@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
 import 'package:ta_rides/screen/bottom_tab/rides_screen.dart';
+import 'package:ta_rides/data/user_data.dart';
 
 import 'community_screen.dart';
 import 'goal30_screen.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen({
+    super.key,
+  });
 
   @override
   State<TabsScreen> createState() {
@@ -28,6 +32,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     Widget activePage = const CommunityScreen();
+    final List<Users> users = UserInformation;
     //var activePageTitle = 'Community';
 
     if (_selectedPageIndex == 1) {
@@ -43,7 +48,9 @@ class _TabsScreenState extends State<TabsScreen> {
       //   activePageTitle = 'Goal30';
     }
     if (_selectedPageIndex == 4) {
-      activePage = const ProfileScreen();
+      activePage = ProfileScreen(
+        user: users[0],
+      );
       //   activePageTitle = 'You';
     }
 

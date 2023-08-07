@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/data/user_data.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
+  const ProfileScreen({super.key, required this.user});
+  final Users user;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +18,18 @@ class ProfileScreen extends StatelessWidget {
               ),
         ),
         backgroundColor: const Color(0x3ff0C0D11),
+      ),
+      body: Column(
+        children: [
+          Text(
+            user.id,
+            style: TextStyle(color: Colors.white),
+          ),
+          Text(
+            user.firstName,
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }
