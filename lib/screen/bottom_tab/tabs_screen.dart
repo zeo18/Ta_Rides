@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ta_rides/data/community_date.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
 import 'package:ta_rides/screen/bottom_tab/rides_screen.dart';
 import 'package:ta_rides/data/user_data.dart';
+import 'package:ta_rides/models/community_info.dart';
 
 import 'community_screen.dart';
 import 'goal30_screen.dart';
@@ -31,8 +33,12 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage = const CommunityScreen();
     final List<Users> users = UserInformation;
+    final List<Post> post = PostCommunity;
+    Widget activePage = CommunityScreen(
+      user: users[0],
+    );
+
     //var activePageTitle = 'Community';
 
     if (_selectedPageIndex == 1) {
@@ -70,7 +76,7 @@ class _TabsScreenState extends State<TabsScreen> {
         backgroundColor: const Color(0x3ff0C0D11),
         onTap: selectedPage,
         currentIndex: _selectedPageIndex,
-        fixedColor: Color(0x3ffFF0000),
+        fixedColor: const Color(0x3ffFF0000),
         items: [
           if (_selectedPageIndex == 0)
             BottomNavigationBarItem(
@@ -78,7 +84,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 'assets/images/community.png',
                 height: 30,
                 width: 30,
-                color: Colors.red,
+                color: Color(0x3FFFF0000),
               ),
               label: 'Community',
               backgroundColor: const Color(0x3ff0C0D11),
@@ -99,7 +105,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 'assets/images/rides.png',
                 height: 30,
                 width: 30,
-                color: Colors.red,
+                color: Color(0x3FFFF0000),
               ),
               label: 'Rides',
               backgroundColor: const Color(0x3ff0C0D11),
@@ -117,7 +123,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 'assets/images/pedal.png',
                 height: 30,
                 width: 30,
-                color: Colors.red,
+                color: Color(0x3FFFF0000),
               ),
               label: 'Pedal',
               backgroundColor: const Color(0x3ff0C0D11),
@@ -135,7 +141,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 'assets/images/goal30.png',
                 height: 30,
                 width: 30,
-                color: Colors.red,
+                color: Color(0x3FFFF0000),
               ),
               label: 'Goal 30',
               backgroundColor: const Color(0x3ff0C0D11),
@@ -153,7 +159,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 'assets/images/profile.png',
                 height: 30,
                 width: 30,
-                color: Colors.red,
+                color: Color(0x3FFFF0000),
               ),
               label: 'You',
               backgroundColor: const Color(0x3ff0C0D11),

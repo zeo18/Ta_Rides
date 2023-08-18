@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ta_rides/models/user_info.dart';
 
 class EventsTab extends StatefulWidget {
-  const EventsTab({super.key});
+  const EventsTab({super.key, required this.user});
+
+  final Users user;
 
   @override
   State<EventsTab> createState() {

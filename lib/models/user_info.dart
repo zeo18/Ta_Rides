@@ -1,21 +1,23 @@
 class Users {
-  const Users(
-      {required this.id,
-      required this.userImage,
-      required this.username,
-      required this.password,
-      required this.firstName,
-      required this.lastName,
-      required this.email,
-      required this.birthdate,
-      required this.gender,
-      required this.location,
-      required this.phoneNumber,
-      required this.followers,
-      required this.following,
-      required this.isCommunity});
+  const Users({
+    required this.id,
+    required this.userImage,
+    required this.username,
+    required this.password,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.birthdate,
+    required this.gender,
+    required this.location,
+    required this.phoneNumber,
+    required this.followers,
+    required this.following,
+    required this.isCommunity,
+    required this.communityId,
+  });
 
-  final String id;
+  final int id;
   final String userImage;
   final String username;
   final String password;
@@ -29,6 +31,7 @@ class Users {
   final int followers;
   final int following;
   final bool isCommunity;
+  final int communityId;
 }
 
 class Achievements {

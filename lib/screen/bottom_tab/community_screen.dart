@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:ta_rides/data/community_date.dart';
+import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/widget/tab_widget/events.dart';
 import 'package:ta_rides/widget/tab_widget/for_you.dart';
 import 'package:ta_rides/widget/tab_widget/search.dart';
+import 'package:ta_rides/models/user_info.dart';
 
-class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+class CommunityScreen extends StatelessWidget {
+  const CommunityScreen({
+    super.key,
+    required this.user,
+  });
 
-  @override
-  State<CommunityScreen> createState() {
-    return _CommunityScreenState();
-  }
-}
+  final Users user;
 
-class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
+    List<Post> post = PostCommunity;
+    void PassValuePost() {
+      List<Post> post = PostCommunity;
+      ListView.builder(
+        itemCount: post.length,
+        itemBuilder: (context, index) => SearchTab(user: user),
+      );
+    }
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -34,7 +44,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             TabBar(
               indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 4,
-              indicatorColor: Colors.red,
+              indicatorColor: Color(0x3FFFF0000),
               tabs: [
                 Tab(
                   child: Text(
@@ -65,13 +75,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
               ],
             ),
-            const Expanded(
+            Expanded(
               child: TabBarView(children: [
-                SearchTab(),
-                ForYouTabs(),
-                EventsTab(),
+                SearchTab(user: user),
+                ForYouTabs(user: user),
+                EventsTab(user: user),
               ]),
-            )
+            ),
           ],
         ),
       ),

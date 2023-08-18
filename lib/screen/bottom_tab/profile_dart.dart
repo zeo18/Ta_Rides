@@ -4,7 +4,9 @@ import 'package:ta_rides/data/user_data.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.user});
+
   final Users user;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,13 +23,26 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Text(
-            user.id,
-            style: TextStyle(color: Colors.white),
-          ),
-          Text(
-            user.firstName,
-            style: TextStyle(color: Colors.white),
+          Center(
+            child: Container(
+              height: 180,
+              width: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  user.userImage,
+                  height: 130,
+                  width: 130,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
         ],
       ),

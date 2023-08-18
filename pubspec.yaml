@@ -67,6 +67,29 @@ flutter:
     - assets/images/pedal.png
     - assets/images/profile.png
     - assets/images/rides.png
+    - assets/images/iconSearch.png
+    - assets/images/createGroup.png
+    - assets/images/joinGroup.png
+    - assets/images/community_images/cebu.png
+    - assets/images/community_images/danao.png
+    - assets/images/community_images/lapulapu.png
+    - assets/images/community_images/shark.png
+    - assets/images/community_images/sharkCover.jpg
+    - assets/images/community_images/danaoCover.jpg
+    - assets/images/community_images/LapulapuCover.jpg
+    - assets/images/community_images/cebuCover.jpg
+    - assets/images/community_images/cordovaCover.jpg
+    - assets/images/community_images/bantayanCover.jpg
+    - assets/images/community_images/barbaCover.jpg
+    - assets/images/user_images/charles.jpg
+    - assets/images/user_images/christian.jpg
+    - assets/images/user_images/desiree.jpg
+    - assets/images/user_images/jonah.jpg
+    - assets/images/user_images/lloyde.jpg
+    
+  
+
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
