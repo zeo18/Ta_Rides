@@ -1,6 +1,5 @@
-import 'dart:ui';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 
@@ -18,7 +17,7 @@ class PostCommunityScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            post.usersName,
+            "${user.firstName} ${user.lastName}",
             style: GoogleFonts.inter(
               fontSize: 16,
               color: Colors.white,

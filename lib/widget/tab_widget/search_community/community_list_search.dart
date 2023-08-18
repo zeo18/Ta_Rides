@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ta_rides/data/community_date.dart';
-
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 
@@ -17,10 +15,10 @@ class CommunityListSearch extends StatelessWidget {
   final void Function(Community community) orderRecentSearch;
   final List<Community> onRecentSearch;
   final Community community;
-  final void Function(Community community, Users user, Post post)
+  final void Function(Community community, List<Users> user, List<Post> post)
       onSelectedCommunity;
-  final Users user;
-  final Post post;
+  final List<Users> user;
+  final List<Post> post;
 
   @override
   Widget build(BuildContext context) {

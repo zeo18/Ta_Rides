@@ -32,6 +32,26 @@ class Users {
   final int following;
   final bool isCommunity;
   final int communityId;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userImage': userImage,
+      'username': username,
+      'password': password,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'birthdate': birthdate.toIso8601String(),
+      'gender': gender,
+      'location': location,
+      'phoneNumber': phoneNumber,
+      'followers': followers,
+      'following': following,
+      'isCommunity': isCommunity,
+      'communityId': communityId,
+    };
+  }
 }
 
 class Achievements {

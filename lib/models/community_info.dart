@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:ta_rides/models/user_info.dart';
-
 class Community {
   Community({
     required this.title,
@@ -43,4 +40,18 @@ class Post {
   final int heart;
   final int commentNumber;
   final List<String> commment;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'communityId': communityId,
+      'userId': userId,
+      'isImage': isImage,
+      'imagePost': imagePost,
+      'usersName': usersName,
+      'caption': caption,
+      'heart': heart,
+      'commentNumber': commentNumber,
+      'commment': commment,
+    };
+  }
 }

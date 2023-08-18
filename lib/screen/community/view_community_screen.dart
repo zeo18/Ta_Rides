@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ta_rides/data/community_date.dart';
-import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
@@ -21,13 +19,16 @@ class ViewCommunityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user.length);
-    print(post.length);
+    // print(["user", user[0].toJson()]);
+    // print(["post", post.length]);
+    for (var i = 0; i < post.length; i++) {
+      // print("${post[i].toJson()}" '\n');
+    }
     return Scaffold(
-      backgroundColor: const Color(0x3ff0C0D11),
+      backgroundColor: const Color(0x3ff0c0d11),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0x3ff0C0D11),
+        backgroundColor: const Color(0x3ff0c0d11),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +51,7 @@ class ViewCommunityScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(0, 0, 172, 0),
                   child: Text(
                     community.title,
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),

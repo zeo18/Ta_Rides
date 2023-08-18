@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ta_rides/data/community_date.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 

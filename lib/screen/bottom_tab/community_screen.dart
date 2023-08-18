@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ta_rides/data/community_date.dart';
+import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/tab_widget/events.dart';
 import 'package:ta_rides/widget/tab_widget/for_you.dart';
 import 'package:ta_rides/widget/tab_widget/search.dart';
-import 'package:ta_rides/models/user_info.dart';
 
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({
@@ -28,23 +28,23 @@ class CommunityScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: const Color(0x3ff0C0D11),
+        backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
           title: Text(
             'Community',
-            style: Theme.of(context).textTheme.headline6!.copyWith(
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          backgroundColor: const Color(0x3ff0C0D11),
+          backgroundColor: const Color(0x3ff0c0d11),
         ),
         body: Column(
           children: [
             TabBar(
               indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 4,
-              indicatorColor: Color(0x3FFFF0000),
+              indicatorColor: const Color(0x3ffff0000),
               tabs: [
                 Tab(
                   child: Text(

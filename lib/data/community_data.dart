@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
-import 'package:ta_rides/models/user_info.dart';
 
 final CommunityInformation = [
   Community(
@@ -84,7 +81,7 @@ final CommunityInformation = [
   Community(
     id: 1108,
     coverImage: 'assets/images/community_images/barbaCover.jpg',
-    title: 'Barba Warriors Team',
+    title: 'Barba Warriors Team 2',
     private: false,
     description:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
@@ -112,7 +109,7 @@ final PostCommunity = [
     userId: 104,
     isImage: false,
     imagePost: '',
-    usersName: 'lloyd101',
+    usersName: 'lloyde101',
     caption: 'Lloyd Gwapo.A united and inclusive cycling team, fueled by a',
     commment: [],
     commentNumber: 0,
@@ -123,7 +120,7 @@ final PostCommunity = [
     userId: 105,
     isImage: false,
     imagePost: '',
-    usersName: 'desire126',
+    usersName: 'desiree126',
     caption:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     commment: [],

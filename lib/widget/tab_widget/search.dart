@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ta_rides/data/community_date.dart';
+import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
@@ -8,7 +8,6 @@ import 'package:ta_rides/screen/community/create_group_screen.dart';
 import 'package:ta_rides/screen/community/join_group_screen.dart';
 import 'package:ta_rides/screen/community/private_condition_screen.dart';
 import 'package:ta_rides/screen/community/view_community_screen.dart';
-import 'package:ta_rides/widget/post_community/post_comunnity.dart';
 import 'package:ta_rides/widget/tab_widget/search_community/community_list_search.dart';
 import 'package:ta_rides/widget/tab_widget/search_community/recent_search.dart';
 
@@ -68,15 +67,28 @@ class _SearchTabState extends State<SearchTab> {
     super.dispose();
   }
 
-  void selectCommunity(
-      BuildContext context, Community community, Users user, Post post) {
+  void selectCommunity(BuildContext context, Community community,
+      List<Users> user, List<Post> post) {
     final communityPost = PostCommunity.where(
             (post) => post.communityId.toString() == community.id.toString())
         .toList();
 
-    final userPost = UserInformation.where(
-            (user) => user.username.toString() == post.usersName.toString())
-        .toList();
+    List<Users> userPost = [];
+    for (var post in communityPost) {
+      for (var user in UserInformation) {
+        if (post.usersName == user.username) {
+          print([post.usersName.toString(), user.username.toString()]);
+          userPost.add(user);
+        }
+      }
+    }
+    // final userPost = UserInformation.where((user) =>
+    //     user.username.toString() ==
+    //     post.where((element) =>
+    //         element.usersName.toString() == user.username.toString())).toList();
+    print(['user length', user.length]);
+    print(['communityPost', communityPost]);
+    print(['userPost', userPost]);
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -200,7 +212,7 @@ class _SearchTabState extends State<SearchTab> {
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Color(0x3ffE89B05)),
+                borderSide: const BorderSide(color: Color(0x3ffe89b05)),
                 borderRadius: BorderRadius.circular(20),
               ),
               enabledBorder: OutlineInputBorder(
@@ -235,8 +247,8 @@ class _SearchTabState extends State<SearchTab> {
                       selectCommunity(context, community, user, post);
                     },
                     onRecentSearch: _recentSearchCommunity,
-                    user: users[index],
-                    post: post[index],
+                    user: UserInformation,
+                    post: PostCommunity,
                   );
 
                   return commu;
@@ -274,7 +286,7 @@ class _SearchTabState extends State<SearchTab> {
                   child: Text(
                     'Clear searches',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Color(0x3ff454545),
+                          color: const Color(0x3ff454545),
                           fontWeight: FontWeight.bold,
                         ),
                     textAlign: TextAlign.right,
@@ -301,7 +313,8 @@ class _SearchTabState extends State<SearchTab> {
                     },
                     community: communityRecentSearch,
                     onTapRecentSearch: (community, user, post) {
-                      selectCommunity(context, community, user, post);
+                      selectCommunity(
+                          context, community, UserInformation, PostCommunity);
                     },
                     joinGroup: (community) {
                       joinGroup(context, community);
