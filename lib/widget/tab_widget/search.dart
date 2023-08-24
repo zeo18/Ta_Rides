@@ -4,7 +4,6 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
-import 'package:ta_rides/screen/bottom_tab/community_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/screen/community/create_group_screen.dart';
 import 'package:ta_rides/screen/community/join_group_screen.dart';

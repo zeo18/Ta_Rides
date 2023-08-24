@@ -19,7 +19,7 @@ class CommunityScreen extends StatefulWidget {
   final Users userUse;
   final List<Users> userPosted;
   final List<Post> communityPosted;
-  final Community community;
+  final Community? community;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -40,7 +40,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
     print(['isCommunity', widget.userUse.isCommunity]);
     print(['List<Users>', widget.userPosted.length]);
     print(['List<Post>', widget.communityPosted.length]);
-    print(['community', widget.community.title]);
+    if (widget.community != null) {
+      print(['community', widget.community!.title]);
+    }
     return DefaultTabController(
       length: 3,
       initialIndex: selectedTab,

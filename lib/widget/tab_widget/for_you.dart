@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
 
 class ForYouTabs extends StatelessWidget {
@@ -16,7 +16,7 @@ class ForYouTabs extends StatelessWidget {
   final Users userUse;
   final List<Users> userPosted;
   final List<Post> communityPosted;
-  final Community community;
+  final Community? community;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class ForYouTabs extends StatelessWidget {
       children: [
         if (userUse.isCommunity)
           Image.asset(
-            community.coverImage,
+            community!.coverImage,
             height: 180,
             width: 450,
             fit: BoxFit.cover,
@@ -39,7 +39,7 @@ class ForYouTabs extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      community.title,
+                      community!.title,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -49,7 +49,7 @@ class ForYouTabs extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        if (community.private)
+                        if (community!.private)
                           Text(
                             'Private Group',
                             style: GoogleFonts.inter(
@@ -70,7 +70,7 @@ class ForYouTabs extends StatelessWidget {
                         const SizedBox(
                           width: 2,
                         ),
-                        if (community.private)
+                        if (community!.private)
                           const Icon(
                             Icons.lock,
                             color: Color(0x3ff808080),
@@ -94,7 +94,7 @@ class ForYouTabs extends StatelessWidget {
                           width: 5,
                         ),
                         Text(
-                          community.membersIndex.toString(),
+                          community!.membersIndex.toString(),
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: Colors.white,
@@ -118,7 +118,7 @@ class ForYouTabs extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      community.description,
+                      community!.description,
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         color: Colors.white,

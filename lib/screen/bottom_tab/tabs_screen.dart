@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ta_rides/data/community_data.dart';
-import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
@@ -24,7 +23,7 @@ class TabsScreen extends StatefulWidget {
   final int selectTab;
   final List<Users> userPosted;
   final List<Post> communityPosted;
-  final Community community;
+  final Community? community;
 
   //  selectTab: select,
   //     community: communityUser,
@@ -101,13 +100,15 @@ class _TabsScreenState extends State<TabsScreen> {
     // print(['List<Post> joined', communityPost.length]);
 
     setState(() {
-      print('hello');
-      for (var community in communities) {
-        print('hello2');
-        if (widget.user.communityId == community.id) {
-          communityUser = community;
-          print(['correct2', communityUser.title]);
-          break; // Break the loop after finding a match for the current user
+      if (widget.community != null) {
+        print('hello');
+        for (var community in communities) {
+          print('hello2');
+          if (widget.user.communityId == community.id) {
+            communityUser = community;
+            print(['correct2', communityUser!.title]);
+            break; // Break the loop after finding a match for the current user
+          }
         }
       }
     });
