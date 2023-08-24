@@ -4,29 +4,44 @@ import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
 
-class ViewCommunityScreen extends StatelessWidget {
+class ViewCommunityScreen extends StatefulWidget {
   const ViewCommunityScreen({
     super.key,
     required this.community,
     required this.onClickPrivateGroup,
     required this.post,
     required this.user,
+    required this.onPublicGroup,
+    required this.userUse,
+    required this.users,
+    required this.posts,
   });
   final List<Users> user;
   final List<Post> post;
   final Community community;
   final void Function(Community community) onClickPrivateGroup;
+  final void Function(Community community, Users userUse, List<Users> users,
+      List<Post> posts) onPublicGroup;
+  final Users userUse;
+  final List<Users> users;
+  final List<Post> posts;
 
+  @override
+  State<ViewCommunityScreen> createState() => _ViewCommunityScreenState();
+}
+
+class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     // print(["user", user[0].toJson()]);
     // print(["post", post.length]);
-    for (var i = 0; i < post.length; i++) {
+    for (var i = 0; i < widget.post.length; i++) {
       // print("${post[i].toJson()}" '\n');
     }
     return Scaffold(
       backgroundColor: const Color(0x3ff0c0d11),
       appBar: AppBar(
+        // automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0x3ff0c0d11),
       ),
@@ -34,183 +49,180 @@ class ViewCommunityScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            community.coverImage,
+            widget.community.coverImage,
             height: 210,
-            width: 480,
+            width: 450,
             fit: BoxFit.cover,
           ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: Stack(
-              children: [
-                const SizedBox(
-                  height: 45,
-                  width: 200,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 172, 0),
-                  child: Text(
-                    community.title,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+          Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.community.title,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                      textAlign: TextAlign.left,
+                    ),
+                    Row(
+                      children: [
+                        if (widget.community.private)
+                          Text(
+                            'Private Group',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        else
+                          Text(
+                            'Public Group',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        const SizedBox(
+                          width: 2,
                         ),
-                    textAlign: TextAlign.left,
+                        if (widget.community.private)
+                          const Icon(
+                            Icons.lock,
+                            color: Color(0x3ff808080),
+                            size: 15,
+                          ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          child: Text(
+                            '.',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          widget.community.membersIndex.toString(),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'members',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: const Color(0x3ff808080),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      widget.community.description,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      if (widget.community.private) {
+                        widget.onClickPrivateGroup(widget.community);
+                      } else {
+                        widget.onPublicGroup(widget.community, widget.userUse,
+                            widget.users, widget.posts);
+                      }
+                    });
+                  },
+                  icon: Image.asset(
+                    'assets/images/joinGroup.png',
+                    height: 35,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Positioned(
-                  top: 3,
-                  left: 272,
-                  child: IconButton(
-                    onPressed: () {
-                      onClickPrivateGroup(community);
-                    },
-                    icon: Image.asset(
-                      'assets/images/joinGroup.png',
-                      height: 35,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    child: Text(
-                      'Private Group',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    child: Text(
-                      'Public Group',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  const Positioned(
-                    top: 31,
-                    left: 100,
-                    child: Icon(
-                      Icons.lock,
-                      color: Color(0x3ff808080),
-                      size: 15,
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 25,
-                    left: 120,
-                    child: Text(
-                      '.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 25,
-                    left: 98,
-                    child: Text(
-                      '.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    left: 131,
-                    child: Text(
-                      community.membersIndex.toString(),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    left: 110,
-                    child: Text(
-                      community.membersIndex.toString(),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    left: 153,
-                    child: Text(
-                      'members',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    left: 134,
-                    child: Text(
-                      'members',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(
-              community.description,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
               ),
+            ],
+          ),
+          const Text(
+            '____________________________________________',
+            style: TextStyle(
+              color: Color(0x3ff797979),
+              fontSize: 18,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: const Text(
-              '__________________________________________',
-              style: TextStyle(
-                color: Color(0x3ff797979),
-                fontSize: 18,
+          if (widget.community.private)
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Rules',
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Lorem ipsum dolor sit amet consectetur. Ornare auctor velit mauris rutrum imperdiet risus et hendrerit rhoncus. Quis lorem at sapien',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Lorem ipsum dolor sit amet consectetur. Ornare auctor velit mauris rutrum imperdiet risus et hendrerit rhoncus. Quis lorem at sapien',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )),
               ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(
+            )
+          else
+            Text(
               'Group Post',
               style: GoogleFonts.inter(
                 fontSize: 19,
@@ -218,14 +230,14 @@ class ViewCommunityScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-          if (community.private == false)
+          if (widget.community.private == false)
             Expanded(
               child: ListView.builder(
-                itemCount: post.length,
+                shrinkWrap: false,
+                itemCount: widget.post.length,
                 itemBuilder: (ctx, index) => PostCommunityScreen(
-                  post: post[index],
-                  user: user[index],
+                  post: widget.post[index],
+                  user: widget.user[index],
                 ),
               ),
             ),

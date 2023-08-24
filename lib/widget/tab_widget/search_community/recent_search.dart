@@ -3,23 +3,27 @@ import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 
 class RecentSearch extends StatelessWidget {
-  const RecentSearch({
-    super.key,
-    required this.community,
-    required this.onTapRecentSearch,
-    required this.orderRecentSearch,
-    required this.joinGroup,
-    required this.user,
-    required this.post,
-  });
+  const RecentSearch(
+      {super.key,
+      required this.community,
+      required this.onTapRecentSearch,
+      required this.orderRecentSearch,
+      required this.user,
+      required this.post,
+      required this.onClickPrivateGroup,
+      required this.onPublicGroup,
+      required this.userUse});
 
   final void Function(Community community) orderRecentSearch;
   final Community community;
-  final void Function(Community community, Users user, Post post)
+  final void Function(Community community, List<Users> user, List<Post> post)
       onTapRecentSearch;
-  final void Function(Community community) joinGroup;
-  final Users user;
-  final Post post;
+  final void Function(Community community) onClickPrivateGroup;
+  final void Function(Community community, Users userUse, List<Users> users,
+      List<Post> posts) onPublicGroup;
+  final List<Users> user;
+  final List<Post> post;
+  final Users userUse;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,11 @@ class RecentSearch extends StatelessWidget {
                         alignment: Alignment.bottomRight,
                         child: IconButton(
                           onPressed: () {
-                            joinGroup(community);
+                            if (community.private) {
+                              onClickPrivateGroup(community);
+                            } else {
+                              onPublicGroup(community, userUse, user, post);
+                            }
                           },
                           icon: Image.asset(
                             'assets/images/joinGroup.png',
