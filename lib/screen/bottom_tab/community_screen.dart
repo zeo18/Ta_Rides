@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/tab_widget/events.dart';
@@ -48,6 +47,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       child: Scaffold(
         backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(
             'Community',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -56,6 +56,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
           ),
           backgroundColor: const Color(0x3ff0c0d11),
+          // backgroundColor: Colors.red,
         ),
         body: Column(
           children: [
@@ -103,7 +104,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     userUse: widget.userUse,
                     community: widget.community,
                   ),
-                  EventsTab(),
+                  const EventsTab(),
                 ],
               ),
             ),

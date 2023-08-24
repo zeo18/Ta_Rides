@@ -3,9 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
-import 'package:ta_rides/widget/tab_widget/for_you.dart';
 
-class ViewCommunityScreen extends StatelessWidget {
+class ViewCommunityScreen extends StatefulWidget {
   const ViewCommunityScreen({
     super.key,
     required this.community,
@@ -28,15 +27,21 @@ class ViewCommunityScreen extends StatelessWidget {
   final List<Post> posts;
 
   @override
+  State<ViewCommunityScreen> createState() => _ViewCommunityScreenState();
+}
+
+class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
+  @override
   Widget build(BuildContext context) {
     // print(["user", user[0].toJson()]);
     // print(["post", post.length]);
-    for (var i = 0; i < post.length; i++) {
+    for (var i = 0; i < widget.post.length; i++) {
       // print("${post[i].toJson()}" '\n');
     }
     return Scaffold(
       backgroundColor: const Color(0x3ff0c0d11),
       appBar: AppBar(
+        // automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0x3ff0c0d11),
       ),
@@ -44,7 +49,7 @@ class ViewCommunityScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
-            community.coverImage,
+            widget.community.coverImage,
             height: 210,
             width: 450,
             fit: BoxFit.cover,
@@ -57,7 +62,7 @@ class ViewCommunityScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      community.title,
+                      widget.community.title,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -67,7 +72,7 @@ class ViewCommunityScreen extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        if (community.private)
+                        if (widget.community.private)
                           Text(
                             'Private Group',
                             style: GoogleFonts.inter(
@@ -88,7 +93,7 @@ class ViewCommunityScreen extends StatelessWidget {
                         const SizedBox(
                           width: 2,
                         ),
-                        if (community.private)
+                        if (widget.community.private)
                           const Icon(
                             Icons.lock,
                             color: Color(0x3ff808080),
@@ -112,7 +117,7 @@ class ViewCommunityScreen extends StatelessWidget {
                           width: 5,
                         ),
                         Text(
-                          community.membersIndex.toString(),
+                          widget.community.membersIndex.toString(),
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: Colors.white,
@@ -136,7 +141,7 @@ class ViewCommunityScreen extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      community.description,
+                      widget.community.description,
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         color: Colors.white,
@@ -151,11 +156,14 @@ class ViewCommunityScreen extends StatelessWidget {
                 right: 10,
                 child: IconButton(
                   onPressed: () {
-                    if (community.private) {
-                      onClickPrivateGroup(community);
-                    } else {
-                      onPublicGroup(community, userUse, users, posts);
-                    }
+                    setState(() {
+                      if (widget.community.private) {
+                        widget.onClickPrivateGroup(widget.community);
+                      } else {
+                        widget.onPublicGroup(widget.community, widget.userUse,
+                            widget.users, widget.posts);
+                      }
+                    });
                   },
                   icon: Image.asset(
                     'assets/images/joinGroup.png',
@@ -173,7 +181,7 @@ class ViewCommunityScreen extends StatelessWidget {
               fontSize: 18,
             ),
           ),
-          if (community.private)
+          if (widget.community.private)
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
@@ -222,14 +230,14 @@ class ViewCommunityScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          if (community.private == false)
+          if (widget.community.private == false)
             Expanded(
               child: ListView.builder(
                 shrinkWrap: false,
-                itemCount: post.length,
+                itemCount: widget.post.length,
                 itemBuilder: (ctx, index) => PostCommunityScreen(
-                  post: post[index],
-                  user: user[index],
+                  post: widget.post[index],
+                  user: widget.user[index],
                 ),
               ),
             ),
