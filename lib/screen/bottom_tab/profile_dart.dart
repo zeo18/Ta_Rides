@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
-import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/widget/profile_Tabs/achievements_tabs.dart';
 import 'package:ta_rides/widget/profile_Tabs/profile_tabs.dart';
 import 'package:ta_rides/widget/profile_Tabs/progress_tabs.dart';
@@ -31,16 +30,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       length: 3,
       initialIndex: selectTab,
       child: Scaffold(
-        backgroundColor: const Color(0x3ff0C0D11),
+        backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
           title: Text(
             'You',
-            style: Theme.of(context).textTheme.headline6!.copyWith(
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          backgroundColor: const Color(0x3ff0C0D11),
+          backgroundColor: const Color(0x3ff0c0d11),
         ),
         body: Column(
           children: [
@@ -103,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   widget.user.followers.toString(),
                                   style: GoogleFonts.inter(
                                     fontSize: 25,
-                                    color: const Color(0x3ffE8AA0A),
+                                    color: const Color(0x3ffe8aa0a),
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -129,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   widget.user.following.toString(),
                                   style: GoogleFonts.inter(
                                     fontSize: 25,
-                                    color: const Color(0x3ffE8AA0A),
+                                    color: const Color(0x3ffe8aa0a),
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -153,50 +152,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (selectTab == 1)
               Text(
                 'Community',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
               ),
             const SizedBox(
               height: 20,
             ),
             TabBar(
+              labelStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
               indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 4,
               indicatorColor: const Color(0x3ffff0000),
               onTap: selectedPage,
-              tabs: [
+              tabs: const [
                 Tab(
-                  child: Text(
-                    'Profile',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                  ),
+                  text: 'Profile',
+                  // child: Text(
+                  //   'Profile',
+                  //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  //         color: Colors.white,
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 18,
+                  //       ),
+                  // ),
+                ),
+
+                Tab(
+                  text: "Achievements",
+                  // child: Text(
+                  //   'Achievements',
+                  //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  //         color: Colors.white,
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 18,
+                  //       ),
+                  // ),
                 ),
                 Tab(
-                  child: Text(
-                    'Achievements',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    'Progress',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                  ),
-                ),
+                  text: 'Progress',
+                )
+                // Tab(
+                // text: 'Progress'
+                // child: Text(
+                //   'Progress',
+                //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                //         color: Colors.white,
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 18,
+                // )
+                //),
+                // ),
               ],
             ),
             Expanded(
