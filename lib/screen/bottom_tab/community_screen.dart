@@ -6,27 +6,45 @@ import 'package:ta_rides/widget/tab_widget/events.dart';
 import 'package:ta_rides/widget/tab_widget/for_you.dart';
 import 'package:ta_rides/widget/tab_widget/search.dart';
 
-class CommunityScreen extends StatelessWidget {
+class CommunityScreen extends StatefulWidget {
   const CommunityScreen({
     super.key,
-    required this.user,
+    required this.selectTab,
+    required this.userUse,
+    required this.communityPosted,
+    required this.userPosted,
+    required this.community,
   });
 
-  final Users user;
+  final int selectTab;
+  final Users userUse;
+  final List<Users> userPosted;
+  final List<Post> communityPosted;
+  final Community community;
+
+  @override
+  State<CommunityScreen> createState() => _CommunityScreenState();
+}
+
+class _CommunityScreenState extends State<CommunityScreen> {
+  int selectedTab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTab = widget.selectTab;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Post> post = PostCommunity;
-    void PassValuePost() {
-      List<Post> post = PostCommunity;
-      ListView.builder(
-        itemCount: post.length,
-        itemBuilder: (context, index) => SearchTab(user: user),
-      );
-    }
-
+    print(['communityID', widget.userUse.communityId]);
+    print(['isCommunity', widget.userUse.isCommunity]);
+    print(['List<Users>', widget.userPosted.length]);
+    print(['List<Post>', widget.communityPosted.length]);
+    print(['community', widget.community.title]);
     return DefaultTabController(
       length: 3,
+      initialIndex: selectedTab,
       child: Scaffold(
         backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
@@ -76,11 +94,18 @@ class CommunityScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: TabBarView(children: [
-                SearchTab(user: user),
-                ForYouTabs(user: user),
-                EventsTab(user: user),
-              ]),
+              child: TabBarView(
+                children: [
+                  SearchTab(userUse: widget.userUse),
+                  ForYouTabs(
+                    communityPosted: widget.communityPosted,
+                    userPosted: widget.userPosted,
+                    userUse: widget.userUse,
+                    community: widget.community,
+                  ),
+                  EventsTab(),
+                ],
+              ),
             ),
           ],
         ),

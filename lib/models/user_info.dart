@@ -1,5 +1,5 @@
 class Users {
-  const Users({
+  Users({
     required this.id,
     required this.userImage,
     required this.username,
@@ -30,8 +30,8 @@ class Users {
   final String phoneNumber;
   final int followers;
   final int following;
-  final bool isCommunity;
-  final int communityId;
+  late bool isCommunity;
+  late int communityId;
 
   Map<String, dynamic> toJson() {
     return {

@@ -98,11 +98,10 @@ final PostCommunity = [
     isImage: true,
     imagePost: 'assets/images/community_images/barbaCover.jpg',
     usersName: 'christian3',
-    caption:
-        'A united and inclusive cycling team, fueled by a shared love for the sport.',
+    caption: 'I love you des',
     commment: [],
     commentNumber: 0,
-    heart: 0,
+    heart: 23,
   ),
   Post(
     communityId: 1102,
@@ -110,10 +109,11 @@ final PostCommunity = [
     isImage: false,
     imagePost: '',
     usersName: 'lloyde101',
-    caption: 'Lloyd Gwapo.A united and inclusive cycling team, fueled by a',
+    caption:
+        'Lloyd Gwapo,Lloyd Gwapo,Lloyd Gwapo,Lloyd Gwapo,Lloyd Gwapo,Lloyd Gwapo,Lloyd Gwapo',
     commment: [],
     commentNumber: 0,
-    heart: 0,
+    heart: 10,
   ),
   Post(
     communityId: 1102,
@@ -122,9 +122,33 @@ final PostCommunity = [
     imagePost: '',
     usersName: 'desiree126',
     caption:
+        'Inlove jud kaayo ko christian guys. dmd najud ako najud ni siya minyoan. bye people',
+    commment: [],
+    commentNumber: 0,
+    heart: 12,
+  ),
+  Post(
+    communityId: 1103,
+    userId: 101,
+    isImage: false,
+    imagePost: '',
+    usersName: 'jonah101',
+    caption:
+        'Bisag unsaon pa ninyo kontra nako. di mo ka palag nako. Rwarrrrr HAHAHAHHAHAHAHHA',
+    commment: [],
+    commentNumber: 0,
+    heart: 12,
+  ),
+  Post(
+    communityId: 1103,
+    userId: 102,
+    isImage: true,
+    imagePost: 'assets/images/community_images/cordovaCover.jpg',
+    usersName: 'charles2',
+    caption:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     commment: [],
     commentNumber: 0,
-    heart: 0,
+    heart: 121,
   ),
 ];

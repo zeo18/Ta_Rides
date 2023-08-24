@@ -4,6 +4,8 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/community_screen.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/screen/community/create_group_screen.dart';
 import 'package:ta_rides/screen/community/join_group_screen.dart';
 import 'package:ta_rides/screen/community/private_condition_screen.dart';
@@ -14,11 +16,10 @@ import 'package:ta_rides/widget/tab_widget/search_community/recent_search.dart';
 class SearchTab extends StatefulWidget {
   const SearchTab({
     super.key,
-    required this.user,
+    required this.userUse,
   });
 
-  final Users user;
-
+  final Users userUse;
   @override
   State<SearchTab> createState() => _SearchTabState();
 }
@@ -86,9 +87,9 @@ class _SearchTabState extends State<SearchTab> {
     //     user.username.toString() ==
     //     post.where((element) =>
     //         element.usersName.toString() == user.username.toString())).toList();
-    print(['user length', user.length]);
-    print(['communityPost', communityPost]);
-    print(['userPost', userPost]);
+    // print(['user length', user.length]);
+    // print(['communityPost', communityPost]);
+    // print(['userPost', userPost]);
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -99,6 +100,12 @@ class _SearchTabState extends State<SearchTab> {
           onClickPrivateGroup: (community) {
             privateGroup(context, community);
           },
+          onPublicGroup: (community, userUse, users, post) {
+            publicGroup(context, community, userUse, users, post);
+          },
+          userUse: widget.userUse,
+          users: user,
+          posts: post,
         ),
       ),
     );
@@ -164,6 +171,38 @@ class _SearchTabState extends State<SearchTab> {
       MaterialPageRoute(
         builder: (ctx) => PrivateConditionScreen(community: community),
       ),
+    );
+  }
+
+  void publicGroup(BuildContext context, Community community, Users userUse,
+      List<Users> users, List<Post> post) {
+    userUse.isCommunity = true;
+    userUse.communityId = community.id;
+
+    final communityPost = PostCommunity.where(
+            (post) => post.communityId.toString() == community.id.toString())
+        .toList();
+
+    List<Users> userPost = [];
+    for (var post in communityPost) {
+      for (var user in UserInformation) {
+        if (post.usersName == user.username) {
+          print([post.usersName.toString(), user.username.toString()]);
+          userPost.add(user);
+        }
+      }
+    }
+
+    int selectTab = 1;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (ctx) => TabsScreen(
+              user: widget.userUse,
+              community: community,
+              communityPosted: communityPost,
+              selectTab: selectTab,
+              userPosted: userPost)),
     );
   }
 
@@ -316,11 +355,15 @@ class _SearchTabState extends State<SearchTab> {
                       selectCommunity(
                           context, community, UserInformation, PostCommunity);
                     },
-                    joinGroup: (community) {
-                      joinGroup(context, community);
+                    user: UserInformation,
+                    post: PostCommunity,
+                    onClickPrivateGroup: (community) {
+                      privateGroup(context, community);
                     },
-                    user: widget.user,
-                    post: post[_OrderRecentSearch.length],
+                    onPublicGroup: (community, userUse, users, post) {
+                      publicGroup(context, community, userUse, users, post);
+                    },
+                    userUse: widget.userUse,
                   )
               ],
             ),

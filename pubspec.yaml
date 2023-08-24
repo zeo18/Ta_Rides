@@ -70,6 +70,7 @@ flutter:
     - assets/images/iconSearch.png
     - assets/images/createGroup.png
     - assets/images/joinGroup.png
+    - assets/images/joinedGroup.png
     - assets/images/community_images/cebu.png
     - assets/images/community_images/danao.png
     - assets/images/community_images/lapulapu.png
@@ -86,6 +87,11 @@ flutter:
     - assets/images/user_images/desiree.jpg
     - assets/images/user_images/jonah.jpg
     - assets/images/user_images/lloyde.jpg
+    - assets/images/user_images/line.png
+    - assets/images/community_images/post_community/heart.png
+    - assets/images/community_images/post_community/comment.png
+    - assets/images/community_images/post_community/icon.png
+    - assets/images/community_images/post_community/iconDot.png
     
   
 

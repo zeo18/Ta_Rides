@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
+import 'package:ta_rides/widget/tab_widget/for_you.dart';
 
 class ViewCommunityScreen extends StatelessWidget {
   const ViewCommunityScreen({
@@ -11,11 +12,20 @@ class ViewCommunityScreen extends StatelessWidget {
     required this.onClickPrivateGroup,
     required this.post,
     required this.user,
+    required this.onPublicGroup,
+    required this.userUse,
+    required this.users,
+    required this.posts,
   });
   final List<Users> user;
   final List<Post> post;
   final Community community;
   final void Function(Community community) onClickPrivateGroup;
+  final void Function(Community community, Users userUse, List<Users> users,
+      List<Post> posts) onPublicGroup;
+  final Users userUse;
+  final List<Users> users;
+  final List<Post> posts;
 
   @override
   Widget build(BuildContext context) {
@@ -36,181 +46,175 @@ class ViewCommunityScreen extends StatelessWidget {
           Image.asset(
             community.coverImage,
             height: 210,
-            width: 480,
+            width: 450,
             fit: BoxFit.cover,
           ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: Stack(
-              children: [
-                const SizedBox(
-                  height: 45,
-                  width: 200,
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 172, 0),
-                  child: Text(
-                    community.title,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+          Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      community.title,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                      textAlign: TextAlign.left,
+                    ),
+                    Row(
+                      children: [
+                        if (community.private)
+                          Text(
+                            'Private Group',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        else
+                          Text(
+                            'Public Group',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        const SizedBox(
+                          width: 2,
                         ),
-                    textAlign: TextAlign.left,
-                  ),
+                        if (community.private)
+                          const Icon(
+                            Icons.lock,
+                            color: Color(0x3ff808080),
+                            size: 15,
+                          ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          child: Text(
+                            '.',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: const Color(0x3ff808080),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          community.membersIndex.toString(),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'members',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: const Color(0x3ff808080),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      community.description,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  top: 3,
-                  left: 272,
-                  child: IconButton(
-                    onPressed: () {
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  onPressed: () {
+                    if (community.private) {
                       onClickPrivateGroup(community);
-                    },
-                    icon: Image.asset(
-                      'assets/images/joinGroup.png',
-                      height: 35,
-                      fit: BoxFit.cover,
-                    ),
+                    } else {
+                      onPublicGroup(community, userUse, users, posts);
+                    }
+                  },
+                  icon: Image.asset(
+                    'assets/images/joinGroup.png',
+                    height: 35,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    child: Text(
-                      'Private Group',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    child: Text(
-                      'Public Group',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  const Positioned(
-                    top: 31,
-                    left: 100,
-                    child: Icon(
-                      Icons.lock,
-                      color: Color(0x3ff808080),
-                      size: 15,
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 25,
-                    left: 120,
-                    child: Text(
-                      '.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 25,
-                    left: 98,
-                    child: Text(
-                      '.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    left: 131,
-                    child: Text(
-                      community.membersIndex.toString(),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    left: 110,
-                    child: Text(
-                      community.membersIndex.toString(),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                if (community.private)
-                  Positioned(
-                    top: 28,
-                    left: 153,
-                    child: Text(
-                      'members',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  )
-                else
-                  Positioned(
-                    top: 28,
-                    left: 134,
-                    child: Text(
-                      'members',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0x3ff808080),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(
-              community.description,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
               ),
+            ],
+          ),
+          const Text(
+            '____________________________________________',
+            style: TextStyle(
+              color: Color(0x3ff797979),
+              fontSize: 18,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: const Text(
-              '__________________________________________',
-              style: TextStyle(
-                color: Color(0x3ff797979),
-                fontSize: 18,
+          if (community.private)
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Rules',
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Lorem ipsum dolor sit amet consectetur. Ornare auctor velit mauris rutrum imperdiet risus et hendrerit rhoncus. Quis lorem at sapien',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Lorem ipsum dolor sit amet consectetur. Ornare auctor velit mauris rutrum imperdiet risus et hendrerit rhoncus. Quis lorem at sapien',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )),
               ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(
+            )
+          else
+            Text(
               'Group Post',
               style: GoogleFonts.inter(
                 fontSize: 19,
@@ -218,10 +222,10 @@ class ViewCommunityScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),
           if (community.private == false)
             Expanded(
               child: ListView.builder(
+                shrinkWrap: false,
                 itemCount: post.length,
                 itemBuilder: (ctx, index) => PostCommunityScreen(
                   post: post[index],

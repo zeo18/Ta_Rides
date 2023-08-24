@@ -13,8 +13,24 @@ import 'goal30_screen.dart';
 class TabsScreen extends StatefulWidget {
   const TabsScreen({
     super.key,
+    required this.user,
+    required this.community,
+    required this.communityPosted,
+    required this.selectTab,
+    required this.userPosted,
   });
+  final Users user;
 
+  final int selectTab;
+  final List<Users> userPosted;
+  final List<Post> communityPosted;
+  final Community community;
+
+  //  selectTab: select,
+  //     community: communityUser,
+  //     communityPosted: communityPost,
+  //     userPosted: userPost,
+  //     userUse: widget.user,
   @override
   State<TabsScreen> createState() {
     return _TabsScreenState();
@@ -31,12 +47,77 @@ class _TabsScreenState extends State<TabsScreen> {
     print(_selectedPageIndex);
   }
 
+  // @override
+  // void initState() {
+  //   if (comm){
+  //   var community1;
+  //   for (var community in CommunityInformation) {
+  //     print('hello2');
+  //     if (widget.user.communityId == community.id) {
+  //       community1 = community;
+  //       print(['correct2', community.title]);
+  //       break; // Break the loop after finding a match for the current user
+  //     }
+  //   }
+
+  //   Widget activePage = CommunityScreen(
+  //     selectTab: widget.selectTab,
+  //     community: community1,
+  //     communityPosted: widget.communityPosted,
+  //     userPosted: widget.userPosted,
+  //     userUse: widget.user,
+  //   );
+  //   super.initState();
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final List<Users> users = UserInformation;
-    final List<Post> post = PostCommunity;
+    final List<Community> communities = CommunityInformation;
+
+    late var communityUser = widget.community;
+
+    // List<Post> communityPost = [];
+
+    // for (var community in CommunityInformation) {
+    //   for (var post in PostCommunity) {
+    //     if (post.communityId.toString() == community.id.toString()) {
+    //       communityPost.add(post);
+    //     }
+    //   }
+    // }
+
+    // List<Users> userPost = [];
+    // for (var post in PostCommunity) {
+    //   for (var user in UserInformation) {
+    //     if (post.usersName == user.username) {
+    //       print([post.usersName.toString(), user.username.toString()]);
+    //       userPost.add(user);
+    //     }
+    //   }
+    // }
+
+    // print(['List<Users> joined', userPost.length]);
+    // print(['List<Post> joined', communityPost.length]);
+
+    setState(() {
+      print('hello');
+      for (var community in communities) {
+        print('hello2');
+        if (widget.user.communityId == community.id) {
+          communityUser = community;
+          print(['correct2', communityUser.title]);
+          break; // Break the loop after finding a match for the current user
+        }
+      }
+    });
+
     Widget activePage = CommunityScreen(
-      user: users[1],
+      selectTab: widget.selectTab,
+      community: communityUser,
+      communityPosted: widget.communityPosted,
+      userPosted: widget.userPosted,
+      userUse: widget.user,
     );
 
     //var activePageTitle = 'Community';
@@ -55,22 +136,12 @@ class _TabsScreenState extends State<TabsScreen> {
     }
     if (_selectedPageIndex == 4) {
       activePage = ProfileScreen(
-        user: users[0],
+        user: widget.user,
       );
       //   activePageTitle = 'You';
     }
 
     return Scaffold(
-      // appBar: AppBar(
-      //  title: Text(
-      //    activePageTitle,
-      //    style: Theme.of(context).textTheme.headline6!.copyWith(
-      //          color: Colors.white,
-      //         fontWeight: FontWeight.bold,
-      //         ),
-      //   ),
-      //backgroundColor: const Color(0x3ff0C0D11),
-      //),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0x3ff0c0d11),
