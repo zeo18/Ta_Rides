@@ -12,6 +12,8 @@ class PostCommunityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(['user in post', user.username]);
+    print([' post caption', post.caption]);
     return Stack(
       children: [
         Column(
@@ -71,12 +73,20 @@ class PostCommunityScreen extends StatelessWidget {
               ),
             ),
             if (post.isImage)
-              Image.asset(
-                post.imagePost,
-                height: 168,
-                width: 420,
-                fit: BoxFit.cover,
-              ),
+              if (post.ifImage.isEmpty)
+                Image.asset(
+                  post.imagePost,
+                  height: 168,
+                  width: 420,
+                  fit: BoxFit.cover,
+                )
+              else
+                Image(
+                  image: MemoryImage(post.ifImage),
+                  height: 168,
+                  width: 420,
+                  fit: BoxFit.cover,
+                ),
             if (post.isImage)
               const SizedBox(
                 height: 10,

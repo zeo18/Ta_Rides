@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:ta_rides/models/user_info.dart';
+
 class Community {
   Community({
     required this.title,
@@ -8,6 +11,7 @@ class Community {
     required this.members,
     required this.image,
     required this.id,
+    required this.ifItsImage,
   });
   final int id;
   final String coverImage;
@@ -15,7 +19,8 @@ class Community {
   final String title;
   final String description;
   final int membersIndex;
-  final List<String> members;
+  final List<Users> members;
+  late final Uint8List ifItsImage;
   final String image;
 }
 
@@ -30,6 +35,7 @@ class Post {
     required this.commment,
     required this.commentNumber,
     required this.heart,
+    required this.ifImage,
   });
   final int communityId;
   final int userId;
@@ -40,18 +46,5 @@ class Post {
   final int heart;
   final int commentNumber;
   final List<String> commment;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'communityId': communityId,
-      'userId': userId,
-      'isImage': isImage,
-      'imagePost': imagePost,
-      'usersName': usersName,
-      'caption': caption,
-      'heart': heart,
-      'commentNumber': commentNumber,
-      'commment': commment,
-    };
-  }
+  late final Uint8List ifImage;
 }

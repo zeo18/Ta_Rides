@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/data/user_data.dart';
+import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/profile_Tabs/achievements_tabs.dart';
+import 'package:ta_rides/widget/profile_Tabs/edit_profile.dart';
 import 'package:ta_rides/widget/profile_Tabs/profile_tabs.dart';
 import 'package:ta_rides/widget/profile_Tabs/progress_tabs.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, required this.user});
+  const ProfileScreen({
+    super.key,
+    required this.user,
+    required this.community,
+    required this.communityPosted,
+    required this.userPosted,
+    required this.achievements,
+    required this.onEditProfile,
+  });
 
   final Users user;
+  final Community community;
+  final List<Users> userPosted;
+  final List<Post> communityPosted;
+  final Achievements? achievements;
+  final Function(Users users) onEditProfile;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -16,6 +33,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int selectTab = 0;
+  int selectButtomTab = 0;
 
   void selectedPage(int index) {
     setState(() {
@@ -32,6 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(
             'You',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -150,71 +169,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             if (selectTab == 1)
-              Text(
-                'Community',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+              Column(
+                children: [
+                  Text(
+                    'Community',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: const Color(0x3ffe8aa0a),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => TabsScreen(
+                            user: widget.user,
+                            community: widget.community,
+                            communityPosted: widget.communityPosted,
+                            selectTab: selectTab,
+                            userPosted: widget.userPosted,
+                            achievements: widget.achievements!,
+                            selectButtomTab: selectButtomTab,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      color: const Color(0xff282828),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      elevation: 10,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        child: Text(
+                          widget.community.title,
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                        ),
+                      ),
                     ),
+                  )
+                ],
+              ),
+            if (selectTab == 2)
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => ProfileEdit(
+                              user: widget.user,
+                              onEditProfile: widget.onEditProfile,
+                              achievements: widget.achievements!,
+                              community: widget.community,
+                              communityPosted: widget.communityPosted,
+                              userPosted: widget.userPosted,
+                            )),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white, // Border color
+                      width: 1, // Border width
+                    ),
+                  ),
+                  child: Text(
+                    'Edit',
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                  ),
+                ),
               ),
             const SizedBox(
               height: 20,
             ),
             TabBar(
-              labelStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+              labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
               indicatorSize: TabBarIndicatorSize.label,
+              isScrollable: true,
+              unselectedLabelColor: const Color(0x3ff666666),
               indicatorWeight: 4,
               indicatorColor: const Color(0x3ffff0000),
               onTap: selectedPage,
               tabs: const [
                 Tab(
                   text: 'Profile',
-                  // child: Text(
-                  //   'Profile',
-                  //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  //         color: Colors.white,
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 18,
-                  //       ),
-                  // ),
                 ),
-
                 Tab(
                   text: "Achievements",
-                  // child: Text(
-                  //   'Achievements',
-                  //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  //         color: Colors.white,
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 18,
-                  //       ),
-                  // ),
                 ),
                 Tab(
                   text: 'Progress',
                 )
-                // Tab(
-                // text: 'Progress'
-                // child: Text(
-                //   'Progress',
-                //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                //         color: Colors.white,
-                //         fontWeight: FontWeight.bold,
-                //         fontSize: 18,
-                // )
-                //),
-                // ),
               ],
             ),
             Expanded(
               child: TabBarView(
                 children: [
                   ProfileTabs(user: widget.user),
-                  AchievementsTabs(user: widget.user),
+                  AchievementsTabs(
+                    user: widget.user,
+                    achievements: widget.achievements!,
+                  ),
                   ProgressTabs(user: widget.user),
                 ],
               ),

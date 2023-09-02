@@ -24,12 +24,20 @@ class ForYouTabs extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (userUse.isCommunity)
-          Image.asset(
-            community!.coverImage,
-            height: 180,
-            width: 450,
-            fit: BoxFit.cover,
-          ),
+          if (community!.ifItsImage.isEmpty)
+            Image.asset(
+              community!.coverImage,
+              height: 180,
+              width: 450,
+              fit: BoxFit.cover,
+            )
+          else if (userUse.isCommunity)
+            Image(
+              image: MemoryImage(community!.ifItsImage),
+              height: 180,
+              width: 450,
+              fit: BoxFit.cover,
+            ),
         if (userUse.isCommunity)
           Stack(
             children: [

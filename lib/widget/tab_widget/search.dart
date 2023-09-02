@@ -5,20 +5,21 @@ import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
-import 'package:ta_rides/screen/community/create_group_screen.dart';
+
 import 'package:ta_rides/screen/community/join_group_screen.dart';
 import 'package:ta_rides/screen/community/private_condition_screen.dart';
 import 'package:ta_rides/screen/community/view_community_screen.dart';
 import 'package:ta_rides/widget/tab_widget/search_community/community_list_search.dart';
 import 'package:ta_rides/widget/tab_widget/search_community/recent_search.dart';
 
+import '../create_group/create_group_screen.dart';
+
 class SearchTab extends StatefulWidget {
-  const SearchTab({
-    super.key,
-    required this.userUse,
-  });
+  const SearchTab(
+      {super.key, required this.userUse, required this.achievements});
 
   final Users userUse;
+  final Achievements? achievements;
   @override
   State<SearchTab> createState() => _SearchTabState();
 }
@@ -132,7 +133,11 @@ class _SearchTabState extends State<SearchTab> {
   void createGroup() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const CreateGroupScreen(),
+        builder: (ctx) => CreateGroup(
+          user: widget.userUse,
+          onAddCommunity: _addCommunity,
+          onAddPost: _addPosting,
+        ),
       ),
     );
   }
@@ -143,6 +148,20 @@ class _SearchTabState extends State<SearchTab> {
         builder: (ctx) => JoinGroupScreen(community: community),
       ),
     );
+  }
+
+  void _addPosting(Post post) {
+    setState(() {
+      PostCommunity.insert(0, post);
+    });
+  }
+
+  void _addCommunity(Community community) {
+    setState(() {
+      CommunityInformation.add(community);
+      widget.userUse.isCommunity = true;
+      widget.userUse.communityId = community.id;
+    });
   }
 
   void submittedSearch() {
@@ -191,17 +210,20 @@ class _SearchTabState extends State<SearchTab> {
         }
       }
     }
-
+    int selectButtom = 0;
     int selectTab = 1;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (ctx) => TabsScreen(
-              user: widget.userUse,
-              community: community,
-              communityPosted: communityPost,
-              selectTab: selectTab,
-              userPosted: userPost)),
+                user: widget.userUse,
+                community: community,
+                communityPosted: communityPost,
+                selectTab: selectTab,
+                userPosted: userPost,
+                achievements: widget.achievements!,
+                selectButtomTab: selectButtom,
+              )),
     );
   }
 

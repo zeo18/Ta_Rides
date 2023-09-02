@@ -123,7 +123,7 @@ class ProfileTabs extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          user.gender,
+                          user.gender.toString().split('.').last,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: Colors.white,

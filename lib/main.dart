@@ -31,12 +31,14 @@ class App extends StatelessWidget {
     var select = 0;
     Community? communityUser;
     List<Users>? userPost = [];
+    Achievements? userAchievements;
+
     // late Community communityUser;
 
     print('hello');
     for (var community in communities) {
       print('hello2');
-      if (users[1].communityId == community.id) {
+      if (users[0].communityId == community.id) {
         communityUser = community;
         print(['correct2', communityUser.title]);
         break;
@@ -70,18 +72,26 @@ class App extends StatelessWidget {
       }
     }
 
-    // print(['List<Users> joined', userPost.length]);
-    // print(['List<Post> joined', communityPost.length]);
-
+    for (var achieve in achievementsInformation) {
+      if (achieve.userName == users[0].username) {
+        //////////////////////////////
+        userAchievements = achieve;
+      }
+    }
+    int selectButtom = 2;
+    print(['List<Users> joined', userPost.length]);
+    print(['List<Post> joined', communityPost.length]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme,
       home: TabsScreen(
-        user: users[1],
-        community: communityUser,
+        user: users[0], ///////////////////////////////
+        community: communityUser!,
         communityPosted: communityPost,
         selectTab: select,
         userPosted: userPost,
+        achievements: userAchievements!,
+        selectButtomTab: selectButtom,
       ),
     );
   }

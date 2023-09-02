@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 
 final CommunityInformation = [
   Community(
@@ -11,6 +15,7 @@ final CommunityInformation = [
     membersIndex: 24,
     members: [],
     image: 'assets/images/community_images/shark.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1102,
@@ -20,8 +25,9 @@ final CommunityInformation = [
     description:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     membersIndex: 42,
-    members: [],
+    members: [UserInformation[2], UserInformation[3], UserInformation[4]],
     image: 'assets/images/community_images/cebu.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1103,
@@ -31,8 +37,9 @@ final CommunityInformation = [
     description:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     membersIndex: 55,
-    members: [],
+    members: [UserInformation[0], UserInformation[1]],
     image: 'assets/images/community_images/lapulapu.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1104,
@@ -44,6 +51,7 @@ final CommunityInformation = [
     membersIndex: 4,
     members: [],
     image: 'assets/images/community_images/danao.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1105,
@@ -55,6 +63,7 @@ final CommunityInformation = [
     membersIndex: 4,
     members: [],
     image: 'assets/images/community_images/danao.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1106,
@@ -66,6 +75,7 @@ final CommunityInformation = [
     membersIndex: 32,
     members: [],
     image: 'assets/images/community_images/danao.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1107,
@@ -77,6 +87,7 @@ final CommunityInformation = [
     membersIndex: 89,
     members: [],
     image: 'assets/images/community_images/danao.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
   Community(
     id: 1108,
@@ -88,6 +99,7 @@ final CommunityInformation = [
     membersIndex: 89,
     members: [],
     image: 'assets/images/community_images/danao.png',
+    ifItsImage: Uint8List.fromList([]),
   ),
 ];
 
@@ -102,6 +114,7 @@ final PostCommunity = [
     commment: [],
     commentNumber: 0,
     heart: 23,
+    ifImage: Uint8List.fromList([]),
   ),
   Post(
     communityId: 1102,
@@ -114,6 +127,7 @@ final PostCommunity = [
     commment: [],
     commentNumber: 0,
     heart: 10,
+    ifImage: Uint8List.fromList([]),
   ),
   Post(
     communityId: 1102,
@@ -126,6 +140,7 @@ final PostCommunity = [
     commment: [],
     commentNumber: 0,
     heart: 12,
+    ifImage: Uint8List.fromList([]),
   ),
   Post(
     communityId: 1103,
@@ -138,6 +153,7 @@ final PostCommunity = [
     commment: [],
     commentNumber: 0,
     heart: 12,
+    ifImage: Uint8List.fromList([]),
   ),
   Post(
     communityId: 1103,
@@ -150,5 +166,6 @@ final PostCommunity = [
     commment: [],
     commentNumber: 0,
     heart: 121,
+    ifImage: Uint8List.fromList([]),
   ),
 ];

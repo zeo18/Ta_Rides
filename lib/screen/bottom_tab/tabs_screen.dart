@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ta_rides/data/community_data.dart';
+import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
@@ -17,19 +18,18 @@ class TabsScreen extends StatefulWidget {
     required this.communityPosted,
     required this.selectTab,
     required this.userPosted,
+    required this.achievements,
+    required this.selectButtomTab,
   });
-  final Users user;
 
+  final Users user;
+  final int selectButtomTab;
   final int selectTab;
   final List<Users> userPosted;
   final List<Post> communityPosted;
-  final Community? community;
+  final Community community;
+  final Achievements? achievements;
 
-  //  selectTab: select,
-  //     community: communityUser,
-  //     communityPosted: communityPost,
-  //     userPosted: userPost,
-  //     userUse: widget.user,
   @override
   State<TabsScreen> createState() {
     return _TabsScreenState();
@@ -39,6 +39,13 @@ class TabsScreen extends StatefulWidget {
 class _TabsScreenState extends State<TabsScreen> {
   int _selectedPageIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Set the initial selected page index based on selectButtomTab
+    _selectedPageIndex = widget.selectButtomTab;
+  }
+
   void selectedPage(int index) {
     setState(() {
       _selectedPageIndex = index;
@@ -46,58 +53,29 @@ class _TabsScreenState extends State<TabsScreen> {
     print(_selectedPageIndex);
   }
 
-  // @override
-  // void initState() {
-  //   if (comm){
-  //   var community1;
-  //   for (var community in CommunityInformation) {
-  //     print('hello2');
-  //     if (widget.user.communityId == community.id) {
-  //       community1 = community;
-  //       print(['correct2', community.title]);
-  //       break; // Break the loop after finding a match for the current user
-  //     }
-  //   }
+  void _editProfile(Users newUser) {
+    // setState(() {
 
-  //   Widget activePage = CommunityScreen(
-  //     selectTab: widget.selectTab,
-  //     community: community1,
-  //     communityPosted: widget.communityPosted,
-  //     userPosted: widget.userPosted,
-  //     userUse: widget.user,
-  //   );
-  //   super.initState();
-  //   }
-  // }
+    //   UserInformation.add(user);
+    // });
+    setState(() {
+      // Find the index of the user to be edited in UserInformation list
+      _selectedPageIndex = widget.selectButtomTab;
+
+      // UserInformation.remove(newUser);
+      // UserInformation.add(newUser);
+      int index = UserInformation.indexWhere((user) => user.id == newUser.id);
+
+      UserInformation[index] = newUser;
+      print(['fuck nasud ba', UserInformation[index].firstName]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final List<Community> communities = CommunityInformation;
 
     late var communityUser = widget.community;
-
-    // List<Post> communityPost = [];
-
-    // for (var community in CommunityInformation) {
-    //   for (var post in PostCommunity) {
-    //     if (post.communityId.toString() == community.id.toString()) {
-    //       communityPost.add(post);
-    //     }
-    //   }
-    // }
-
-    // List<Users> userPost = [];
-    // for (var post in PostCommunity) {
-    //   for (var user in UserInformation) {
-    //     if (post.usersName == user.username) {
-    //       print([post.usersName.toString(), user.username.toString()]);
-    //       userPost.add(user);
-    //     }
-    //   }
-    // }
-
-    // print(['List<Users> joined', userPost.length]);
-    // print(['List<Post> joined', communityPost.length]);
 
     setState(() {
       if (widget.community != null) {
@@ -106,7 +84,7 @@ class _TabsScreenState extends State<TabsScreen> {
           print('hello2');
           if (widget.user.communityId == community.id) {
             communityUser = community;
-            print(['correct2', communityUser!.title]);
+            print(['correct2', communityUser.title]);
             break; // Break the loop after finding a match for the current user
           }
         }
@@ -119,6 +97,7 @@ class _TabsScreenState extends State<TabsScreen> {
       communityPosted: widget.communityPosted,
       userPosted: widget.userPosted,
       userUse: widget.user,
+      achievements: widget.achievements!,
     );
 
     //var activePageTitle = 'Community';
@@ -138,6 +117,11 @@ class _TabsScreenState extends State<TabsScreen> {
     if (_selectedPageIndex == 4) {
       activePage = ProfileScreen(
         user: widget.user,
+        community: widget.community,
+        communityPosted: widget.communityPosted,
+        userPosted: widget.userPosted,
+        achievements: widget.achievements,
+        onEditProfile: _editProfile,
       );
       //   activePageTitle = 'You';
     }

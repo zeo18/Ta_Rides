@@ -33,6 +33,12 @@ class ViewCommunityScreen extends StatefulWidget {
 class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
   @override
   Widget build(BuildContext context) {
+    int numMembers = 0;
+
+    // for (var i = 0; i < widget.community.members.length; i++) {
+    //   numMembers = numMembers + widget.community.members[i].id;
+    // }
+    // print('numMembers $numMembers');
     // print(["user", user[0].toJson()]);
     // print(["post", post.length]);
     for (var i = 0; i < widget.post.length; i++) {

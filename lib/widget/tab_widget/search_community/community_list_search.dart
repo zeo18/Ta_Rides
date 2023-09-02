@@ -38,13 +38,30 @@ class CommunityListSearch extends StatelessWidget {
         },
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              child: Image(
-                image: AssetImage(community.image),
-                height: 50,
+            if (community.ifItsImage.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: ClipOval(
+                  child: Image(
+                    image: AssetImage(community.coverImage),
+                    height: 50,
+                    width: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: ClipOval(
+                  child: Image(
+                    image: MemoryImage(community.ifItsImage),
+                    height: 50,
+                    width: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

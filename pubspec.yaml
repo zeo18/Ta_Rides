@@ -38,6 +38,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^4.0.4
 
+  image_picker: ^1.0.2
+ 
+  table_calendar: ^3.0.9
+  fl_country_code_picker: ^0.0.4
+  country_code_picker: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,16 +88,29 @@ flutter:
     - assets/images/community_images/cordovaCover.jpg
     - assets/images/community_images/bantayanCover.jpg
     - assets/images/community_images/barbaCover.jpg
+    - assets/images/community_images/privateJoin.png
+    - assets/images/community_images/publicJoin.png
+    - assets/images/community_images/first.png
+    - assets/images/community_images/second.png
+    - assets/images/community_images/third.png
+    - assets/images/community_images/uploadImage.png
     - assets/images/user_images/charles.jpg
     - assets/images/user_images/christian.jpg
     - assets/images/user_images/desiree.jpg
     - assets/images/user_images/jonah.jpg
     - assets/images/user_images/lloyde.jpg
     - assets/images/user_images/line.png
+    - assets/images/user_images/Achievements/calves.png
+    - assets/images/user_images/Achievements/challenger.png
+    - assets/images/user_images/Achievements/legendary.png
+    - assets/images/user_images/Achievements/newbie.png
+    - assets/images/user_images/Achievements/noSweat.png
+    - assets/images/user_images/Achievements/roadMaster.png
     - assets/images/community_images/post_community/heart.png
     - assets/images/community_images/post_community/comment.png
     - assets/images/community_images/post_community/icon.png
     - assets/images/community_images/post_community/iconDot.png
+    - assets/images/community_images/post_community/addImage.png
     
   
 

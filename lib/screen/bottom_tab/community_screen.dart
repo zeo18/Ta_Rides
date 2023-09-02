@@ -13,6 +13,7 @@ class CommunityScreen extends StatefulWidget {
     required this.communityPosted,
     required this.userPosted,
     required this.community,
+    required this.achievements,
   });
 
   final int selectTab;
@@ -20,6 +21,7 @@ class CommunityScreen extends StatefulWidget {
   final List<Users> userPosted;
   final List<Post> communityPosted;
   final Community? community;
+  final Achievements achievements;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -99,7 +101,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  SearchTab(userUse: widget.userUse),
+                  SearchTab(
+                      userUse: widget.userUse,
+                      achievements: widget.achievements),
                   ForYouTabs(
                     communityPosted: widget.communityPosted,
                     userPosted: widget.userPosted,
