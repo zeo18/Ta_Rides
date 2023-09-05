@@ -48,3 +48,5 @@ class Post {
   final List<String> commment;
   late final Uint8List ifImage;
 }
+
+class IfPrivate {}

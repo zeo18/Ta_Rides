@@ -180,11 +180,13 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
               ),
             ],
           ),
-          const Text(
-            '____________________________________________',
-            style: TextStyle(
+          Container(
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: const Divider(
               color: Color(0x3ff797979),
-              fontSize: 18,
+              thickness: 1.0,
+              indent: 0,
+              endIndent: 0,
             ),
           ),
           if (widget.community.private)

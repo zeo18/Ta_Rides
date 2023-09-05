@@ -77,6 +77,14 @@ flutter:
     - assets/images/createGroup.png
     - assets/images/joinGroup.png
     - assets/images/joinedGroup.png
+    - assets/images/create_group_community/iconSelect1.png
+    - assets/images/create_group_community/iconSelect2.png
+    - assets/images/create_group_community/iconSelect3.png
+    - assets/images/create_group_community/iconSelected1.png
+    - assets/images/create_group_community/iconSelected2.png
+    - assets/images/create_group_community/iconSelected3.png
+    - assets/images/create_group_community/afterInputTextIcon.png
+    - assets/images/create_group_community/Icon.png   
     - assets/images/community_images/cebu.png
     - assets/images/community_images/danao.png
     - assets/images/community_images/lapulapu.png
@@ -111,6 +119,12 @@ flutter:
     - assets/images/community_images/post_community/icon.png
     - assets/images/community_images/post_community/iconDot.png
     - assets/images/community_images/post_community/addImage.png
+    - assets/images/log_in/1stPage.png
+    - assets/images/log_in/2ndPage.png
+    - assets/images/log_in/3rdPage.png
+    - assets/images/log_in/bike.png
+    - assets/images/log_in/circle.png
+    - assets/images/log_in/success.png
     
   
 

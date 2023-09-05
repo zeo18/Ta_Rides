@@ -4,6 +4,7 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/auth/logInPage.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 
 final theme = ThemeData(
@@ -84,15 +85,17 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme,
-      home: TabsScreen(
-        user: users[0], ///////////////////////////////
-        community: communityUser!,
-        communityPosted: communityPost,
-        selectTab: select,
-        userPosted: userPost,
-        achievements: userAchievements!,
-        selectButtomTab: selectButtom,
-      ),
+      home: const LoginPage(),
+
+      //  TabsScreen(
+      //   user: users[0], ///////////////////////////////
+      //   community: communityUser!,
+      //   communityPosted: communityPost,
+      //   selectTab: select,
+      //   userPosted: userPost,
+      //   achievements: userAchievements!,
+      //   selectButtomTab: selectButtom,
+      // ),
     );
   }
 }

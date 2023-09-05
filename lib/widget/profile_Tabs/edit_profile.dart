@@ -78,7 +78,7 @@ class _ProfileEditState extends State<ProfileEdit> {
 
     var selectButtomTab = 4;
     var selectTab = 0;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (ctx) => TabsScreen(

@@ -139,7 +139,7 @@ class _CreateGroup2State extends State<CreateGroup2> {
     print(widget.user.communityId);
 
     var selectButtom = 0;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: ((ctx) => TabsScreen(
