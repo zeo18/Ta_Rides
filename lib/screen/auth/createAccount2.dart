@@ -1,13 +1,24 @@
 import 'dart:ui';
-//import 'package:fl_country_code_picker/fl_country_code_picker.dart';
+// import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/createAccount3.dart';
 
 class CreateAccount2 extends StatefulWidget {
-  const CreateAccount2({super.key});
+  const CreateAccount2(
+      {super.key,
+      required this.firstNameValue,
+      required this.lastNameValue,
+      required this.middleNameValue,
+      required this.addUser});
+
+  final String lastNameValue;
+  final String firstNameValue;
+  final String middleNameValue;
+  final Function(Users user) addUser;
 
   @override
   State<CreateAccount2> createState() => _CreateAccount2State();
@@ -15,6 +26,7 @@ class CreateAccount2 extends StatefulWidget {
 
 class _CreateAccount2State extends State<CreateAccount2> {
   TextEditingController dateController = TextEditingController();
+  DateTime? selectedDate;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -40,11 +52,12 @@ class _CreateAccount2State extends State<CreateAccount2> {
       String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
       setState(() {
         dateController.text = formattedDate;
+        selectedDate = picked;
       });
     }
   }
 
-  var gender;
+  Gender? selectedGender;
 
   final phoneNumberController = TextEditingController();
 
@@ -52,7 +65,7 @@ class _CreateAccount2State extends State<CreateAccount2> {
     final phoneNumInvalid = double.tryParse(phoneNumberController.text);
     final phoneInvalid = phoneNumInvalid == null;
     if (dateController.text.trim().isEmpty ||
-        // gender  == null||
+        selectedGender == null ||
         phoneInvalid) {
       showDialog(
         context: context,
@@ -76,7 +89,15 @@ class _CreateAccount2State extends State<CreateAccount2> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const CreateAccount3(),
+          builder: (context) => CreateAccount3(
+            selectedDateValue: selectedDate as DateTime,
+            genderValue: selectedGender!,
+            phoneNumberValue: phoneNumberController.text,
+            firstNameValue: widget.firstNameValue,
+            lastNameValue: widget.lastNameValue,
+            middleNameValue: widget.middleNameValue,
+            addUser: widget.addUser,
+          ),
         ),
       );
     }
@@ -94,6 +115,7 @@ class _CreateAccount2State extends State<CreateAccount2> {
   void onListen() => setState(() {});
   @override
   Widget build(BuildContext context) {
+    // print(['firstNameValue', widget.firstNameValue]); checker if value is passed
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0x3fff0C0D11),
@@ -203,74 +225,60 @@ class _CreateAccount2State extends State<CreateAccount2> {
             const SizedBox(
               height: 21,
             ),
-            DropdownButtonFormField(
-              value: gender,
-              items: [
-                DropdownMenuItem(
-                  value: -1,
-                  child: Text(
-                    'Select Gender',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+            Container(
+              child: DropdownButtonFormField(
+                value: selectedGender,
+                dropdownColor: Colors.black,
+                items: Gender.values
+                    .map(
+                      (gender) => DropdownMenuItem(
+                        value: gender,
+                        child: Text(
+                          gender.name,
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            color: selectedGender == gender
+                                ? Colors.white
+                                : Color(0x3fff454545),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  print(value);
+                  if (value == null) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      selectedGender = value;
+                    },
+                  );
+                },
+                decoration: InputDecoration(
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0x3fffFFFFF0),
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15.0),
                     ),
                   ),
-                ),
-                DropdownMenuItem(
-                  value: 1,
-                  child: Text(
-                    'Male',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      color: Color(0x3fff454545),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0x3fffFFFFF0),
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15.0),
                     ),
                   ),
-                ),
-                DropdownMenuItem(
-                  value: 2,
-                  child: Text(
-                    'Female',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      color: const Color(0x3fff454545),
-                    ),
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 15,
+                    color: Color(0x3fff454545),
                   ),
+                  labelText: 'Gender',
                 ),
-                DropdownMenuItem(
-                  value: 3,
-                  child: Text(
-                    'Others',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      color: Color(0x3fff454545),
-                    ),
-                  ),
-                ),
-              ],
-              onChanged: (gender) {},
-              decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3fffFFFFF0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3fffFFFFF0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                labelStyle: GoogleFonts.montserrat(
-                  color: Color(0x3fff454545),
-                ),
-                prefixIcon: Icon(Icons.person_search_sharp),
-                prefixIconColor: Color(0x3fff454545),
-                labelText: 'Gender',
               ),
             ),
             SizedBox(
@@ -317,12 +325,12 @@ class _CreateAccount2State extends State<CreateAccount2> {
                 labelStyle: GoogleFonts.montserrat(
                   color: Color(0x3fff454545),
                 ),
-                suffixIcon: phoneNumberController.text.isEmpty
-                    ? Container(width: 0)
-                    : IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => phoneNumberController.clear(),
-                      ),
+                // suffixIcon: phoneNumberController.text.isEmpty
+                //     ? Container(width: 0)
+                //     : IconButton(
+                //         icon: Icon(Icons.close),
+                //         onPressed: () => phoneNumberController.clear(),
+                //       ),
                 // labelText: (countryCode?.dialCode ?? ' Phone Number'),
               ),
             ),

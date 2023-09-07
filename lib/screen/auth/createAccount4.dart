@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/finishedCreatingAccount.dart';
 
 class CreateAccount4 extends StatefulWidget {
-  const CreateAccount4({super.key});
+  const CreateAccount4(
+      {super.key,
+      required this.countryValue,
+      required this.emailValue,
+      required this.firstNameValue,
+      required this.genderValue,
+      required this.lastNameValue,
+      required this.middleNameValue,
+      required this.phoneNumberValue,
+      required this.selectedDateValue,
+      required this.usernameValue,
+      required this.addUser});
+
+  final String lastNameValue;
+  final String firstNameValue;
+  final String middleNameValue;
+
+  final DateTime selectedDateValue;
+  final Gender genderValue;
+  final String phoneNumberValue;
+
+  final String usernameValue;
+  final String emailValue;
+  final String countryValue;
+  final Function(Users user) addUser;
 
   @override
   State<CreateAccount4> createState() => _CreateAccount4State();
@@ -85,7 +110,19 @@ class _CreateAccount4State extends State<CreateAccount4> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const FinishedCreatingAccount(),
+          builder: (context) => FinishedCreatingAccount(
+            passwordValue: passwordController.text,
+            countryValue: widget.countryValue,
+            emailValue: widget.emailValue,
+            firstNameValue: widget.firstNameValue,
+            genderValue: widget.genderValue,
+            lastNameValue: widget.lastNameValue,
+            middleNameValue: widget.middleNameValue,
+            phoneNumberValue: widget.phoneNumberValue,
+            selectedDateValue: widget.selectedDateValue,
+            usernameValue: widget.usernameValue,
+            addUser: widget.addUser,
+          ),
         ),
       );
     }

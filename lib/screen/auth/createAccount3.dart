@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/createAccount4.dart';
 
 class CreateAccount3 extends StatefulWidget {
-  const CreateAccount3({super.key});
+  const CreateAccount3(
+      {super.key,
+      required this.selectedDateValue,
+      required this.genderValue,
+      required this.phoneNumberValue,
+      required this.lastNameValue,
+      required this.firstNameValue,
+      required this.middleNameValue,
+      required this.addUser});
+
+  final String lastNameValue;
+  final String firstNameValue;
+  final String middleNameValue;
+
+  final DateTime selectedDateValue;
+  final Gender genderValue;
+  final String phoneNumberValue;
+  final Function(Users user) addUser;
 
   @override
   State<CreateAccount3> createState() => _CreateAccount3State();
@@ -60,7 +78,18 @@ class _CreateAccount3State extends State<CreateAccount3> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const CreateAccount4(),
+          builder: (context) => CreateAccount4(
+            countryValue: countryController.text,
+            emailValue: emailController.text,
+            usernameValue: userNameController.text,
+            firstNameValue: widget.firstNameValue,
+            genderValue: widget.genderValue,
+            lastNameValue: widget.lastNameValue,
+            middleNameValue: widget.middleNameValue,
+            phoneNumberValue: widget.phoneNumberValue,
+            selectedDateValue: widget.selectedDateValue,
+            addUser: widget.addUser,
+          ),
         ),
       );
     }
@@ -68,6 +97,9 @@ class _CreateAccount3State extends State<CreateAccount3> {
 
   @override
   Widget build(BuildContext context) {
+    print(['selectDateValue', widget.selectedDateValue]);
+    print(['selectPhoneNum', widget.phoneNumberValue]);
+    print(['selectGender', widget.genderValue]);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0x3fff0c0d11),

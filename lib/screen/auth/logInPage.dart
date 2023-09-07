@@ -101,8 +101,17 @@ class _LoginPageState extends State<LoginPage> {
         ));
   }
 
+  void addUser(Users user) {
+    setState(() {
+      UserInformation.add(user);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // print(['UserID', UserInformation[6].id]);
+    // print(['UserName', UserInformation[6].username]);
+
     return Scaffold(
       backgroundColor: const Color(0xfff0C0D11),
       resizeToAvoidBottomInset: false,
@@ -256,7 +265,8 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const CreateAccount(),
+                              builder: (context) =>
+                                  CreateAccount(addUser: addUser),
                             ),
                           );
                         },
