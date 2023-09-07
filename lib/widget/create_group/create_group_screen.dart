@@ -5,18 +5,20 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/create_group/add_question.dart';
+import 'package:ta_rides/widget/create_group/add_rules.dart';
 import 'package:ta_rides/widget/create_group/create_group_1.dart';
 
 class CreateGroup extends StatefulWidget {
-  const CreateGroup({
-    super.key,
-    required this.user,
-    required this.onAddCommunity,
-    required this.onAddPost,
-  });
+  const CreateGroup(
+      {super.key,
+      required this.user,
+      required this.onAddCommunity,
+      required this.onAddPost,
+      required this.onSelectedPrivacy});
   final Function(Community community) onAddCommunity;
   final Function(Post post) onAddPost;
   final Users user;
+  final int onSelectedPrivacy;
 
   @override
   State<CreateGroup> createState() => _CreateGroupState();
@@ -26,6 +28,12 @@ class _CreateGroupState extends State<CreateGroup> {
   final _titleCoummunityController = TextEditingController();
   int onSelectPrivacy = 0;
   late bool selectedPrivacy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    onSelectPrivacy = widget.onSelectedPrivacy;
+  }
 
   @override
   void dispose() {
@@ -65,7 +73,24 @@ class _CreateGroupState extends State<CreateGroup> {
   void onAddQuestion() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (ctx) => const AddQuestion()),
+      MaterialPageRoute(
+          builder: (ctx) => AddQuestion(
+                onAddCommunity: widget.onAddCommunity,
+                onAddPost: widget.onAddPost,
+                user: widget.user,
+              )),
+    );
+  }
+
+  void onAddRules() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (ctx) => AddRules(
+                onAddCommunity: widget.onAddCommunity,
+                onAddPost: widget.onAddPost,
+                user: widget.user,
+              )),
     );
   }
 
@@ -257,7 +282,7 @@ class _CreateGroupState extends State<CreateGroup> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: onAddRules,
                         child: Text(
                           'Create Rules',
                           style:

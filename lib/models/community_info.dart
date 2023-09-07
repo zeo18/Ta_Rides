@@ -49,4 +49,26 @@ class Post {
   late final Uint8List ifImage;
 }
 
-class IfPrivate {}
+class IfPrivate {
+  IfPrivate({
+    required this.privateCommunityId,
+    required this.choiceQuestion,
+    required this.choices,
+    required this.cheboxesQuestion,
+    required this.cheboxes,
+    required this.writtenQuestion,
+    required this.writtenAnswer,
+    required this.writeRules,
+    required this.detailsRules,
+  });
+  final int privateCommunityId;
+  final String choiceQuestion;
+  final List<String> choices;
+  final String cheboxesQuestion;
+  final List<String> cheboxes;
+  final String writtenQuestion;
+  final String writtenAnswer;
+
+  final String writeRules;
+  final String detailsRules;
+}

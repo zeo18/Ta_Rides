@@ -130,6 +130,7 @@ class _SearchTabState extends State<SearchTab> {
     });
   }
 
+  int onSelectPrivacy = 0;
   void createGroup() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -137,6 +138,7 @@ class _SearchTabState extends State<SearchTab> {
           user: widget.userUse,
           onAddCommunity: _addCommunity,
           onAddPost: _addPosting,
+          onSelectedPrivacy: onSelectPrivacy,
         ),
       ),
     );

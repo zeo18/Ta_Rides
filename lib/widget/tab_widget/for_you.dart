@@ -148,12 +148,11 @@ class ForYouTabs extends StatelessWidget {
             ],
           ),
         if (userUse.isCommunity)
-          const Text(
-            '____________________________________________',
-            style: TextStyle(
-              color: Color(0x3ff797979),
-              fontSize: 18,
-            ),
+          const Divider(
+            color: Color(0x3ff797979),
+            thickness: 1.0,
+            indent: 10,
+            endIndent: 10,
           ),
         if (userUse.isCommunity)
           Container(
