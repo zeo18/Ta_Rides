@@ -1,14 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ta_rides/models/community_info.dart';
-import 'package:ta_rides/models/user_info.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
+import 'package:ta_rides/models/community_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
-import 'package:ta_rides/widget/profile_Tabs/profile_tabs.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileEdit extends StatefulWidget {
   const ProfileEdit({
@@ -124,10 +122,10 @@ class _ProfileEditState extends State<ProfileEdit> {
   }
 
   pickImage(ImageSource source) async {
-    final ImagePicker _imagePicker = ImagePicker();
-    XFile? _file = await _imagePicker.pickImage(source: source);
-    if (_file != null) {
-      return await _file.readAsBytes();
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if (file != null) {
+      return await file.readAsBytes();
     }
     print('No image selected.');
   }
@@ -149,10 +147,10 @@ class _ProfileEditState extends State<ProfileEdit> {
         return Theme(
           data: ThemeData(
             colorScheme: const ColorScheme.light(
-              primary: Color(0x3ffFF0000),
+              primary: Color(0x3ffff0000),
               onPrimary: Colors.white,
             ),
-            textTheme: TextTheme(),
+            textTheme: const TextTheme(),
           ),
           child: child!,
         );
@@ -171,13 +169,13 @@ class _ProfileEditState extends State<ProfileEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0x3ff0C0D11),
+      backgroundColor: const Color(0x3ff0c0d11),
       appBar: AppBar(
         title: Row(
           children: [
             Text(
               'Edit Profile',
-              style: Theme.of(context).textTheme.headline6!.copyWith(
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -194,15 +192,15 @@ class _ProfileEditState extends State<ProfileEdit> {
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Color(0x3ffFF0000),
+                  color: const Color(0x3ffff0000),
                   border: Border.all(
-                    color: Color(0x3ffFF0000),
+                    color: const Color(0x3ffff0000),
                     width: 1.4,
                   ),
                 ),
                 child: Text(
                   'Done',
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -212,7 +210,7 @@ class _ProfileEditState extends State<ProfileEdit> {
             ),
           ],
         ),
-        backgroundColor: const Color(0x3ff0C0D11),
+        backgroundColor: const Color(0x3ff0c0d11),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -269,7 +267,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 185,
                     child: TextField(
                       style: GoogleFonts.inter(
@@ -304,7 +302,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                   const SizedBox(
                     width: 15,
                   ),
-                  Container(
+                  SizedBox(
                     width: 185,
                     child: TextField(
                       style: GoogleFonts.inter(
@@ -367,7 +365,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 250,
                     child: TextField(
                       style: GoogleFonts.inter(
@@ -400,11 +398,11 @@ class _ProfileEditState extends State<ProfileEdit> {
                   const SizedBox(
                     width: 15,
                   ),
-                  Container(
+                  SizedBox(
                     width: 125,
                     child: DropdownButtonFormField(
                       value: selectedGender,
-                      dropdownColor: Color(0x3ffFF0000),
+                      dropdownColor: const Color(0x3ffff0000),
                       items: Gender.values
                           .map(
                             (gender) => DropdownMenuItem(
@@ -415,7 +413,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                                   fontSize: 15,
                                   color: selectedGender == gender
                                       ? Colors.white
-                                      : Color(0x3fff454545),
+                                      : const Color(0x3fff454545),
                                 ),
                               ),
                             ),
@@ -435,7 +433,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                       decoration: InputDecoration(
                         focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Color(0x3fffFFFFF0),
+                            color: Color(0x3ffffffff0),
                           ),
                           borderRadius: BorderRadius.all(
                             Radius.circular(15.0),
@@ -443,7 +441,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                         ),
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Color(0x3fffFFFFF0),
+                            color: Color(0x3ffffffff0),
                           ),
                           borderRadius: BorderRadius.all(
                             Radius.circular(15.0),
@@ -451,7 +449,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                         ),
                         labelStyle: GoogleFonts.inter(
                           fontSize: 15,
-                          color: Color(0x3fff454545),
+                          color: const Color(0x3fff454545),
                         ),
                         labelText: 'Gender',
                       ),
@@ -466,12 +464,12 @@ class _ProfileEditState extends State<ProfileEdit> {
                   _selectDate(context);
                 },
                 style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
+                  color: const Color(0x3fff454545),
                 ),
                 decoration: InputDecoration(
                   focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
+                      color: Color(0x3ffffffff0),
                     ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15.0),
@@ -479,7 +477,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
+                      color: Color(0x3ffffffff0),
                     ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(15.0),
@@ -487,13 +485,13 @@ class _ProfileEditState extends State<ProfileEdit> {
                   ),
                   labelStyle: GoogleFonts.inter(
                     fontSize: 15,
-                    color: Color(0x3fff454545),
+                    color: const Color(0x3fff454545),
                   ),
                   prefixIcon: const Icon(
                     Icons.calendar_today,
                     color: Color(0x3fff454545),
                   ),
-                  prefixIconColor: Color(0x3fff454545),
+                  prefixIconColor: const Color(0x3fff454545),
                   labelText: 'Birthday',
                 ),
               ),
