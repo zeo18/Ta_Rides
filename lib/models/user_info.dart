@@ -69,6 +69,8 @@ class Achievements {
   final bool challenger;
   final bool calvesGoBrrr;
   final bool roadMaster;
+
+  static Achievements? defaultAchievement() {}
 }
 
 class Statistic {

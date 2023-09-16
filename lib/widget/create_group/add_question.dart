@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/create_group/create_group_screen.dart';
@@ -12,8 +13,9 @@ class AddQuestion extends StatefulWidget {
     required this.user,
     required this.onAddCommunity,
     required this.onAddPost,
+    required this.onAddPrivateCommunity,
   });
-
+  final Function(IfPrivate private) onAddPrivateCommunity;
   final Function(Community community) onAddCommunity;
   final Function(Post post) onAddPost;
   final Users user;
@@ -24,11 +26,76 @@ class AddQuestion extends StatefulWidget {
 
 class _AddQuestionState extends State<AddQuestion> {
   var selectTab = 1;
-
+  int idCommunity =
+      CommunityInformation[CommunityInformation.length - 1].id + 1;
   bool iconChanged = false;
-
+  final _multipleChoiceQuestionController = TextEditingController();
+  final _answerController = TextEditingController();
   var listOption = <Widget>[];
   var listCheck = <Widget>[];
+
+  void onAddPrivateQuestion() {
+    if (selectTab == 1) {
+      setState(() {
+        widget.onAddPrivateCommunity(
+          IfPrivate(
+            privateCommunityId: idCommunity,
+            choiceQuestion: _multipleChoiceQuestionController.text,
+            choices: addChoiceQuestion,
+            cheboxesQuestion: '',
+            cheboxes: [],
+            writtenQuestion: '',
+            writtenAnswer: '',
+            writeRules: '',
+            detailsRules: '',
+          ),
+        );
+      });
+    }
+    if (selectTab == 2) {
+      setState(() {
+        widget.onAddPrivateCommunity(
+          IfPrivate(
+            privateCommunityId: idCommunity,
+            choiceQuestion: '',
+            choices: [],
+            cheboxesQuestion: _multipleChoiceQuestionController.text,
+            cheboxes: addCheckBoxQuestion,
+            writtenQuestion: '',
+            writtenAnswer: '',
+            writeRules: '',
+            detailsRules: '',
+          ),
+        );
+      });
+    }
+    if (selectTab == 3) {
+      setState(() {
+        widget.onAddPrivateCommunity(
+          IfPrivate(
+            privateCommunityId: idCommunity,
+            choiceQuestion: '',
+            choices: [],
+            cheboxesQuestion: '',
+            cheboxes: [],
+            writtenQuestion: _multipleChoiceQuestionController.text,
+            writtenAnswer: _answerController.text,
+            writeRules: '',
+            detailsRules: '',
+          ),
+        );
+      });
+    }
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => CreateGroup(
+              onSelectedPrivacy: onSelectedPrivacy,
+              user: widget.user,
+              onAddCommunity: widget.onAddCommunity,
+              onAddPost: widget.onAddPost),
+        ));
+  }
 
   void selectedTab() {
     switch (selectTab) {
@@ -72,7 +139,16 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  List<String> addChoiceQuestion = [];
+
+  List<TextEditingController> optionControllers = [];
   void addOption() {
+    var choiceQuestionController = TextEditingController();
+    optionControllers.add(choiceQuestionController);
+
+    addChoiceQuestion.clear();
+
+    print('addChoiceQuestion: $addChoiceQuestion');
     setState(() {
       listOption.add(
         TextField(
@@ -80,18 +156,15 @@ class _AddQuestionState extends State<AddQuestion> {
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          //controller: _captionPostController,
+          controller: choiceQuestionController,
           textInputAction: TextInputAction.done,
           cursorColor: Colors.white,
-
           decoration: InputDecoration(
             prefixIcon: IconButton(
               onPressed: addOption,
               icon: Image.asset(
-                  'assets/images/create_group_community/afterInputTextIcon.png'), // Default icon
+                  'assets/images/create_group_community/afterInputTextIcon.png'),
             ),
-
-            //
             hintText: 'Add Options',
             hintStyle: GoogleFonts.inter(
               color: const Color(0x3ffE89B05),
@@ -107,9 +180,20 @@ class _AddQuestionState extends State<AddQuestion> {
         ),
       );
     });
+
+    // Add the text from the controller to addChoiceQuestion
   }
 
+  List<String> addCheckBoxQuestion = [];
+  List<TextEditingController> optionCheckBoxControllers = [];
+
   void addCheck() {
+    var checkBoxController = TextEditingController();
+    optionCheckBoxControllers.add(checkBoxController);
+    addCheckBoxQuestion.clear();
+
+    print('addCheckBoxQuestion: $addCheckBoxQuestion');
+
     setState(() {
       listCheck.add(
         TextField(
@@ -117,13 +201,12 @@ class _AddQuestionState extends State<AddQuestion> {
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          //controller: _captionPostController,
+          controller: checkBoxController,
           textInputAction: TextInputAction.done,
           cursorColor: Colors.white,
-
           decoration: InputDecoration(
             prefixIcon: IconButton(
-              onPressed: addOption,
+              onPressed: addCheck,
               icon: Image.asset(
                   'assets/images/create_group_community/checkedIcon.png'), // Default icon
             ),
@@ -173,6 +256,7 @@ class _AddQuestionState extends State<AddQuestion> {
                 ),
                 //controller: ,
                 textInputAction: TextInputAction.done,
+                controller: _multipleChoiceQuestionController,
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   hintText: 'Ask Question',
@@ -307,7 +391,9 @@ class _AddQuestionState extends State<AddQuestion> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 IconButton(
-                                  onPressed: addOption,
+                                  onPressed: () {
+                                    addOption();
+                                  },
                                   icon: Image.asset(
                                       'assets/images/create_group_community/Icon.png'),
                                 ),
@@ -373,6 +459,7 @@ class _AddQuestionState extends State<AddQuestion> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
+                          controller: _answerController,
                           textInputAction: TextInputAction.done,
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
@@ -405,7 +492,23 @@ class _AddQuestionState extends State<AddQuestion> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: goToFirstScreen,
+                      onPressed: () {
+                        if (selectTab == 1) {
+                          for (var i = 0; i < optionControllers.length; i++) {
+                            addChoiceQuestion.add(optionControllers[i].text);
+                          }
+                        }
+                        if (selectTab == 2) {
+                          for (var i = 0;
+                              i < optionCheckBoxControllers.length;
+                              i++) {
+                            addCheckBoxQuestion
+                                .add(optionCheckBoxControllers[i].text);
+                          }
+                        }
+
+                        onAddPrivateQuestion();
+                      },
                       child: Text(
                         'Continue',
                         style:

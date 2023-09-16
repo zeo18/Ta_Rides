@@ -26,6 +26,7 @@ class Community {
 
 class Post {
   Post({
+    required this.postId,
     required this.communityId,
     required this.userId,
     required this.isImage,
@@ -37,16 +38,30 @@ class Post {
     required this.heart,
     required this.ifImage,
   });
+  final int postId;
   final int communityId;
   final int userId;
   final bool isImage;
   final String imagePost;
   final String usersName;
   final String caption;
-  final int heart;
+  late int heart;
   final int commentNumber;
   final List<String> commment;
   late final Uint8List ifImage;
+}
+
+class Comment {
+  Comment({
+    required this.postId,
+    required this.comment,
+    required this.usersName,
+    required this.userImage,
+  });
+  final int postId;
+  final String comment;
+  final String usersName;
+  final String userImage;
 }
 
 class IfPrivate {
@@ -68,7 +83,6 @@ class IfPrivate {
   final List<String> cheboxes;
   final String writtenQuestion;
   final String writtenAnswer;
-
   final String writeRules;
   final String detailsRules;
 }

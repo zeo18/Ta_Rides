@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "675947114692",
+    "project_id": "tarides",
+    "storage_bucket": "tarides.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675947114692:android:7208765a0b38d454011991",
+        "android_client_info": {
+          "package_name": "com.example.ta_rides"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGF993dY8qWAMFF6hUzVpz6EcReWOzVtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

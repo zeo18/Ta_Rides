@@ -105,6 +105,7 @@ final CommunityInformation = [
 
 final PostCommunity = [
   Post(
+    postId: 301,
     communityId: 1102,
     userId: 103,
     isImage: true,
@@ -117,6 +118,7 @@ final PostCommunity = [
     ifImage: Uint8List.fromList([]),
   ),
   Post(
+    postId: 302,
     communityId: 1102,
     userId: 104,
     isImage: false,
@@ -130,6 +132,7 @@ final PostCommunity = [
     ifImage: Uint8List.fromList([]),
   ),
   Post(
+    postId: 303,
     communityId: 1102,
     userId: 105,
     isImage: false,
@@ -143,6 +146,7 @@ final PostCommunity = [
     ifImage: Uint8List.fromList([]),
   ),
   Post(
+    postId: 304,
     communityId: 1103,
     userId: 101,
     isImage: false,
@@ -156,6 +160,7 @@ final PostCommunity = [
     ifImage: Uint8List.fromList([]),
   ),
   Post(
+    postId: 305,
     communityId: 1103,
     userId: 102,
     isImage: true,
@@ -168,4 +173,112 @@ final PostCommunity = [
     heart: 121,
     ifImage: Uint8List.fromList([]),
   ),
+];
+
+final commentCommunity = [
+  Comment(
+    postId: 301,
+    comment: 'hala grabe na ba ani',
+    usersName: 'lloyde101',
+    userImage: '',
+  ),
+  Comment(
+    postId: 301,
+    comment: 'i love u too',
+    usersName: 'desiree126',
+    userImage: '',
+  ),
+  Comment(
+    postId: 303,
+    comment: 'i love you too baby',
+    usersName: 'christian3',
+    userImage: '',
+  ),
+];
+
+final privateCommunity = [
+  IfPrivate(
+      privateCommunityId: 1101,
+      choiceQuestion:
+          'In 2011, Markus Stöckl gained a speed of 102 mph when he rode his bike down... what?',
+      choices: [
+        'A volcano',
+        'A mountain',
+        'A glacier',
+        'A cliff',
+      ],
+      cheboxesQuestion: '',
+      cheboxes: [],
+      writtenQuestion: '',
+      writtenAnswer: '',
+      writeRules: '',
+      detailsRules: ''),
+  IfPrivate(
+      privateCommunityId: 1101,
+      choiceQuestion: '',
+      choices: [],
+      cheboxesQuestion: 'What is the name of the world’s first mountain bike?',
+      cheboxes: [
+        'The Mongoose',
+        'The Klunker',
+        'The Stumpjumper',
+        'The Rockhopper',
+      ],
+      writtenQuestion: '',
+      writtenAnswer: '',
+      writeRules: '',
+      detailsRules: ''),
+  IfPrivate(
+      privateCommunityId: 1101,
+      choiceQuestion: '',
+      choices: [],
+      cheboxesQuestion: '',
+      cheboxes: [],
+      writtenQuestion:
+          'Bicycles became a word several years after their invention. What were they called originally?',
+      writtenAnswer: 'When was the Penny-farthing invented',
+      writeRules: '',
+      detailsRules: ''),
+  IfPrivate(
+    privateCommunityId: 1101,
+    choiceQuestion: '',
+    choices: [],
+    cheboxesQuestion: '',
+    cheboxes: [],
+    writtenQuestion: '',
+    writtenAnswer: '',
+    writeRules:
+        'Riding a bike is a healthy, fun and safe activity. However, it isnt without some risk.',
+    detailsRules:
+        'All laws mentioned here were compiled as part of a research project in the fall of 2012 and may be subject to change. We update laws as we work with our member advocacy organizations to pass better laws and as advocates or the public tell us about changes. ',
+  ),
+  IfPrivate(
+    privateCommunityId: 1104,
+    choiceQuestion: '',
+    choices: [],
+    cheboxesQuestion: '',
+    cheboxes: [],
+    writtenQuestion: '',
+    writtenAnswer: '',
+    writeRules:
+        'We update laws as we work with our member advocacy organizations to pass better laws and as advocates or the public tell us about changes.',
+    detailsRules:
+        'These highlights only cover statewide laws and are not comprehensive.',
+  ),
+  IfPrivate(
+      privateCommunityId: 1101,
+      choiceQuestion:
+          ' We update laws as we work with our member advocacy organizations to pass better laws and as advocates or the public tell us about changes.',
+      choices: [
+        'State Bike Laws',
+        'Bike Laws',
+        'other traffic laws',
+        'Bike Lawses',
+      ],
+      cheboxesQuestion: '',
+      cheboxes: [],
+      writtenQuestion: '',
+      writtenAnswer: '',
+      writeRules: '',
+      detailsRules: ''),
 ];

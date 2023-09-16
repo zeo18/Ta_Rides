@@ -43,13 +43,27 @@ class RecentSearch extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
-              child: Image(
-                image: AssetImage(community.image),
-                height: 38,
+            if (community.ifItsImage.isEmpty == false &&
+                community.ifItsImage != null)
+              Container(
+                height: 52,
+                width: 52,
+                padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
+                child: ClipOval(
+                  child: Image(
+                    image: MemoryImage(community.ifItsImage),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
+                child: Image(
+                  image: AssetImage(community.image),
+                  height: 38,
+                ),
               ),
-            ),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

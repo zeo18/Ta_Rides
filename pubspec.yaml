@@ -43,6 +43,8 @@ dependencies:
   table_calendar: ^3.0.9
   fl_country_code_picker: ^0.0.4
   country_code_picker: ^3.0.0
+  firebase_core: ^2.15.1
+  cloud_firestore: ^4.9.1
 
 dev_dependencies:
   flutter_test:
@@ -117,6 +119,7 @@ flutter:
     - assets/images/user_images/Achievements/noSweat.png
     - assets/images/user_images/Achievements/roadMaster.png
     - assets/images/community_images/post_community/heart.png
+    - assets/images/community_images/post_community/hearted.png
     - assets/images/community_images/post_community/comment.png
     - assets/images/community_images/post_community/icon.png
     - assets/images/community_images/post_community/iconDot.png

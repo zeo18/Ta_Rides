@@ -57,7 +57,7 @@ final UserInformation = [
     following: 42,
     isCommunity: true,
     communityId: 1103,
-    isAchievement: false,
+    isAchievement: true,
   ),
   Users(
     id: 104,
@@ -113,7 +113,7 @@ final UserInformation = [
     followers: 21,
     following: 32,
     isCommunity: false,
-    isAchievement: true,
+    isAchievement: false,
     communityId: 0,
   ),
 ];
@@ -138,7 +138,7 @@ final achievementsInformation = [
     roadMaster: false,
   ),
   Achievements(
-    userName: 'martin16',
+    userName: 'christian3',
     legendary: true,
     newbie: true,
     noSweat: true,

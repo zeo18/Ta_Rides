@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/profile_Tabs/profile_tabs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileEdit extends StatefulWidget {
   const ProfileEdit({
@@ -32,6 +33,8 @@ class ProfileEdit extends StatefulWidget {
 }
 
 class _ProfileEditState extends State<ProfileEdit> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   Uint8List? _selectUserImage;
   Gender? selectedGender;
   DateTime? _SelectedDate;
@@ -41,6 +44,33 @@ class _ProfileEditState extends State<ProfileEdit> {
   final _emailController = TextEditingController();
   final _locationController = TextEditingController();
   final _phoneNumberController = TextEditingController();
+
+  final user = {
+    'id': 101,
+    'userImage': 'assets/images/user_images/jonah.jpg',
+    'username': 'jonah101',
+    'password': 'jonah123',
+    'firstName': 'Jonah',
+    'lastName': 'Cornista',
+    'email': 'jonahCornista@gmail.com',
+    'birthdate': DateTime.now(),
+    'gender': 'female',
+    'location': 'Pajac, Lapu-Lapu City',
+    'phoneNumber': '0923481231',
+    'isCommunity': true,
+    'communityId': 1102,
+    'isAchievement': true,
+  };
+
+// Add the user data to the "User" collection
+  Future<void> addUser() async {
+    try {
+      await firestore.collection('User').add(user);
+      print('User added successfully!');
+    } catch (e) {
+      print('Error adding user: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -87,7 +117,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                 communityPosted: widget.communityPosted,
                 selectTab: selectTab,
                 userPosted: widget.userPosted,
-                achievements: widget.achievements,
+                achievements: widget.achievements!,
                 selectButtomTab: selectButtomTab,
               )),
     );
@@ -157,7 +187,8 @@ class _ProfileEditState extends State<ProfileEdit> {
             ),
             InkWell(
               onTap: () {
-                newProfile();
+                // newProfile();
+                addUser();
               },
               child: Container(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),

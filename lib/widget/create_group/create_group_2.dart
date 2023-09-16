@@ -51,6 +51,7 @@ class _CreateGroup2State extends State<CreateGroup2> {
     setState(() {
       if (_postImage != null) {
         widget.onAddPost(Post(
+          postId: PostCommunity.length + 1,
           communityId: idCommunity,
           userId: widget.user.id,
           isImage: onClickPostImage,
@@ -64,6 +65,7 @@ class _CreateGroup2State extends State<CreateGroup2> {
         ));
       } else {
         widget.onAddPost(Post(
+          postId: PostCommunity.length + 1,
           communityId: idCommunity,
           userId: widget.user.id,
           isImage: onClickPostImage,
@@ -148,7 +150,7 @@ class _CreateGroup2State extends State<CreateGroup2> {
               communityPosted: communityPost,
               selectTab: select,
               userPosted: userPost,
-              achievements: userAchievements,
+              achievements: userAchievements!,
               selectButtomTab: selectButtom,
             )),
       ),

@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
     print('hello');
     for (var community in communities) {
       print('hello2');
-      if (users[0].communityId == community.id) {
+      if (users[5].communityId == community.id) {
         communityUser = community;
         print(['correct2', communityUser.title]);
         break;
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     for (var achieve in achievementsInformation) {
-      if (achieve.userName == users[0].username) {
+      if (achieve.userName == users[5].username) {
         //////////////////////////////
         userAchievements = achieve;
       }
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (ctx) => TabsScreen(
-            user: users[0], ///////////////////////////////
+            user: users[5], ///////////////////////////////
             community: communityUser!,
             communityPosted: communityPost,
             selectTab: select,
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: const Color(0x3fff454545),
                     ),
                     prefixIcon: const Icon(Icons.person),
-                    prefixIconColor: const Color(0x3fff808080),
+                    prefixIconColor: const Color(0x3fff454545),
                     labelText: 'Username',
                   ),
                 ),

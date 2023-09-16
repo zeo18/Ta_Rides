@@ -15,6 +15,7 @@ class CreateGroup extends StatefulWidget {
       required this.onAddCommunity,
       required this.onAddPost,
       required this.onSelectedPrivacy});
+
   final Function(Community community) onAddCommunity;
   final Function(Post post) onAddPost;
   final Users user;
@@ -27,12 +28,15 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
   final _titleCoummunityController = TextEditingController();
   int onSelectPrivacy = 0;
-  late bool selectedPrivacy = false;
+  late bool selectedPrivacy;
+  int idCommunity =
+      CommunityInformation[CommunityInformation.length - 1].id + 1;
 
   @override
   void initState() {
     super.initState();
     onSelectPrivacy = widget.onSelectedPrivacy;
+    selectedPrivacy = true;
   }
 
   @override
@@ -52,6 +56,12 @@ class _CreateGroupState extends State<CreateGroup> {
     setState(() {
       onSelectPrivacy = 0;
       selectedPrivacy = false;
+    });
+  }
+
+  void addQuestion(IfPrivate private) {
+    setState(() {
+      privateCommunity.add(private);
     });
   }
 
@@ -75,6 +85,7 @@ class _CreateGroupState extends State<CreateGroup> {
       context,
       MaterialPageRoute(
           builder: (ctx) => AddQuestion(
+                onAddPrivateCommunity: addQuestion,
                 onAddCommunity: widget.onAddCommunity,
                 onAddPost: widget.onAddPost,
                 user: widget.user,
@@ -87,6 +98,7 @@ class _CreateGroupState extends State<CreateGroup> {
       context,
       MaterialPageRoute(
           builder: (ctx) => AddRules(
+                onAddPrivateRules: addQuestion,
                 onAddCommunity: widget.onAddCommunity,
                 onAddPost: widget.onAddPost,
                 user: widget.user,
@@ -96,6 +108,58 @@ class _CreateGroupState extends State<CreateGroup> {
 
   @override
   Widget build(BuildContext context) {
+    List<IfPrivate> choicePrivates = [];
+    List<IfPrivate> cheboxesPrivates = [];
+    List<IfPrivate> writtenPrivates = [];
+    List<IfPrivate> rulesPrivates = [];
+
+    if (privateCommunity.length <= 10) {
+      for (var private = 6;
+          private < 10 && private < privateCommunity.length;
+          private++) {
+        if (privateCommunity[private].choiceQuestion.isNotEmpty) {
+          choicePrivates.add(privateCommunity[private]);
+        }
+      }
+    }
+
+    if (privateCommunity.length <= 10) {
+      for (var private = 6;
+          private < 10 && private < privateCommunity.length;
+          private++) {
+        if (privateCommunity[private].cheboxesQuestion.isNotEmpty) {
+          cheboxesPrivates.add(privateCommunity[private]);
+        }
+      }
+    }
+
+    if (privateCommunity.length <= 10) {
+      for (var private = 6;
+          private < 10 && private < privateCommunity.length;
+          private++) {
+        if (privateCommunity[private].writtenQuestion.isNotEmpty) {
+          writtenPrivates.add(privateCommunity[private]);
+        }
+      }
+    }
+
+    if (privateCommunity.length <= 10) {
+      for (var private = 6;
+          private < 10 && private < privateCommunity.length;
+          private++) {
+        if (privateCommunity[private].writeRules.isNotEmpty) {
+          rulesPrivates.add(privateCommunity[private]);
+        }
+      }
+    }
+    //  for (var private in privateCommunity) {
+    //     if (private.privateCommunityId == widget.community.id) {
+    //       if (private.choiceQuestion.isNotEmpty) {
+    //         choicePrivates.add(private);
+    //       }
+    //     }
+    //   }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0x3ff0C0D11),
@@ -218,6 +282,165 @@ class _CreateGroupState extends State<CreateGroup> {
                       ),
                     ),
                     const SizedBox(
+                      height: 10,
+                    ),
+                    if (choicePrivates.isNotEmpty)
+                      Column(
+                        children: [
+                          Text(
+                            'Multiplie Choice',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
+                    if (choicePrivates.isNotEmpty)
+                      for (var private in choicePrivates)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              private.choiceQuestion,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            for (var choice in private.choices)
+                              Text(
+                                '• $choice',
+                                style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: const Color(0x3ff797979)),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                    if (cheboxesPrivates.isNotEmpty &&
+                        choicePrivates.isNotEmpty)
+                      const Divider(
+                        color: Color(0x3ff797979),
+                        thickness: 1.0,
+                        indent: 0,
+                        endIndent: 0,
+                      ),
+                    if (choicePrivates.isNotEmpty)
+                      Column(
+                        children: [
+                          Text(
+                            'Check Boxes',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
+                    if (cheboxesPrivates.isNotEmpty)
+                      for (var private in cheboxesPrivates)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              private.cheboxesQuestion,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            for (var cheboxes in private.cheboxes)
+                              Text(
+                                '•  $cheboxes',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  color: const Color(0x3ff797979),
+                                ),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                    if (cheboxesPrivates.isNotEmpty &&
+                        choicePrivates.isNotEmpty &&
+                        writtenPrivates.isNotEmpty)
+                      const Divider(
+                        color: Color(0x3ff797979),
+                        thickness: 1.0,
+                        indent: 0,
+                        endIndent: 0,
+                      ),
+                    if (writtenPrivates.isNotEmpty)
+                      Column(
+                        children: [
+                          Text(
+                            'Written Answer',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
+                    if (writtenPrivates.isNotEmpty)
+                      for (var private in writtenPrivates)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              private.writtenQuestion,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              private.writtenAnswer,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
+                          ],
+                        ),
+                    const SizedBox(
                       height: 15,
                     ),
                     Center(
@@ -268,6 +491,53 @@ class _CreateGroupState extends State<CreateGroup> {
                     ),
                     const SizedBox(
                       height: 15,
+                    ),
+                    if (rulesPrivates.isNotEmpty)
+                      Column(
+                        children: [
+                          Text(
+                            'Rules',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
+                    if (rulesPrivates.isNotEmpty)
+                      for (var privates in rulesPrivates)
+                        Column(
+                          children: [
+                            Text(
+                              privates.writeRules,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 1),
+                            Text(
+                              privates.detailsRules,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     Center(
                       child: ElevatedButton(

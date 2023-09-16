@@ -2,7 +2,7 @@ import 'dart:ui';
 // import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:core';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/createAccount3.dart';
@@ -27,6 +27,8 @@ class CreateAccount2 extends StatefulWidget {
 class _CreateAccount2State extends State<CreateAccount2> {
   TextEditingController dateController = TextEditingController();
   DateTime? selectedDate;
+  IconData? maleIcon = Icons.male;
+  IconData? femaleIcon = Icons.female;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -55,6 +57,13 @@ class _CreateAccount2State extends State<CreateAccount2> {
         selectedDate = picked;
       });
     }
+  }
+
+  String capitalize(String s) {
+    if (s == null || s.isEmpty) {
+      return s;
+    }
+    return s[0].toUpperCase() + s.substring(1);
   }
 
   Gender? selectedGender;
@@ -234,7 +243,7 @@ class _CreateAccount2State extends State<CreateAccount2> {
                       (gender) => DropdownMenuItem(
                         value: gender,
                         child: Text(
-                          gender.name,
+                          capitalize(gender.name),
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: selectedGender == gender
@@ -250,11 +259,14 @@ class _CreateAccount2State extends State<CreateAccount2> {
                   if (value == null) {
                     return;
                   }
-                  setState(
-                    () {
-                      selectedGender = value;
-                    },
-                  );
+                  setState(() {
+                    selectedGender = value;
+                    if (selectedGender == Gender.male) {
+                      maleIcon = Icons.male;
+                    } else if (selectedGender == Gender.female) {
+                      femaleIcon = Icons.female;
+                    }
+                  });
                 },
                 decoration: InputDecoration(
                   focusedBorder: const OutlineInputBorder(
@@ -277,6 +289,11 @@ class _CreateAccount2State extends State<CreateAccount2> {
                     fontSize: 15,
                     color: Color(0x3fff454545),
                   ),
+                  prefix: selectedGender == Gender.male
+                      ? Icon(maleIcon)
+                      : selectedGender == Gender.female
+                          ? Icon(femaleIcon)
+                          : null,
                   labelText: 'Gender',
                 ),
               ),

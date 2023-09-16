@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/create_group/create_group_screen.dart';
@@ -10,8 +11,10 @@ class AddRules extends StatefulWidget {
     required this.onAddCommunity,
     required this.user,
     required this.onAddPost,
+    required this.onAddPrivateRules,
   });
 
+  final Function(IfPrivate private) onAddPrivateRules;
   final Function(Community community) onAddCommunity;
   final Function(Post post) onAddPost;
   final Users user;
@@ -22,9 +25,29 @@ class AddRules extends StatefulWidget {
 
 class _AddRulesState extends State<AddRules> {
   int onSelectedPrivacy = 1;
+  final rulesController = TextEditingController();
+  final addDetailsController = TextEditingController();
+  int idCommunity =
+      CommunityInformation[CommunityInformation.length - 1].id + 1;
 
-  void goToFirstScreen() {
-    Navigator.push(
+  void addRulesCommunity() {
+    setState(() {
+      widget.onAddPrivateRules(
+        IfPrivate(
+          privateCommunityId: idCommunity,
+          choiceQuestion: '',
+          choices: [],
+          cheboxesQuestion: '',
+          cheboxes: [],
+          writtenQuestion: '',
+          writtenAnswer: '',
+          writeRules: rulesController.text,
+          detailsRules: addDetailsController.text,
+        ),
+      );
+    });
+
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (ctx) => CreateGroup(
@@ -53,85 +76,92 @@ class _AddRulesState extends State<AddRules> {
       ),
       body: Container(
         margin: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            TextField(
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              //controller: ,
-              textInputAction: TextInputAction.done,
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                hintText: 'Write the rule',
-                hintStyle: GoogleFonts.inter(
-                  color: const Color(0x3ff454545),
-                  fontSize: 15,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x3ff454545)),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              //controller: ,
-              textInputAction: TextInputAction.done,
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                hintText: 'Add Details',
-                hintStyle: GoogleFonts.inter(
-                  color: const Color(0x3ff454545),
-                  fontSize: 15,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Color(0x3ff454545)),
-                  borderRadius: BorderRadius.circular(15),
+                minLines: 1,
+                maxLines: 10,
+                controller: rulesController,
+                textInputAction: TextInputAction.done,
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  hintText: 'Write the rule',
+                  hintStyle: GoogleFonts.inter(
+                    color: const Color(0x3ff454545),
+                    fontSize: 15,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0x3ff454545)),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 550,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0x3ffFF0000),
-                minimumSize: const Size(
-                  395,
-                  45,
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                controller: addDetailsController,
+                textInputAction: TextInputAction.done,
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  hintText: 'Add Details',
+                  hintStyle: GoogleFonts.inter(
+                    color: const Color(0x3ff454545),
+                    fontSize: 15,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0x3ff454545)),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
               ),
-              onPressed: goToFirstScreen,
-              child: Text(
-                'Continue',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                    ),
+              const SizedBox(
+                height: 550,
               ),
-            ),
-          ],
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0x3ffFF0000),
+                  minimumSize: const Size(
+                    395,
+                    45,
+                  ),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  addRulesCommunity();
+                  print(['rules', rulesController.text]);
+                },
+                child: Text(
+                  'Continue',
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
