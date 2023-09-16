@@ -4,6 +4,7 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+
 import 'package:ta_rides/screen/auth/createAccount.dart';
 import 'package:ta_rides/screen/auth/forgotPassword.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
@@ -44,16 +45,15 @@ class _LoginPageState extends State<LoginPage> {
     print('hello');
     for (var community in communities) {
       print('hello2');
-      if (users[5].communityId == community.id) {
+      if (users[0].communityId == community.id) {
         communityUser = community;
         print(['correct2', communityUser.title]);
         break;
       }
     }
-
     List<Post> communityPost = [];
     if (communityUser != null) {
-      if (users[5].isCommunity) {
+      if (users[0].isCommunity) {
         for (var community in CommunityInformation) {
           for (var post in PostCommunity) {
             if (post.communityId.toString() == community.id.toString()) {
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     for (var achieve in achievementsInformation) {
-      if (achieve.userName == users[5].username) {
+      if (achieve.userName == users[0].username) {
         //////////////////////////////
         userAchievements = achieve;
       }
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
     // print(['UserName', UserInformation[6].username]);
 
     return Scaffold(
-      backgroundColor: const Color(0xfff0c0d11),
+      backgroundColor: const Color(0xfff0C0D11),
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       'RIDES',
                       style: GoogleFonts.montserrat(
-                        color: const Color(0x3fffff0000),
+                        color: const Color(0x3fffFF0000),
                         fontSize: 53.0,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Color(0x3ffffffff0),
+                        color: Color(0x3fffFFFFF0),
                       ),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15.0),
@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Color(0x3ffffffff0),
+                        color: Color(0x3fffFFFFF0),
                       ),
                       borderRadius: BorderRadius.all(
                         Radius.circular(15.0),
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0x3ffffffff0),
+                          color: Color(0x3fffFFFFF0),
                         ),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15.0),
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0x3ffffffff0),
+                          color: Color(0x3fffFFFFF0),
                         ),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15.0),
@@ -225,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0x3ffffffff0),
+                          color: Color(0x3fffFFFFF0),
                         ),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15.0),
@@ -233,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Color(0x3ffffffff0),
+                          color: Color(0x3fffFFFFF0),
                         ),
                         borderRadius: BorderRadius.all(
                           Radius.circular(15.0),
@@ -315,7 +315,7 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide.none,
                     ),
-                    backgroundColor: const Color(0x3ffff0000),
+                    backgroundColor: const Color(0x3ffFF0000),
                   ),
                   onPressed: homePage,
                   child: Text(
