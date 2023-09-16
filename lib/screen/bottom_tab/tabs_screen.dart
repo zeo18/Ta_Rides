@@ -27,7 +27,7 @@ class TabsScreen extends StatefulWidget {
   final int selectTab;
   final List<Users> userPosted;
   final List<Post> communityPosted;
-  final Community community;
+  final Community? community;
   final Achievements? achievements;
 
   @override
@@ -84,7 +84,7 @@ class _TabsScreenState extends State<TabsScreen> {
           print('hello2');
           if (widget.user.communityId == community.id) {
             communityUser = community;
-            print(['correct2', communityUser.title]);
+            print(['correct2', communityUser!.title]);
             break; // Break the loop after finding a match for the current user
           }
         }
@@ -97,7 +97,7 @@ class _TabsScreenState extends State<TabsScreen> {
       communityPosted: widget.communityPosted,
       userPosted: widget.userPosted,
       userUse: widget.user,
-      achievements: widget.achievements!,
+      achievements: widget.achievements,
     );
 
     //var activePageTitle = 'Community';

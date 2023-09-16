@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
@@ -21,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
   });
 
   final Users user;
-  final Community community;
+  final Community? community;
   final List<Users> userPosted;
   final List<Post> communityPosted;
   final Achievements? achievements;
@@ -169,46 +168,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             if (selectTab == 1)
-              Column(
-                children: [
-                  Text(
-                    'Community',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: const Color(0x3ffe8aa0a),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => TabsScreen(
-                            user: widget.user,
-                            community: widget.community,
-                            communityPosted: widget.communityPosted,
-                            selectTab: selectTab,
-                            userPosted: widget.userPosted,
-                            achievements: widget.achievements!,
-                            selectButtomTab: selectButtomTab,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      color: const Color(0xff282828),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      clipBehavior: Clip.hardEdge,
-                      elevation: 10,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                        child: Text(
-                          widget.community.title,
+              widget.community == null
+                  ? Container(
+                      child: const Text("No Community"),
+                    )
+                  : Column(
+                      children: [
+                        Text(
+                          'Community',
                           style:
                               Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: const Color(0x3ffe8aa0a),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => TabsScreen(
+                                  user: widget.user,
+                                  community: widget.community,
+                                  communityPosted: widget.communityPosted,
+                                  selectTab: selectTab,
+                                  userPosted: widget.userPosted,
+                                  achievements: widget.achievements,
+                                  selectButtomTab: selectButtomTab,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            color: const Color(0xff282828),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            elevation: 10,
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              child: Text(
+                                widget.community!.title,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+            if (selectTab == 2)
+              widget.community == null || widget.achievements == null
+                  ? Container(
+                      child: const Text("No Community"),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => ProfileEdit(
+                                    user: widget.user,
+                                    onEditProfile: widget.onEditProfile,
+                                    achievements: widget.achievements!,
+                                    community: widget.community,
+                                    communityPosted: widget.communityPosted,
+                                    userPosted: widget.userPosted,
+                                  )),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white, // Border color
+                            width: 1, // Border width
+                          ),
+                        ),
+                        child: Text(
+                          'Edit',
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
@@ -216,44 +265,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
-            if (selectTab == 2)
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => ProfileEdit(
-                              user: widget.user,
-                              onEditProfile: widget.onEditProfile,
-                              achievements: widget.achievements!,
-                              community: widget.community,
-                              communityPosted: widget.communityPosted,
-                              userPosted: widget.userPosted,
-                            )),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white, // Border color
-                      width: 1, // Border width
-                    ),
-                  ),
-                  child: Text(
-                    'Edit',
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                  ),
-                ),
-              ),
             const SizedBox(
               height: 20,
             ),
@@ -287,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileTabs(user: widget.user),
                   AchievementsTabs(
                     user: widget.user,
-                    achievements: widget.achievements!,
+                    achievements: widget.achievements,
                   ),
                   ProgressTabs(user: widget.user),
                 ],

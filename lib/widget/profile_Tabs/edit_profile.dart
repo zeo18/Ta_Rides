@@ -19,7 +19,7 @@ class ProfileEdit extends StatefulWidget {
     required this.achievements,
   });
 
-  final Community community;
+  final Community? community;
   final List<Users> userPosted;
   final List<Post> communityPosted;
   final Achievements? achievements;
@@ -115,7 +115,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                 communityPosted: widget.communityPosted,
                 selectTab: selectTab,
                 userPosted: widget.userPosted,
-                achievements: widget.achievements!,
+                achievements: widget.achievements,
                 selectButtomTab: selectButtomTab,
               )),
     );
