@@ -91,11 +91,11 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (ctx) => TabsScreen(
             user: users[5], ///////////////////////////////
-            community: communityUser!,
+            community: communityUser,
             communityPosted: communityPost,
             selectTab: select,
             userPosted: userPost,
-            achievements: userAchievements!,
+            achievements: userAchievements,
             selectButtomTab: selectButtom,
           ),
         ));

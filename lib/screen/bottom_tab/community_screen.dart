@@ -103,7 +103,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 children: [
                   SearchTab(
                     userUse: widget.userUse,
-                    achievements: widget.achievements!,
+                    achievements: widget.achievements,
                   ),
                   ForYouTabs(
                     communityPosted: widget.communityPosted,

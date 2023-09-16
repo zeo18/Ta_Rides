@@ -5,7 +5,6 @@ import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
-
 import 'package:ta_rides/screen/community/join_group_screen.dart';
 import 'package:ta_rides/screen/community/private_condition_screen.dart';
 import 'package:ta_rides/screen/community/view_community_screen.dart';
@@ -223,7 +222,7 @@ class _SearchTabState extends State<SearchTab> {
                 communityPosted: communityPost,
                 selectTab: selectTab,
                 userPosted: userPost,
-                achievements: widget.achievements!,
+                achievements: widget.achievements,
                 selectButtomTab: selectButtom,
               )),
     );
