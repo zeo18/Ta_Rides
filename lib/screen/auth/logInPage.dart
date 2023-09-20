@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/community_data.dart';
@@ -7,7 +10,11 @@ import 'package:ta_rides/models/user_info.dart';
 
 import 'package:ta_rides/screen/auth/createAccount.dart';
 import 'package:ta_rides/screen/auth/forgotPassword.dart';
+import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
+import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,88 +24,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  var checking = true;
+  final _formKey = GlobalKey<FormState>();
+  bool _obscureText = true;
+  var username = '';
+  var password = '';
 
-  void _isChecking() {
-    setState(() {
-      checking = false;
-    });
-  }
+  void submit() async {
+    final isValid = _formKey.currentState!.validate();
 
-  void _isChecking2() {
-    setState(() {
-      checking = true;
-    });
-  }
-
-  void homePage() {
-    final List<Community> communities = CommunityInformation;
-    final List<Users> users = UserInformation;
-    int selectButtom = 2;
-    var select = 0;
-    Community? communityUser;
-    List<Users>? userPost = [];
-    Achievements? userAchievements;
-
-    // late Community communityUser;
-
-    print('hello');
-    for (var community in communities) {
-      print('hello2');
-      if (users[0].communityId == community.id) {
-        communityUser = community;
-        print(['correct2', communityUser.title]);
-        break;
-      }
-    }
-    List<Post> communityPost = [];
-    if (communityUser != null) {
-      if (users[0].isCommunity) {
-        for (var community in CommunityInformation) {
-          for (var post in PostCommunity) {
-            if (post.communityId.toString() == community.id.toString()) {
-              communityPost.add(post);
-            }
-          }
-        }
-      } else {
-        for (var post in PostCommunity) {
-          if (post.communityId.toString() == communityUser.id.toString()) {
-            communityPost.add(post);
-          }
-        }
-      }
-
-      for (var post in communityPost) {
-        for (var user in UserInformation) {
-          if (post.usersName == user.username) {
-            print([post.usersName.toString(), user.username.toString()]);
-            userPost.add(user);
-          }
-        }
-      }
+    if (!isValid) {
+      return;
     }
 
-    for (var achieve in achievementsInformation) {
-      if (achieve.userName == users[0].username) {
-        //////////////////////////////
-        userAchievements = achieve;
-      }
-    }
+    if (isValid) {
+      _formKey.currentState!.save();
+      print('username: $username');
+      print('password: $password');
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => TabsScreen(
-            user: users[5], ///////////////////////////////
-            community: communityUser,
-            communityPosted: communityPost,
-            selectTab: select,
-            userPosted: userPost,
-            achievements: userAchievements,
-            selectButtomTab: selectButtom,
+      //   final user = FirebaseAuth.instance.currentUser!;
+      //   final userData = await FirebaseFirestore.instance
+      //       .collection('users')
+      //       .doc(user.uid)
+      //       .get();
+      // final userObject = Users.fromDocument(
+      //         userData);
+      // Convert DocumentSnapshot to Users object
+      FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: username, password: password)
+          .then((value) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PedalScreen()
+              // // ProfileScreen(
+              // //   user: userObject, // Pass the Users object
+              // ),
+              ),
+        );
+      }).onError((error, stackTrace) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Invalid username or password.',
+            ),
           ),
-        ));
+        );
+      });
+    }
   }
 
   void addUser(Users user) {
@@ -109,9 +81,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print(['UserID', UserInformation[6].id]);
-    // print(['UserName', UserInformation[6].username]);
-
     return Scaffold(
       backgroundColor: const Color(0xfff0C0D11),
       resizeToAvoidBottomInset: false,
@@ -148,110 +117,109 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 48,
                 ),
-                TextField(
-                  style: GoogleFonts.inter(
-                    color: const Color(0x3fff454545),
-                  ),
-                  decoration: InputDecoration(
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x3fffFFFFF0),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.trim().isEmpty || !value.contains('@')) {
+                            return 'Please enter a valid email address.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          username = value!;
+                        },
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x3fffFFFFF0),
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x3fffFFFFF0),
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          labelStyle: GoogleFonts.montserrat(
+                            color: const Color(0x3fff454545),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.person,
+                            color: Color(0x3fff454545),
+                          ),
+                          labelText: 'Username',
+                        ),
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
+                      const SizedBox(
+                        height: 35,
                       ),
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x3fffFFFFF0),
+                      TextFormField(
+                        validator: (value) {
+                          if (value!.trim().isEmpty) {
+                            return 'Please enter your passworrd.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          password = value!;
+                        },
+                        obscureText: _obscureText,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                        ),
+                        decoration: InputDecoration(
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x3fffFFFFF0),
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0x3fffFFFFF0),
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          labelStyle: GoogleFonts.montserrat(
+                            color: const Color(0x3fff454545),
+                          ),
+                          prefixIcon: const Icon(Icons.lock,
+                              color: Color(0x3fff454545)),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            child: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Color(0x3fff454545),
+                            ),
+                          ),
+                          suffixIconColor: const Color(0x3fff454545),
+                          labelText: 'Password',
+                        ),
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15.0),
-                      ),
-                    ),
-                    labelStyle: GoogleFonts.montserrat(
-                      color: const Color(0x3fff454545),
-                    ),
-                    prefixIcon: const Icon(Icons.person),
-                    prefixIconColor: const Color(0x3fff454545),
-                    labelText: 'Username',
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 35,
-                ),
-                if (checking == true)
-                  TextField(
-                    obscureText: true,
-                    style: GoogleFonts.inter(
-                      color: const Color(0x3fff454545),
-                    ),
-                    decoration: InputDecoration(
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x3fffFFFFF0),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x3fffFFFFF0),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                      ),
-                      labelStyle: GoogleFonts.montserrat(
-                        color: const Color(0x3fff454545),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                      prefixIconColor: const Color(0x3fff808080),
-                      suffixIcon: IconButton(
-                        onPressed: _isChecking,
-                        icon: const Icon(Icons.remove_red_eye),
-                      ),
-                      suffixIconColor: const Color(0x3fff808080),
-                      labelText: 'Password',
-                    ),
-                  )
-                else
-                  TextField(
-                    obscureText: false,
-                    style: GoogleFonts.inter(
-                      color: const Color(0x3fff454545),
-                    ),
-                    decoration: InputDecoration(
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x3fffFFFFF0),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0x3fffFFFFF0),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                      ),
-                      labelStyle: GoogleFonts.montserrat(
-                        color: const Color(0x3fff454545),
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                      prefixIconColor: const Color(0x3fff808080),
-                      suffixIcon: IconButton(
-                        onPressed: _isChecking2,
-                        icon: const Icon(Icons.remove_red_eye),
-                      ),
-                      suffixIconColor: const Color(0x3fff808080),
-                      labelText: 'Password',
-                    ),
-                  ),
                 const SizedBox(
                   height: 21,
                 ),
@@ -317,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     backgroundColor: const Color(0x3ffFF0000),
                   ),
-                  onPressed: homePage,
+                  onPressed: submit,
                   child: Text(
                     'LOGIN',
                     style: GoogleFonts.montserrat(
@@ -345,3 +313,73 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+// void homePage() {
+//   final List<Community> communities = CommunityInformation;
+//   final List<Users> users = UserInformation;
+//   int selectButtom = 2;
+//   var select = 0;
+//   Community? communityUser;
+//   List<Users>? userPost = [];
+//   Achievements? userAchievements;
+
+//   // late Community communityUser;
+
+//   print('hello');
+//   for (var community in communities) {
+//     print('hello2');
+//     if (users[5].communityId == community.id) {
+//       communityUser = community;
+//       print(['correct2', communityUser.title]);
+//       break;
+//     }
+//   }
+//   List<Post> communityPost = [];
+//   if (communityUser != null) {
+//     if (users[5].isCommunity) {
+//       for (var community in CommunityInformation) {
+//         for (var post in PostCommunity) {
+//           if (post.communityId.toString() == community.id.toString()) {
+//             communityPost.add(post);
+//           }
+//         }
+//       }
+//     } else {
+//       for (var post in PostCommunity) {
+//         if (post.communityId.toString() == communityUser.id.toString()) {
+//           communityPost.add(post);
+//         }
+//       }
+//     }
+
+//     for (var post in communityPost) {
+//       for (var user in UserInformation) {
+//         if (post.usersName == user.username) {
+//           print([post.usersName.toString(), user.username.toString()]);
+//           userPost.add(user);
+//         }
+//       }
+//     }
+//   }
+
+//   for (var achieve in achievementsInformation) {
+//     if (achieve.userName == users[5].username) {
+//       //////////////////////////////
+//       userAchievements = achieve;
+//     }
+//   }
+
+//   Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//         builder: (ctx) => TabsScreen(
+//           user: users[5], ///////////////////////////////
+//           community: communityUser,
+//           communityPosted: communityPost,
+//           selectTab: select,
+//           userPosted: userPost,
+//           achievements: userAchievements,
+//           selectButtomTab: selectButtom,
+//         ),
+//       ));
+// }

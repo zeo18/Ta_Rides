@@ -45,6 +45,8 @@ dependencies:
   country_code_picker: ^3.0.0
   firebase_core: ^2.15.1
   cloud_firestore: ^4.9.1
+  firebase_auth: ^4.9.0
+  firebase_storage: ^11.2.6
 
 dev_dependencies:
   flutter_test:
@@ -130,6 +132,11 @@ flutter:
     - assets/images/log_in/bike.png
     - assets/images/log_in/circle.png
     - assets/images/log_in/success.png
+    - assets/images/log_in/CreateAccount1stPage.png
+    - assets/images/log_in/CreateAccount2ndPage.png
+    - assets/images/log_in/CreateAccount3rdPage.png
+    - assets/images/log_in/CreateAccount4thPage.png
+    - assets/images/log_in/imageEmpty.jpg
     
   
 

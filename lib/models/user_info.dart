@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
@@ -26,12 +27,11 @@ class Users {
     required this.isCommunity,
     required this.communityId,
     required this.isAchievement,
-    required this.chooseUserImage,
   });
 
-  final int id;
+  final String id;
   final String userImage;
-  late final Uint8List chooseUserImage;
+
   final String username;
   final String password;
   final String firstName;
@@ -49,6 +49,28 @@ class Users {
 
   String get formattedDate {
     return formatter.format(birthdate);
+  }
+
+  factory Users.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data() as Map<String, dynamic>;
+    return Users(
+      id: document.id,
+      userImage: data['username'] ?? '',
+      username: data['username'] ?? '',
+      password: data['password'] ?? '',
+      firstName: data['firstName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      email: data['email'] ?? '',
+      birthdate: data['birtdate'] ?? '',
+      gender: data['gender'] ?? '',
+      location: data['location'] ?? '',
+      phoneNumber: data['phoneNumber'] ?? '',
+      followers: data['follwers'] ?? '',
+      following: data['following'] ?? '',
+      isCommunity: data['isCommunity'] ?? '',
+      communityId: data['communityId'] ?? '',
+      isAchievement: data['isAchievement'] ?? '',
+    );
   }
 }
 

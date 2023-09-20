@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/user_data.dart';
@@ -19,7 +24,9 @@ class FinishedCreatingAccount extends StatefulWidget {
       required this.phoneNumberValue,
       required this.selectedDateValue,
       required this.usernameValue,
-      required this.addUser});
+      required this.addUser,
+      required this.selectUserImageValue});
+
   final String lastNameValue;
   final String firstNameValue;
   final String middleNameValue;
@@ -33,6 +40,7 @@ class FinishedCreatingAccount extends StatefulWidget {
   final String countryValue;
 
   final String passwordValue;
+  final File selectUserImageValue;
   final Function(Users user) addUser;
 
   @override
@@ -42,27 +50,90 @@ class FinishedCreatingAccount extends StatefulWidget {
 
 class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
   int userID = UserInformation[UserInformation.length - 1].id + 1;
-  void addUser() {
-    widget.addUser(Users(
-        id: userID,
-        userImage: '',
-        username: widget.usernameValue,
-        password: widget.passwordValue,
-        firstName: widget.firstNameValue,
-        lastName: widget.lastNameValue,
-        email: widget.emailValue,
-        birthdate: widget.selectedDateValue,
-        gender: widget.genderValue,
-        location: widget.countryValue,
-        phoneNumber: widget.phoneNumberValue,
-        followers: 0,
-        following: 0,
-        isCommunity: false,
-        communityId: 0,
-        isAchievement: false,
-        chooseUserImage: Uint8List.fromList([])));
 
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => LoginPage()));
+  void addUser() {
+    // widget.addUser(
+    //   Users(
+    //     id: userID,
+    //     userImage: '',
+    //     username: widget.usernameValue,
+    //     password: widget.passwordValue,
+    //     firstName: widget.firstNameValue,
+    //     lastName: widget.lastNameValue,
+    //     email: widget.emailValue,
+    //     birthdate: widget.selectedDateValue,
+    //     gender: widget.genderValue,
+    //     location: widget.countryValue,
+    //     phoneNumber: widget.phoneNumberValue,
+    //     followers: 0,
+    //     following: 0,
+    //     isCommunity: false,
+    //     communityId: 0,
+    //     isAchievement: false,
+    //     chooseUserImage: widget.selectUserImageValue,
+    //   ),
+    // );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => LoginPage(),
+      ),
+    );
+  }
+
+  void submitCreateAccount() async {
+    try {
+      // Create a new user in Firebase Authentication
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: widget.emailValue,
+        password: widget.passwordValue,
+      );
+
+      // Get the user's unique ID from Firebase Authentication
+      final userId = userCredential.user!.uid;
+
+      // Upload the user image to Firebase Storage
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('user_image')
+          .child('$userId.jpg');
+      await storageRef.putFile(widget.selectUserImageValue);
+
+      // Get the download URL of the uploaded image
+      final imageUrl = await storageRef.getDownloadURL();
+
+      // Store user data in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'username': widget.usernameValue,
+        'firstName': widget.firstNameValue,
+        'lastName': widget.lastNameValue,
+        'email': widget.emailValue,
+        'password': widget.passwordValue,
+        'birthdate': widget.selectedDateValue,
+        'gender': widget.genderValue.toString(),
+        'phoneNumber': widget.phoneNumberValue,
+        'location': widget.countryValue,
+        'followers': 0,
+        'following': 0,
+        'isCommunity': false,
+        'communityId': 0,
+        'isAchievement': false,
+        'userImage': imageUrl, // Store the image URL, not the File object
+      }).then((value) => {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => const LoginPage(),
+              ),
+            )
+          });
+
+      print('Account created successfully');
+    } catch (error) {
+      print('Error creating account: $error');
+    }
   }
 
   @override
@@ -80,6 +151,7 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
     print(['usernameValue', widget.usernameValue]);
     print(['password', widget.passwordValue]);
     print(['userID', userID]);
+    print(['picture', widget.selectUserImageValue]);
     return Scaffold(
       body: Container(
         color: const Color(0x3fff0C0D11),
@@ -130,7 +202,7 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
                   ),
                   backgroundColor: const Color(0x3ffFF0000),
                 ),
-                onPressed: addUser,
+                onPressed: submitCreateAccount,
                 child: Text(
                   'Proceed',
                   style: GoogleFonts.montserrat(

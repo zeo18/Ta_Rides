@@ -1,18 +1,24 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
-import 'package:ta_rides/screen/auth/createAccount4.dart';
+import 'package:ta_rides/screen/auth/createAccount6.dart';
 
-class CreateAccount3 extends StatefulWidget {
-  const CreateAccount3(
+class CreateAccount5 extends StatefulWidget {
+  const CreateAccount5(
       {super.key,
-      required this.selectedDateValue,
-      required this.genderValue,
-      required this.phoneNumberValue,
-      required this.lastNameValue,
+      required this.countryValue,
+      required this.emailValue,
       required this.firstNameValue,
+      required this.genderValue,
+      required this.lastNameValue,
       required this.middleNameValue,
+      required this.phoneNumberValue,
+      required this.selectedDateValue,
+      required this.usernameValue,
+      required this.selectUserImageValue,
       required this.addUser});
 
   final String lastNameValue;
@@ -22,46 +28,36 @@ class CreateAccount3 extends StatefulWidget {
   final DateTime selectedDateValue;
   final Gender genderValue;
   final String phoneNumberValue;
+
+  final String usernameValue;
+  final String emailValue;
+  final String countryValue;
+
+  final File selectUserImageValue;
+
   final Function(Users user) addUser;
 
   @override
-  State<CreateAccount3> createState() => _CreateAccount3State();
+  State<CreateAccount5> createState() => _CreateAccount5State();
 }
 
-class _CreateAccount3State extends State<CreateAccount3> {
-  final userNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final countryController = TextEditingController();
+class _CreateAccount5State extends State<CreateAccount5> {
+  bool _obscureText = true;
+  bool _obscureText2 = true;
+
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    userNameController.dispose();
-    emailController.dispose();
-    countryController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
-  String? validateUsername(String? value) {
-    if (value!.isEmpty) {
-      return 'Your Username is required';
-    }
-    return null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    userNameController.addListener(onListen);
-    emailController.addListener(onListen);
-    countryController.addListener(onListen);
-  }
-
-  void onListen() => setState(() {});
-
-  void step3Checker() {
-    if (userNameController.text.trim().isEmpty ||
-        emailController.text.trim().isEmpty ||
-        countryController.text.trim().isEmpty) {
+  void step5Checker() {
+    if (passwordController.text.trim().isEmpty ||
+        confirmPasswordController.text.trim().isEmpty) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -80,20 +76,42 @@ class _CreateAccount3State extends State<CreateAccount3> {
         ),
       );
       return;
+    }
+    if (passwordController.text != confirmPasswordController.text) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid input'),
+          content: const Text('Check Password'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text(
+                'Exit',
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateAccount4(
-            countryValue: countryController.text,
-            emailValue: emailController.text,
-            usernameValue: userNameController.text,
+          builder: (context) => CreateAccount6(
+            selectUserImageValue: widget.selectUserImageValue,
+            passwordValue: passwordController.text,
+            countryValue: widget.countryValue,
+            emailValue: widget.emailValue,
             firstNameValue: widget.firstNameValue,
             genderValue: widget.genderValue,
             lastNameValue: widget.lastNameValue,
             middleNameValue: widget.middleNameValue,
             phoneNumberValue: widget.phoneNumberValue,
             selectedDateValue: widget.selectedDateValue,
+            usernameValue: widget.usernameValue,
             addUser: widget.addUser,
           ),
         ),
@@ -103,16 +121,10 @@ class _CreateAccount3State extends State<CreateAccount3> {
 
   @override
   Widget build(BuildContext context) {
-    print(['selectDateValue', widget.selectedDateValue]);
-    print(['selectPhoneNum', widget.phoneNumberValue]);
-    print(['selectGender', widget.genderValue]);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0x3fff0c0d11),
       appBar: AppBar(
-        flexibleSpace: Container(
-          padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-          child: Image.asset('assets/images/log_in/CreateAccount3rdPage.png'),
-        ),
         backgroundColor: Color(0x3fff0c0d11),
       ),
       body: SingleChildScrollView(
@@ -129,7 +141,7 @@ class _CreateAccount3State extends State<CreateAccount3> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    'Create A',
+                    'Set Up',
                     style: GoogleFonts.montserrat(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -137,7 +149,7 @@ class _CreateAccount3State extends State<CreateAccount3> {
                     ),
                   ),
                   Text(
-                    ' New Account',
+                    ' Password',
                     style: GoogleFonts.montserrat(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -153,32 +165,80 @@ class _CreateAccount3State extends State<CreateAccount3> {
                 height: 30.0,
               ),
               Text(
-                'Please enter your information below to \ncreate a new account',
+                'Your password must be at least 8\ncharacters long and should not include\ncommon words or personal information.',
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 18.0,
                 ),
               ),
               const SizedBox(
-                height: 50.0,
-              ),
-              Text(
-                'STEP 3',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(
-                height: 30.0,
+                height: 44.0,
               ),
               Form(
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: userNameController,
-                      validator: validateUsername,
+                      controller: passwordController,
+                      obscureText: _obscureText,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: const Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(Icons.lock),
+                        prefixIconColor: Color(0x3fff808080),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                          child: Icon(_obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
+                        suffixIconColor: const Color(0x3fff808080),
+                        labelText: 'Password',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '     Must be at least 8 characters.',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      controller: confirmPasswordController,
+                      obscureText: _obscureText2,
                       style: GoogleFonts.inter(
                         color: Colors.white,
                       ),
@@ -202,117 +262,55 @@ class _CreateAccount3State extends State<CreateAccount3> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: Icon(Icons.person),
-                        prefixIconColor: Color(0x3fff454545),
-                        suffixIcon: userNameController.text.isEmpty
-                            ? Container(width: 0)
-                            : IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () => userNameController.clear(),
-                              ),
-                        labelText: 'Username',
+                        prefixIcon: Icon(Icons.lock),
+                        prefixIconColor: Color(0x3fff808080),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscureText2 = !_obscureText2;
+                            });
+                          },
+                          child: Icon(_obscureText2
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
+                        suffixIconColor: const Color(0x3fff808080),
+                        labelText: 'Confirm Password',
                       ),
                     ),
                     const SizedBox(
-                      height: 21,
+                      height: 20,
                     ),
-                    TextFormField(
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
-                      decoration: InputDecoration(
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x3ffffffff0),
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
+                    Row(
+                      children: [
+                        Text(
+                          '     Must be at least 8 characters.',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 16,
                           ),
                         ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x3ffffffff0),
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
-                        ),
-                        labelStyle: GoogleFonts.montserrat(
-                          color: Color(0x3fff454545),
-                        ),
-                        prefixIcon: Icon(Icons.email),
-                        prefixIconColor: Color(0x3fff454545),
-                        suffixIcon: emailController.text.isEmpty
-                            ? Container(width: 0)
-                            : IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () => emailController.clear(),
-                              ),
-                        labelText: 'Email',
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 21,
-                    ),
-                    TextFormField(
-                      controller: countryController,
-                      validator: validateUsername,
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                      ),
-                      decoration: InputDecoration(
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x3ffffffff0),
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0x3ffffffff0),
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
-                        ),
-                        labelStyle: GoogleFonts.montserrat(
-                          color: Color(0x3fff454545),
-                        ),
-                        prefixIcon: Icon(Icons.location_on),
-                        prefixIconColor: Color(0x3fff454545),
-                        suffixIcon: countryController.text.isEmpty
-                            ? Container(width: 0)
-                            : IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () => countryController.clear(),
-                              ),
-                        labelText: 'Country',
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ),
               const SizedBox(
-                height: 40.0,
+                height: 50,
               ),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size.fromHeight(60),
-                    maximumSize: Size.fromWidth(350),
+                    fixedSize: const Size.fromHeight(60),
+                    maximumSize: const Size.fromWidth(350),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide.none,
                     ),
-                    backgroundColor: Color(0x3ffff0000),
+                    backgroundColor: const Color(0x3ffff0000),
                   ),
                   onPressed: () {
-                    step3Checker();
+                    step5Checker();
                   },
                   child: Text(
                     'Continue',

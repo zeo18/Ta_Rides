@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ta_rides/models/user_info.dart';
-import 'package:ta_rides/screen/auth/finishedCreatingAccount.dart';
+import 'package:ta_rides/screen/auth/createAccount5.dart';
+import 'package:ta_rides/widget/a_reused%20_imagepicker/image_picker.dart';
 
 class CreateAccount4 extends StatefulWidget {
   const CreateAccount4(
@@ -36,38 +40,31 @@ class CreateAccount4 extends StatefulWidget {
 }
 
 class _CreateAccount4State extends State<CreateAccount4> {
-  var checking = true;
-  var checking2 = true;
-
-  void _isChecking() {
-    setState(() {
-      checking = false;
-    });
+  // Uint8List? selectUserImage;
+  File? selectUserImage;
+  @override
+  void dispose() {
+    super.dispose();
   }
 
-  void _isChecking2() {
-    setState(() {
-      checking = true;
-    });
-  }
+  // pickImage(ImageSource source) async {
+  //   final ImagePicker _imagePicker = ImagePicker();
+  //   XFile? _file = await _imagePicker.pickImage(source: source);
+  //   if (_file != null) {
+  //     return await _file.readAsBytes();
+  //   }
+  //   print('No image selected.');
+  // }
 
-  void _isChecking3() {
-    setState(() {
-      checking2 = false;
-    });
-  }
+  // void selectedImage() async {
+  //   Uint8List? img = await pickImage(ImageSource.gallery);
+  //   setState(() {
+  //     selectUserImage = img;
+  //   });
+  // }
 
-  void _isChecking4() {
-    setState(() {
-      checking2 = true;
-    });
-  }
-
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
   void step4Checker() {
-    if (passwordController.text.trim().isEmpty ||
-        confirmPasswordController.text.trim().isEmpty) {
+    if (selectUserImage == null) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -86,301 +83,146 @@ class _CreateAccount4State extends State<CreateAccount4> {
         ),
       );
       return;
-    }
-    if (passwordController.text != confirmPasswordController.text) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Invalid input'),
-          content: const Text('Check Password'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text(
-                'Exit',
-              ),
-            ),
-          ],
-        ),
-      );
-      return;
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FinishedCreatingAccount(
-            passwordValue: passwordController.text,
+          builder: (context) => CreateAccount5(
             countryValue: widget.countryValue,
             emailValue: widget.emailValue,
+            usernameValue: widget.usernameValue,
             firstNameValue: widget.firstNameValue,
             genderValue: widget.genderValue,
             lastNameValue: widget.lastNameValue,
             middleNameValue: widget.middleNameValue,
             phoneNumberValue: widget.phoneNumberValue,
             selectedDateValue: widget.selectedDateValue,
-            usernameValue: widget.usernameValue,
             addUser: widget.addUser,
+            selectUserImageValue: selectUserImage!,
           ),
         ),
       );
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0x3fff0c0d11),
       appBar: AppBar(
+        flexibleSpace: Container(
+          padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+          child: Image.asset('assets/images/log_in/CreateAccount4thPage.png'),
+        ),
         backgroundColor: Color(0x3fff0c0d11),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Set Up',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  ' Password',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0x3ffff0000),
-                  ),
-                ),
-                SizedBox(
-                  height: 30.0,
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30.0,
-            ),
-            Text(
-              'Your password must be at least 8\ncharacters long and should not include\ncommon words or personal information.',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 18.0,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 40,
               ),
-            ),
-            const SizedBox(
-              height: 44.0,
-            ),
-            if (checking == true)
-              TextFormField(
-                controller: passwordController,
-                obscureText: true,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Create A',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    ' New Account',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0x3ffff0000),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30.0,
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 30.0,
+              ),
+              Text(
+                'Please enter your information below to \ncreate a new account',
                 style: GoogleFonts.inter(
-                  color: const Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: const Color(0x3fff454545),
-                  ),
-                  prefixIcon: const Icon(Icons.lock),
-                  prefixIconColor: Color(0x3fff808080),
-                  suffixIcon: IconButton(
-                    onPressed: _isChecking,
-                    icon: const Icon(Icons.remove_red_eye),
-                  ),
-                  suffixIconColor: Color(0x3fff808080),
-                  labelText: 'Password',
-                ),
-              )
-            else
-              TextFormField(
-                controller: passwordController,
-                obscureText: false,
-                style: GoogleFonts.inter(
-                  color: const Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: const Color(0x3fff454545),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                  prefixIconColor: Color(0x3fff808080),
-                  suffixIcon: IconButton(
-                    onPressed: _isChecking2,
-                    icon: Icon(Icons.remove_red_eye),
-                  ),
-                  suffixIconColor: Color(0x3fff808080),
-                  labelText: 'Password',
+                  color: Colors.white,
+                  fontSize: 18.0,
                 ),
               ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              '     Must be at least 8 characters.',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 16,
+              const SizedBox(
+                height: 50.0,
               ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            if (checking2 == true)
-              TextFormField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: Color(0x3fff454545),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                  prefixIconColor: Color(0x3fff808080),
-                  suffixIcon: IconButton(
-                    onPressed: _isChecking3,
-                    icon: Icon(Icons.remove_red_eye),
-                  ),
-                  suffixIconColor: Color(0x3fff808080),
-                  labelText: 'Confirm Password',
-                ),
-              )
-            else
-              TextFormField(
-                controller: confirmPasswordController,
-                obscureText: false,
-                style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3ffffffff0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: Color(0x3fff454545),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                  prefixIconColor: Color(0x3fff808080),
-                  suffixIcon: IconButton(
-                    onPressed: _isChecking4,
-                    icon: Icon(Icons.remove_red_eye),
-                  ),
-                  suffixIconColor: Color(0x3fff808080),
-                  labelText: 'Confirm Password',
+              Text(
+                'STEP 4',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              '     Must be at least 8 characters.',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 16,
+              SizedBox(
+                height: 15,
               ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size.fromHeight(60),
-                  maximumSize: const Size.fromWidth(350),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: BorderSide.none,
+              Row(
+                children: [
+                  Text(
+                    'Upload your best picture.',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 30.0,
+              ),
+              Center(
+                child: PickerImage(onImagePick: (File pickedImage) {
+                  setState(() {
+                    selectUserImage = pickedImage;
+                  });
+                }),
+              ),
+              const SizedBox(
+                height: 40.0,
+              ),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size.fromHeight(60),
+                    maximumSize: const Size.fromWidth(350),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide.none,
+                    ),
+                    backgroundColor: Color(0x3ffFF0000),
                   ),
-                  backgroundColor: const Color(0x3ffff0000),
-                ),
-                onPressed: () {
-                  step4Checker();
-                },
-                child: Text(
-                  'Continue',
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
+                  onPressed: () {
+                    step4Checker();
+                  },
+                  child: Text(
+                    'Continue',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

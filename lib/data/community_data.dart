@@ -25,7 +25,7 @@ final CommunityInformation = [
     description:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     membersIndex: 42,
-    members: [UserInformation[2], UserInformation[3], UserInformation[4]],
+    members: [],
     image: 'assets/images/community_images/cebu.png',
     ifItsImage: Uint8List.fromList([]),
   ),
@@ -37,7 +37,7 @@ final CommunityInformation = [
     description:
         'A united and inclusive cycling team, fueled by a shared love for the sport.',
     membersIndex: 55,
-    members: [UserInformation[0], UserInformation[1]],
+    members: [],
     image: 'assets/images/community_images/lapulapu.png',
     ifItsImage: Uint8List.fromList([]),
   ),
