@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/community/private_condition_screen.dart';
+import 'package:ta_rides/screen/community/view_community_screen.dart';
+import 'package:ta_rides/widget/all_controller/private_community_controller.dart';
+import 'package:ta_rides/widget/all_controller/search_controller.dart';
 
-class RecentSearch extends StatelessWidget {
-  const RecentSearch(
-      {super.key,
-      required this.community,
-      required this.onTapRecentSearch,
-      required this.orderRecentSearch,
-      required this.user,
-      required this.post,
-      required this.onClickPrivateGroup,
-      required this.onPublicGroup,
-      required this.userUse});
-
-  final void Function(Community community) orderRecentSearch;
+class RecentSearch extends StatefulWidget {
+  const RecentSearch({
+    super.key,
+    // required this.community,
+    // required this.onTapRecentSearch,
+    // required this.orderRecentSearch,
+    // required this.user,
+    // required this.post,
+    // required this.onClickPrivateGroup,
+    // required this.onPublicGroup,
+    // required this.userUse,
+    required this.email,
+    required this.community,
+  });
   final Community community;
-  final void Function(Community community, List<Users> user, List<Post> post)
-      onTapRecentSearch;
-  final void Function(Community community) onClickPrivateGroup;
-  final void Function(Community community, Users userUse, List<Users> users,
-      List<Post> posts) onPublicGroup;
-  final List<Users> user;
-  final List<Post> post;
-  final Users userUse;
+  final String email;
 
+  @override
+  State<RecentSearch> createState() => _RecentSearchState();
+}
+
+class _RecentSearchState extends State<RecentSearch> {
+  PrivateCommunityController privateController = PrivateCommunityController();
+
+  @override
+  void initState() {
+    privateController.getPrivate(widget.community.id);
+    super.initState();
+  }
+
+  // final void Function(Community community) orderRecentSearch;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -37,33 +49,29 @@ class RecentSearch extends StatelessWidget {
       elevation: 10,
       child: InkWell(
         onTap: () {
-          onTapRecentSearch(community, user, post);
-          orderRecentSearch(community);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => ViewCommunityScreen(
+                  community: widget.community,
+                  email: widget.email,
+                ),
+              ));
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (community.ifItsImage.isEmpty == false &&
-                community.ifItsImage != null)
-              Container(
-                height: 52,
-                width: 52,
-                padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
-                child: ClipOval(
-                  child: Image(
-                    image: MemoryImage(community.ifItsImage),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              )
-            else
-              Container(
-                padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
-                child: Image(
-                  image: AssetImage(community.image),
-                  height: 38,
+            Container(
+              height: 52,
+              width: 52,
+              padding: const EdgeInsets.fromLTRB(8, 10, 4, 4),
+              child: ClipOval(
+                child: Image.network(
+                  widget.community.coverImage,
+                  fit: BoxFit.cover,
                 ),
               ),
+            ),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -72,7 +80,7 @@ class RecentSearch extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.fromLTRB(0, 10, 2, 3),
                     child: Text(
-                      community.title,
+                      widget.community.title,
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -80,7 +88,7 @@ class RecentSearch extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    community.description,
+                    widget.community.description,
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
                         color: const Color(0x3ff797979),
                         fontWeight: FontWeight.bold,
@@ -94,10 +102,22 @@ class RecentSearch extends StatelessWidget {
                         alignment: Alignment.bottomRight,
                         child: IconButton(
                           onPressed: () {
-                            if (community.private) {
-                              onClickPrivateGroup(community);
-                            } else {
-                              onPublicGroup(community, userUse, user, post);
+                            // if (community.private) {
+                            //   onClickPrivateGroup(community);
+                            // } else {
+                            //   onPublicGroup(community, userUse, user, post);
+                            // }
+                            if (widget.community.private) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => PrivateConditionScreen(
+                                    community: widget.community,
+                                    email: widget.email,
+                                    private: privateController,
+                                  ),
+                                ),
+                              );
                             }
                           },
                           icon: Image.asset(

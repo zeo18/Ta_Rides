@@ -202,12 +202,17 @@ class _CreateAccount3State extends State<CreateAccount3> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff454545),
                         suffixIcon: userNameController.text.isEmpty
                             ? Container(width: 0)
                             : IconButton(
-                                icon: Icon(Icons.close),
+                                icon: Icon(
+                                  Icons.close,
+                                ),
                                 onPressed: () => userNameController.clear(),
                               ),
                         labelText: 'Username',
@@ -243,8 +248,13 @@ class _CreateAccount3State extends State<CreateAccount3> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: Icon(Icons.email),
-                        prefixIconColor: Color(0x3fff454545),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIconColor: const Color(
+                          0x3fff454545,
+                        ),
                         suffixIcon: emailController.text.isEmpty
                             ? Container(width: 0)
                             : IconButton(
@@ -283,7 +293,10 @@ class _CreateAccount3State extends State<CreateAccount3> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: Icon(Icons.location_on),
+                        prefixIcon: const Icon(
+                          Icons.location_on,
+                          color: Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff454545),
                         suffixIcon: countryController.text.isEmpty
                             ? Container(width: 0)

@@ -31,7 +31,6 @@ class Users {
 
   final String id;
   final String userImage;
-
   final String username;
   final String password;
   final String firstName;
@@ -45,31 +44,37 @@ class Users {
   final int following;
   late bool isCommunity;
   final bool isAchievement;
-  late int communityId;
+  late String communityId;
 
   String get formattedDate {
     return formatter.format(birthdate);
+  }
+
+  static Gender setGender(String gender) {
+    return gender == "Gender.male" ? Gender.male : Gender.female;
   }
 
   factory Users.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data() as Map<String, dynamic>;
     return Users(
       id: document.id,
-      userImage: data['username'] ?? '',
-      username: data['username'] ?? '',
-      password: data['password'] ?? '',
-      firstName: data['firstName'] ?? '',
-      lastName: data['lastName'] ?? '',
-      email: data['email'] ?? '',
-      birthdate: data['birtdate'] ?? '',
-      gender: data['gender'] ?? '',
-      location: data['location'] ?? '',
-      phoneNumber: data['phoneNumber'] ?? '',
-      followers: data['follwers'] ?? '',
-      following: data['following'] ?? '',
-      isCommunity: data['isCommunity'] ?? '',
-      communityId: data['communityId'] ?? '',
-      isAchievement: data['isAchievement'] ?? '',
+      userImage: data['userImage'] as String? ?? '',
+      username: data['username'] as String? ?? '',
+      password: data['password'] as String? ?? '',
+      firstName: data['firstName'] as String? ?? '',
+      lastName: data['lastName'] as String? ?? '',
+      email: data['email'] as String? ?? '',
+      birthdate: data['birthdate'] != null
+          ? (data['birthdate'] as Timestamp).toDate()
+          : DateTime.now(),
+      gender: setGender(data['gender'] as String? ?? ''),
+      location: data['location'] as String? ?? '',
+      phoneNumber: data['phoneNumber'] as String? ?? '',
+      followers: data['followers'] as int? ?? 0,
+      following: data['following'] as int? ?? 0,
+      isCommunity: data['isCommunity'] as bool? ?? false,
+      communityId: data['communityId'] as String? ?? '0',
+      isAchievement: data['isAchievement'] as bool? ?? false,
     );
   }
 }
@@ -92,7 +97,19 @@ class Achievements {
   final bool calvesGoBrrr;
   final bool roadMaster;
 
-  static Achievements? defaultAchievement() {}
+  factory Achievements.fromDocument(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data() as Map<String, dynamic>;
+    return Achievements(
+      userName: data['userName'] as String? ?? '',
+      legendary: data['legendary'] as bool? ?? false,
+      newbie: data['newbie'] as bool? ?? false,
+      noSweat: data['noSweat'] as bool? ?? false,
+      challenger: data['challenger'] as bool? ?? false,
+      calvesGoBrrr: data['calvesGoBrrr'] as bool? ?? false,
+      roadMaster: data['roadMaster'] as bool? ?? false,
+    );
+  }
 }
 
 class Statistic {

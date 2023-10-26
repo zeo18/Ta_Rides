@@ -37,9 +37,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   google_fonts: ^4.0.4
-
+  get: ^4.3.8
   image_picker: ^1.0.2
- 
+  http: ^0.13.4
   table_calendar: ^3.0.9
   fl_country_code_picker: ^0.0.4
   country_code_picker: ^3.0.0
@@ -47,6 +47,11 @@ dependencies:
   cloud_firestore: ^4.9.1
   firebase_auth: ^4.9.0
   firebase_storage: ^11.2.6
+  google_maps_flutter: ^2.3.0
+  flutter_polyline_points: ^1.0.0
+  geolocator: ^7.6.2
+  location: ^5.0.3
+  smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -137,6 +142,11 @@ flutter:
     - assets/images/log_in/CreateAccount3rdPage.png
     - assets/images/log_in/CreateAccount4thPage.png
     - assets/images/log_in/imageEmpty.jpg
+    - assets/images/pedal/icon.png
+    - assets/images/pedal/icon1.png
+    - assets/images/pedal/icon2.png
+    - assets/images/goal30/goal30BG.png
+    
     
   
 

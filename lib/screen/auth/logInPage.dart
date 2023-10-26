@@ -26,7 +26,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
-  var username = '';
+  var _email = '';
   var password = '';
 
   void submit() async {
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (isValid) {
       _formKey.currentState!.save();
-      print('username: $username');
+      print('email: $_email');
       print('password: $password');
 
       //   final user = FirebaseAuth.instance.currentUser!;
@@ -50,15 +50,16 @@ class _LoginPageState extends State<LoginPage> {
       //         userData);
       // Convert DocumentSnapshot to Users object
       FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: username, password: password)
+          .signInWithEmailAndPassword(email: _email, password: password)
           .then((value) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PedalScreen()
-              // // ProfileScreen(
-              // //   user: userObject, // Pass the Users object
-              // ),
-              ),
+          MaterialPageRoute(
+              builder: (context) => TabsScreen(
+                    email: _email,
+                    communityTabs: 0,
+                    tabsScreen: 0,
+                  )),
         );
       }).onError((error, stackTrace) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                         onSaved: (value) {
-                          username = value!;
+                          _email = value!;
                         },
                         style: GoogleFonts.inter(
                           color: Colors.white,
@@ -158,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                             Icons.person,
                             color: Color(0x3fff454545),
                           ),
-                          labelText: 'Username',
+                          labelText: 'Email',
                         ),
                       ),
                       const SizedBox(

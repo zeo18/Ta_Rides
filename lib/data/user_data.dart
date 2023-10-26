@@ -145,33 +145,33 @@ final UserInformation = [
 ];
 
 final achievementsInformation = [
-  Achievements(
-    userName: 'charles2',
-    legendary: true,
-    newbie: true,
-    noSweat: false,
-    challenger: false,
-    calvesGoBrrr: true,
-    roadMaster: true,
-  ),
-  Achievements(
-    userName: 'jonah101',
-    legendary: false,
-    newbie: true,
-    noSweat: true,
-    challenger: false,
-    calvesGoBrrr: true,
-    roadMaster: false,
-  ),
-  Achievements(
-    userName: 'christian3',
-    legendary: true,
-    newbie: true,
-    noSweat: true,
-    challenger: true,
-    calvesGoBrrr: true,
-    roadMaster: true,
-  ),
+  // Achievements(
+  //   userName: 'charles2',
+  //   legendary: true,
+  //   newbie: true,
+  //   noSweat: false,
+  //   challenger: false,
+  //   calvesGoBrrr: true,
+  //   roadMaster: true,
+  // ),
+  // Achievements(
+  //   userName: 'jonah101',
+  //   legendary: false,
+  //   newbie: true,
+  //   noSweat: true,
+  //   challenger: false,
+  //   calvesGoBrrr: true,
+  //   roadMaster: false,
+  // ),
+  // Achievements(
+  //   userName: 'christian3',
+  //   legendary: true,
+  //   newbie: true,
+  //   noSweat: true,
+  //   challenger: true,
+  //   calvesGoBrrr: true,
+  //   roadMaster: true,
+  // ),
 ];
 
 // final statisticInformation = [

@@ -231,7 +231,10 @@ class _CreateAccount2State extends State<CreateAccount2> {
                         labelStyle: GoogleFonts.montserrat(
                           color: const Color(0x3fff454545),
                         ),
-                        prefixIcon: const Icon(Icons.calendar_today),
+                        prefixIcon: const Icon(
+                          Icons.calendar_today,
+                          color: const Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff454545),
                         suffixIcon: dateController.text.isEmpty
                             ? Container(width: 0)
@@ -273,9 +276,9 @@ class _CreateAccount2State extends State<CreateAccount2> {
                           setState(() {
                             selectedGender = value;
                             if (selectedGender == Gender.male) {
-                              maleIcon = Icons.male;
+                              maleIcon;
                             } else if (selectedGender == Gender.female) {
-                              femaleIcon = Icons.female;
+                              femaleIcon;
                             }
                           });
                         },
@@ -301,9 +304,15 @@ class _CreateAccount2State extends State<CreateAccount2> {
                             color: Color(0x3fff454545),
                           ),
                           prefixIcon: selectedGender == Gender.male
-                              ? Icon(maleIcon)
+                              ? Icon(
+                                  maleIcon,
+                                  color: Color(0x3fff454545),
+                                )
                               : selectedGender == Gender.female
-                                  ? Icon(femaleIcon)
+                                  ? Icon(
+                                      femaleIcon,
+                                      color: Color(0x3fff454545),
+                                    )
                                   : null,
                           prefixIconColor: Color(0x3fff454545),
                           labelText: 'Gender',
@@ -345,12 +354,10 @@ class _CreateAccount2State extends State<CreateAccount2> {
                             Radius.circular(15.0),
                           ),
                         ),
-                        // prefixIcon: countryCode != null
-                        //     ? Container(
-                        //         padding: EdgeInsets.all(10),
-                        //         child: countryCode!.flagImage,
-                        //       )
-                        //     : Icon(Icons.phone),
+                        prefixIcon: const Icon(
+                          Icons.phone,
+                          color: const Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff454545),
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),

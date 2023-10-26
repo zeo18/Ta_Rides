@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 
 class ProgressTabs extends StatelessWidget {
   const ProgressTabs({
@@ -8,7 +9,7 @@ class ProgressTabs extends StatelessWidget {
     required this.user,
   });
 
-  final Users user;
+  final UserController user;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class ProgressTabs extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          user.username,
+                          user.user.username,
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: Colors.white,
@@ -103,7 +104,7 @@ class ProgressTabs extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          user.birthdate.toString(),
+                          user.user.birthdate.toString(),
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: Colors.white,

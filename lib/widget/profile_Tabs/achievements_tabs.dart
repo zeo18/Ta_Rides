@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 
-class AchievementsTabs extends StatelessWidget {
+class AchievementsTabs extends StatefulWidget {
   const AchievementsTabs({
     super.key,
     required this.user,
-    required this.achievements,
   });
 
-  final Users user;
-  final Achievements? achievements;
+  final UserController user;
+
+  @override
+  State<AchievementsTabs> createState() => _AchievementsTabsState();
+}
+
+class _AchievementsTabsState extends State<AchievementsTabs> {
+  Achievements achievement = achievementsInformation[0];
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +40,7 @@ class AchievementsTabs extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          if (user.isAchievement)
+          if (widget.user.user.isAchievement)
             Card(
               color: const Color(0xff282828),
               margin: const EdgeInsets.all(10),
@@ -46,7 +53,7 @@ class AchievementsTabs extends StatelessWidget {
                 margin: const EdgeInsets.fromLTRB(30, 10, 20, 10),
                 child: Column(
                   children: [
-                    if (achievements!.legendary)
+                    if (achievement.legendary)
                       Row(
                         children: [
                           Image.asset(
@@ -67,11 +74,11 @@ class AchievementsTabs extends StatelessWidget {
                           )
                         ],
                       ),
-                    if (achievements!.legendary)
+                    if (achievement.legendary)
                       const SizedBox(
                         height: 10,
                       ),
-                    if (achievements!.challenger)
+                    if (achievement.challenger)
                       Row(
                         children: [
                           Image.asset(
@@ -92,11 +99,11 @@ class AchievementsTabs extends StatelessWidget {
                           )
                         ],
                       ),
-                    if (achievements!.challenger)
+                    if (achievement.challenger)
                       const SizedBox(
                         height: 10,
                       ),
-                    if (achievements!.roadMaster)
+                    if (achievement.roadMaster)
                       Row(
                         children: [
                           Image.asset(
@@ -117,11 +124,11 @@ class AchievementsTabs extends StatelessWidget {
                           )
                         ],
                       ),
-                    if (achievements!.roadMaster)
+                    if (achievement.roadMaster)
                       const SizedBox(
                         height: 10,
                       ),
-                    if (achievements!.noSweat)
+                    if (achievement.noSweat)
                       Row(
                         children: [
                           Image.asset(
@@ -142,11 +149,11 @@ class AchievementsTabs extends StatelessWidget {
                           )
                         ],
                       ),
-                    if (achievements!.noSweat)
+                    if (achievement.noSweat)
                       const SizedBox(
                         height: 10,
                       ),
-                    if (achievements!.calvesGoBrrr)
+                    if (achievement.calvesGoBrrr)
                       Row(
                         children: [
                           Image.asset(
@@ -167,11 +174,11 @@ class AchievementsTabs extends StatelessWidget {
                           )
                         ],
                       ),
-                    if (achievements!.calvesGoBrrr)
+                    if (achievement.calvesGoBrrr)
                       const SizedBox(
                         height: 10,
                       ),
-                    if (achievements!.newbie)
+                    if (achievement.newbie)
                       Row(
                         children: [
                           Image.asset(

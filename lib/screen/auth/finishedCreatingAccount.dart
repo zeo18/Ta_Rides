@@ -49,7 +49,7 @@ class FinishedCreatingAccount extends StatefulWidget {
 }
 
 class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
-  int userID = UserInformation[UserInformation.length - 1].id + 1;
+  // int userID = UserInformation[UserInformation.length - 1].id + 1;
 
   void addUser() {
     // widget.addUser(
@@ -118,7 +118,7 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
         'followers': 0,
         'following': 0,
         'isCommunity': false,
-        'communityId': 0,
+        'communityId': '',
         'isAchievement': false,
         'userImage': imageUrl, // Store the image URL, not the File object
       }).then((value) => {
@@ -150,7 +150,7 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
     print(['location Value', widget.countryValue]);
     print(['usernameValue', widget.usernameValue]);
     print(['password', widget.passwordValue]);
-    print(['userID', userID]);
+    // print(['userID', userID]);
     print(['picture', widget.selectUserImageValue]);
     return Scaffold(
       body: Container(

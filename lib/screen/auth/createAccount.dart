@@ -173,7 +173,8 @@ class _CreateAccountState extends State<CreateAccount> {
                         labelStyle: GoogleFonts.montserrat(
                           color: const Color(0x3fff454545),
                         ),
-                        prefixIcon: const Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person,
+                            color: const Color(0x3fff454545)),
                         prefixIconColor: const Color(0x3fff454545),
                         suffixIcon: lastNameController.text.isEmpty
                             ? Container(width: 0)
@@ -214,7 +215,10 @@ class _CreateAccountState extends State<CreateAccount> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: const Icon(Icons.person),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: const Color(0x3fff454545),
+                        ),
                         prefixIconColor: const Color(0x3fff454545),
                         suffixIcon: firstNameController.text.isEmpty
                             ? Container(width: 0)
@@ -255,7 +259,10 @@ class _CreateAccountState extends State<CreateAccount> {
                         labelStyle: GoogleFonts.montserrat(
                           color: const Color(0x3fff454545),
                         ),
-                        prefixIcon: const Icon(Icons.person),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: const Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff454545),
                         suffixIcon: middleNameController.text.isEmpty
                             ? Container(width: 0)

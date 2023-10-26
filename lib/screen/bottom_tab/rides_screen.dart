@@ -8,6 +8,7 @@ class RidesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0x3ff0C0D11),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Rides',
           style: Theme.of(context).textTheme.headline6!.copyWith(

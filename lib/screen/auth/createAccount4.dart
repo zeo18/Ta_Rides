@@ -42,6 +42,7 @@ class CreateAccount4 extends StatefulWidget {
 class _CreateAccount4State extends State<CreateAccount4> {
   // Uint8List? selectUserImage;
   File? selectUserImage;
+
   @override
   void dispose() {
     super.dispose();
@@ -170,7 +171,7 @@ class _CreateAccount4State extends State<CreateAccount4> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Row(

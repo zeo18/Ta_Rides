@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/createAccount6.dart';
+import 'package:ta_rides/screen/auth/finishedCreatingAccount.dart';
 
 class CreateAccount5 extends StatefulWidget {
   const CreateAccount5(
@@ -100,7 +101,7 @@ class _CreateAccount5State extends State<CreateAccount5> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateAccount6(
+          builder: (context) => FinishedCreatingAccount(
             selectUserImageValue: widget.selectUserImageValue,
             passwordValue: passwordController.text,
             countryValue: widget.countryValue,
@@ -203,7 +204,10 @@ class _CreateAccount5State extends State<CreateAccount5> {
                         labelStyle: GoogleFonts.montserrat(
                           color: const Color(0x3fff454545),
                         ),
-                        prefixIcon: const Icon(Icons.lock),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff808080),
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -262,7 +266,10 @@ class _CreateAccount5State extends State<CreateAccount5> {
                         labelStyle: GoogleFonts.montserrat(
                           color: Color(0x3fff454545),
                         ),
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Color(0x3fff454545),
+                        ),
                         prefixIconColor: Color(0x3fff808080),
                         suffixIcon: GestureDetector(
                           onTap: () {
