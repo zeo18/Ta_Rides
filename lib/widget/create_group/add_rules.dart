@@ -3,21 +3,30 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/create_group/create_group_screen.dart';
 
 class AddRules extends StatefulWidget {
   const AddRules({
     super.key,
-    required this.onAddCommunity,
-    required this.user,
-    required this.onAddPost,
-    required this.onAddPrivateRules,
-  });
 
-  final Function(IfPrivate private) onAddPrivateRules;
-  final Function(Community community) onAddCommunity;
-  final Function(Post post) onAddPost;
-  final Users user;
+    // required this.onAddCommunity,
+    // required this.user,
+    // required this.onAddPost,
+    // required this.onAddPrivateRules,
+    required this.onAddPrivateCommunity,
+    required this.email,
+    required this.user,
+    required this.idCommunity,
+  });
+  final String idCommunity;
+  final String email;
+  final UserController user;
+  final Function(IfPrivate private) onAddPrivateCommunity;
+  // final Function(IfPrivate private) onAddPrivateRules;
+  // final Function(Community community) onAddCommunity;
+  // final Function(Post post) onAddPost;
+  // final Users user;
 
   @override
   State<AddRules> createState() => _AddRulesState();
@@ -27,17 +36,17 @@ class _AddRulesState extends State<AddRules> {
   int onSelectedPrivacy = 1;
   final rulesController = TextEditingController();
   final addDetailsController = TextEditingController();
-  int idCommunity =
-      CommunityInformation[CommunityInformation.length - 1].id + 1;
 
   void addRulesCommunity() {
     setState(() {
-      widget.onAddPrivateRules(
+      widget.onAddPrivateCommunity(
         IfPrivate(
-          privateCommunityId: idCommunity,
+          privateCommunityId: widget.idCommunity,
           choiceQuestion: '',
           choices: [],
+          choicesAnswer: '',
           cheboxesQuestion: '',
+          cheboxesAnswer: [],
           cheboxes: [],
           writtenQuestion: '',
           writtenAnswer: '',
@@ -51,10 +60,11 @@ class _AddRulesState extends State<AddRules> {
       context,
       MaterialPageRoute(
         builder: (ctx) => CreateGroup(
-            onSelectedPrivacy: onSelectedPrivacy,
-            user: widget.user,
-            onAddCommunity: widget.onAddCommunity,
-            onAddPost: widget.onAddPost),
+          email: widget.email,
+          idCommunity: widget.idCommunity,
+          onSelectedPrivacy: 1,
+          user: widget.user,
+        ),
       ),
     );
   }
@@ -116,6 +126,8 @@ class _AddRulesState extends State<AddRules> {
                 controller: addDetailsController,
                 textInputAction: TextInputAction.done,
                 cursorColor: Colors.white,
+                minLines: 5,
+                maxLines: 10,
                 decoration: InputDecoration(
                   hintText: 'Add Details',
                   hintStyle: GoogleFonts.inter(

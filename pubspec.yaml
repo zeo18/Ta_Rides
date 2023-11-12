@@ -37,14 +37,24 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   google_fonts: ^4.0.4
-
+  get: ^4.3.8
   image_picker: ^1.0.2
- 
+  http: ^0.13.4
   table_calendar: ^3.0.9
   fl_country_code_picker: ^0.0.4
   country_code_picker: ^3.0.0
   firebase_core: ^2.15.1
   cloud_firestore: ^4.9.1
+  firebase_auth: ^4.9.0
+  firebase_storage: ^11.2.6
+  google_maps_flutter: ^2.3.0
+  flutter_polyline_points: ^1.0.0
+  geolocator: ^7.6.2
+  location: ^5.0.3
+  smooth_page_indicator: ^1.1.0
+  shared_preferences: ^2.0.8
+  intl: ^0.18.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +115,7 @@ flutter:
     - assets/images/community_images/first.png
     - assets/images/community_images/second.png
     - assets/images/community_images/third.png
+    - assets/images/community_images/leaveGroup.png
     - assets/images/community_images/uploadImage.png
     - assets/images/user_images/charles.jpg
     - assets/images/user_images/christian.jpg
@@ -119,7 +130,9 @@ flutter:
     - assets/images/user_images/Achievements/noSweat.png
     - assets/images/user_images/Achievements/roadMaster.png
     - assets/images/community_images/post_community/heart.png
+    - assets/images/community_images/post_community/deletePost.png
     - assets/images/community_images/post_community/hearted.png
+    - assets/images/community_images/post_community/reportPost.png
     - assets/images/community_images/post_community/comment.png
     - assets/images/community_images/post_community/icon.png
     - assets/images/community_images/post_community/iconDot.png
@@ -130,6 +143,16 @@ flutter:
     - assets/images/log_in/bike.png
     - assets/images/log_in/circle.png
     - assets/images/log_in/success.png
+    - assets/images/log_in/CreateAccount1stPage.png
+    - assets/images/log_in/CreateAccount2ndPage.png
+    - assets/images/log_in/CreateAccount3rdPage.png
+    - assets/images/log_in/CreateAccount4thPage.png
+    - assets/images/log_in/imageEmpty.jpg
+    - assets/images/pedal/icon.png
+    - assets/images/pedal/icon1.png
+    - assets/images/pedal/icon2.png
+    - assets/images/goal30/goal30BG.png
+    
     
   
 

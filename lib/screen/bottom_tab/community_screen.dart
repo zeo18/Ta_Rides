@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
+import 'package:ta_rides/widget/all_controller/community_controller.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/tab_widget/events.dart';
 import 'package:ta_rides/widget/tab_widget/for_you.dart';
 import 'package:ta_rides/widget/tab_widget/search.dart';
@@ -8,20 +11,24 @@ import 'package:ta_rides/widget/tab_widget/search.dart';
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({
     super.key,
-    required this.selectTab,
-    required this.userUse,
-    required this.communityPosted,
-    required this.userPosted,
-    required this.community,
-    required this.achievements,
-  });
+    required this.email,
+    required this.communityTab,
 
-  final int selectTab;
-  final Users userUse;
-  final List<Users> userPosted;
-  final List<Post> communityPosted;
-  final Community? community;
-  final Achievements? achievements;
+    // required this.selectTab,
+    // required this.userUse,
+    // required this.communityPosted,
+    // required this.userPosted,
+    // required this.community,
+    // required this.achievements,
+  });
+  final String email;
+  final int communityTab;
+  // final int selectTab;
+  // final Users userUse;
+  // final List<Users> userPosted;
+  // final List<Post> communityPosted;
+  // final Community? community;
+  // final Achievements? achievements;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -29,25 +36,37 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> {
   int selectedTab = 0;
+  // UserController userController = UserController();
+  CommunityController communityController = CommunityController();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   selectedTab = widget.selectTab;
+  // }
+  // @override
+  // void initState() {
+  //   userController.setEmail(widget.email);
+  //   userController.getUser(widget.email);
+  //   communityController.setEmail(widget.email);
+  //   communityController.getCommunityAndUser(widget.email);
+  // }
 
   @override
   void initState() {
+    communityController.setEmail(widget.email);
+    communityController.getCommunityAndUser(widget.email);
     super.initState();
-    selectedTab = widget.selectTab;
   }
 
   @override
   Widget build(BuildContext context) {
-    print(['communityID', widget.userUse.communityId]);
-    print(['isCommunity', widget.userUse.isCommunity]);
-    print(['List<Users>', widget.userPosted.length]);
-    print(['List<Post>', widget.communityPosted.length]);
-    if (widget.community != null) {
-      print(['community', widget.community!.title]);
-    }
+    // if (widget.community != null) {
+    //   print(['community', widget.community!.title]);
+    // }
     return DefaultTabController(
       length: 3,
-      initialIndex: selectedTab,
+      initialIndex: widget.communityTab,
       child: Scaffold(
         backgroundColor: const Color(0x3ff0c0d11),
         appBar: AppBar(
@@ -101,17 +120,131 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  SearchTab(
-                    userUse: widget.userUse,
-                    achievements: widget.achievements,
+                  SearchTabs(
+                    email: widget.email,
                   ),
-                  ForYouTabs(
-                    communityPosted: widget.communityPosted,
-                    userPosted: widget.userPosted,
-                    userUse: widget.userUse,
-                    community: widget.community,
+                  AnimatedBuilder(
+                    animation: communityController,
+                    builder: (context, snapshot) {
+                      if (communityController.isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (communityController.community == null) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'User does not have community yet.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const CircularProgressIndicator(),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff282828),
+                                  minimumSize: const Size(
+                                    45,
+                                    45,
+                                  ),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => TabsScreen(
+                                        email: widget.email,
+                                        tabsScreen: 0,
+                                        communityTabs: 0,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Search for community',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 14,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      // ignore: unnecessary_null_comparison
+                      // if (communityController.community == null) {
+                      //   return const Center(
+                      //     child: Text('No community found.'),
+                      //   );
+                      // }
+                      // if(communityController.community.isEmpty){
+                      //   return const Center(
+                      //     child: Text('No Community'),
+                      //   );
+                      // }
+                      return ForYouTabs(
+                        email: widget.email,
+                        community: communityController.community,
+                        // user: userController,
+                        // community: communityController,
+                        // communityPosted: widget.communityPosted,
+                        // userPosted: widget.userPosted,
+                        // userUse: widget.userUse,
+                        // community: widget.community,
+                      );
+                    },
                   ),
-                  const EventsTab(),
+                  AnimatedBuilder(
+                      animation: communityController,
+                      builder: (context, snapshot) {
+                        if (communityController.isLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (communityController.community == null) {
+                          return Center(
+                            child: Text(
+                              'User does not have community yet.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          );
+                        }
+                        return EventsTab(
+                          community: communityController.community,
+                          email: widget.email,
+                        );
+                      }),
                 ],
               ),
             ),

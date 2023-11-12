@@ -20,6 +20,14 @@ class _CreateAccountState extends State<CreateAccount> {
 
   final middleNameController = TextEditingController();
 
+  @override
+  void dispose() {
+    lastNameController.dispose();
+    firstNameController.dispose();
+    middleNameController.dispose();
+    super.dispose();
+  }
+
   void step1Checker() {
     if (lastNameController.text.trim().isEmpty ||
         firstNameController.text.trim().isEmpty ||
@@ -73,7 +81,7 @@ class _CreateAccountState extends State<CreateAccount> {
       appBar: AppBar(
         flexibleSpace: Container(
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-          child: Image.asset('assets/images/log_in/1stPage.png'),
+          child: Image.asset('assets/images/log_in/CreateAccount1stPage.png'),
         ),
         backgroundColor: const Color(0x3fff0C0D11),
       ),
@@ -135,124 +143,137 @@ class _CreateAccountState extends State<CreateAccount> {
               const SizedBox(
                 height: 30.0,
               ),
-              TextFormField(
-                controller: lastNameController,
-                keyboardType: TextInputType.name,
-                maxLines: 1,
-                style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: const Color(0x3fff454545),
-                  ),
-                  prefixIcon: const Icon(Icons.person),
-                  prefixIconColor: const Color(0x3fff454545),
-                  suffixIcon: lastNameController.text.isEmpty
-                      ? Container(width: 0)
-                      : IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => lastNameController.clear(),
+              Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: lastNameController,
+                      keyboardType: TextInputType.name,
+                      maxLines: 1,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
                         ),
-                  labelText: 'Last Name',
-                ),
-              ),
-              const SizedBox(
-                height: 21,
-              ),
-              TextFormField(
-                controller: firstNameController,
-                keyboardType: TextInputType.name,
-                maxLines: 1,
-                style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: Color(0x3fff454545),
-                  ),
-                  prefixIcon: const Icon(Icons.person),
-                  prefixIconColor: const Color(0x3fff454545),
-                  suffixIcon: firstNameController.text.isEmpty
-                      ? Container(width: 0)
-                      : IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => firstNameController.clear(),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
                         ),
-                  labelText: 'First Name',
-                ),
-              ),
-              const SizedBox(
-                height: 21,
-              ),
-              TextFormField(
-                controller: middleNameController,
-                keyboardType: TextInputType.name,
-                maxLines: 1,
-                style: GoogleFonts.inter(
-                  color: Color(0x3fff454545),
-                ),
-                decoration: InputDecoration(
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x3fffFFFFF0),
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15.0),
-                    ),
-                  ),
-                  labelStyle: GoogleFonts.montserrat(
-                    color: const Color(0x3fff454545),
-                  ),
-                  prefixIcon: const Icon(Icons.person),
-                  prefixIconColor: Color(0x3fff454545),
-                  suffixIcon: middleNameController.text.isEmpty
-                      ? Container(width: 0)
-                      : IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => middleNameController.clear(),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: const Color(0x3fff454545),
                         ),
-                  labelText: 'Middle Name',
+                        prefixIcon: const Icon(Icons.person,
+                            color: const Color(0x3fff454545)),
+                        prefixIconColor: const Color(0x3fff454545),
+                        suffixIcon: lastNameController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => lastNameController.clear(),
+                              ),
+                        labelText: 'Last Name',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 21,
+                    ),
+                    TextFormField(
+                      controller: firstNameController,
+                      keyboardType: TextInputType.name,
+                      maxLines: 1,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: const Color(0x3fff454545),
+                        ),
+                        prefixIconColor: const Color(0x3fff454545),
+                        suffixIcon: firstNameController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => firstNameController.clear(),
+                              ),
+                        labelText: 'First Name',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 21,
+                    ),
+                    TextFormField(
+                      controller: middleNameController,
+                      keyboardType: TextInputType.name,
+                      maxLines: 1,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3fffFFFFF0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: const Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: const Color(0x3fff454545),
+                        ),
+                        prefixIconColor: Color(0x3fff454545),
+                        suffixIcon: middleNameController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => middleNameController.clear(),
+                              ),
+                        labelText: 'Middle Name',
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(

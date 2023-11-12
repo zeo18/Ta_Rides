@@ -31,7 +31,15 @@ class CreateAccount3 extends StatefulWidget {
 class _CreateAccount3State extends State<CreateAccount3> {
   final userNameController = TextEditingController();
   final emailController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  final countryController = TextEditingController();
+
+  @override
+  void dispose() {
+    userNameController.dispose();
+    emailController.dispose();
+    countryController.dispose();
+    super.dispose();
+  }
 
   String? validateUsername(String? value) {
     if (value!.isEmpty) {
@@ -49,8 +57,6 @@ class _CreateAccount3State extends State<CreateAccount3> {
   }
 
   void onListen() => setState(() {});
-
-  final countryController = TextEditingController();
 
   void step3Checker() {
     if (userNameController.text.trim().isEmpty ||
@@ -101,196 +107,213 @@ class _CreateAccount3State extends State<CreateAccount3> {
     print(['selectPhoneNum', widget.phoneNumberValue]);
     print(['selectGender', widget.genderValue]);
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0x3fff0c0d11),
       appBar: AppBar(
         flexibleSpace: Container(
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-          child: Image.asset('assets/images/log_in/3rdPage.png'),
+          child: Image.asset('assets/images/log_in/CreateAccount3rdPage.png'),
         ),
         backgroundColor: Color(0x3fff0c0d11),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Create A',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  ' New Account',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0x3ffff0000),
-                  ),
-                ),
-                SizedBox(
-                  height: 30.0,
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30.0,
-            ),
-            Text(
-              'Please enter your information below to \ncreate a new account',
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 18.0,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 40,
               ),
-            ),
-            const SizedBox(
-              height: 50.0,
-            ),
-            Text(
-              'STEP 3',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Create A',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    ' New Account',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0x3ffff0000),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30.0,
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 30.0,
-            ),
-            TextFormField(
-              controller: userNameController,
-              validator: validateUsername,
-              style: GoogleFonts.inter(
-                color: Color(0x3fff454545),
+              const SizedBox(
+                height: 30.0,
               ),
-              decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
+              Text(
+                'Please enter your information below to \ncreate a new account',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 18.0,
                 ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
+              ),
+              const SizedBox(
+                height: 50.0,
+              ),
+              Text(
+                'STEP 3',
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                labelStyle: GoogleFonts.montserrat(
-                  color: Color(0x3fff454545),
-                ),
-                prefixIcon: Icon(Icons.person),
-                prefixIconColor: Color(0x3fff454545),
-                suffixIcon: userNameController.text.isEmpty
-                    ? Container(width: 0)
-                    : IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => userNameController.clear(),
+              ),
+              const SizedBox(
+                height: 30.0,
+              ),
+              Form(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: userNameController,
+                      validator: validateUsername,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
                       ),
-                labelText: 'Username',
-              ),
-            ),
-            const SizedBox(
-              height: 21,
-            ),
-            TextFormField(
-              style: const TextStyle(
-                color: Color(0x3fff454545),
-              ),
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const [AutofillHints.email],
-              decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                labelStyle: GoogleFonts.montserrat(
-                  color: Color(0x3fff454545),
-                ),
-                prefixIcon: Icon(Icons.email),
-                prefixIconColor: Color(0x3fff454545),
-                suffixIcon: emailController.text.isEmpty
-                    ? Container(width: 0)
-                    : IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => emailController.clear(),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.person,
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIconColor: Color(0x3fff454545),
+                        suffixIcon: userNameController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                ),
+                                onPressed: () => userNameController.clear(),
+                              ),
+                        labelText: 'Username',
                       ),
-                labelText: 'Email',
-              ),
-            ),
-            const SizedBox(
-              height: 21,
-            ),
-            TextFormField(
-              controller: countryController,
-              validator: validateUsername,
-              style: GoogleFonts.inter(
-                color: const Color(0x3fff454545),
-              ),
-              decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0x3ffffffff0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(15.0),
-                  ),
-                ),
-                labelStyle: GoogleFonts.montserrat(
-                  color: Color(0x3fff454545),
-                ),
-                prefixIcon: Icon(Icons.location_on),
-                prefixIconColor: Color(0x3fff454545),
-                suffixIcon: countryController.text.isEmpty
-                    ? Container(width: 0)
-                    : IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => countryController.clear(),
+                    ),
+                    const SizedBox(
+                      height: 21,
+                    ),
+                    TextFormField(
+                      style: const TextStyle(
+                        color: Colors.white,
                       ),
-                labelText: 'Country',
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIconColor: const Color(
+                          0x3fff454545,
+                        ),
+                        suffixIcon: emailController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: Icon(Icons.close),
+                                onPressed: () => emailController.clear(),
+                              ),
+                        labelText: 'Email',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 21,
+                    ),
+                    TextFormField(
+                      controller: countryController,
+                      validator: validateUsername,
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0x3ffffffff0),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        labelStyle: GoogleFonts.montserrat(
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.location_on,
+                          color: Color(0x3fff454545),
+                        ),
+                        prefixIconColor: Color(0x3fff454545),
+                        suffixIcon: countryController.text.isEmpty
+                            ? Container(width: 0)
+                            : IconButton(
+                                icon: Icon(Icons.close),
+                                onPressed: () => countryController.clear(),
+                              ),
+                        labelText: 'Country',
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 40.0,
-            ),
-            Center(
-              child: Form(
-                key: formKey,
+              const SizedBox(
+                height: 40.0,
+              ),
+              Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size.fromHeight(60),
@@ -314,8 +337,8 @@ class _CreateAccount3State extends State<CreateAccount3> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

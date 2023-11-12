@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,18 +8,25 @@ import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/create_group/add_question.dart';
 import 'package:ta_rides/widget/create_group/add_rules.dart';
 import 'package:ta_rides/widget/create_group/create_group_1.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 
 class CreateGroup extends StatefulWidget {
-  const CreateGroup(
-      {super.key,
-      required this.user,
-      required this.onAddCommunity,
-      required this.onAddPost,
-      required this.onSelectedPrivacy});
+  const CreateGroup({
+    super.key,
+    required this.user,
+    required this.email,
+    required this.onSelectedPrivacy,
+    required this.idCommunity,
+    // required this.onAddCommunity,
+    // required this.onAddPost,
+    // required this.onSelectedPrivacy,
+  });
 
-  final Function(Community community) onAddCommunity;
-  final Function(Post post) onAddPost;
-  final Users user;
+  // final Function(Community community) onAddCommunity;
+  // final Function(Post post) onAddPost;
+  final String email;
+  final UserController user;
+  final String idCommunity;
   final int onSelectedPrivacy;
 
   @override
@@ -28,9 +36,9 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
   final _titleCoummunityController = TextEditingController();
   int onSelectPrivacy = 0;
+
   late bool selectedPrivacy;
-  int idCommunity =
-      CommunityInformation[CommunityInformation.length - 1].id + 1;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -66,30 +74,39 @@ class _CreateGroupState extends State<CreateGroup> {
   }
 
   void onSecondPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => CreateGroup1(
-          user: widget.user,
-          onAddCommunity: widget.onAddCommunity,
-          isPrivate: selectedPrivacy,
-          titleText: _titleCoummunityController.text,
-          onAddPost: widget.onAddPost,
+    final isValid = _formKey.currentState!.validate();
+
+    if (!isValid) {
+      return;
+    }
+    if (isValid) {
+      _formKey.currentState!.save();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => CreateGroup1(
+            user: widget.user,
+            isPrivate: selectedPrivacy,
+            titleText: _titleCoummunityController.text,
+            email: widget.email,
+            idCommunity: widget.idCommunity,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void onAddQuestion() {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (ctx) => AddQuestion(
-                onAddPrivateCommunity: addQuestion,
-                onAddCommunity: widget.onAddCommunity,
-                onAddPost: widget.onAddPost,
-                user: widget.user,
-              )),
+        builder: (ctx) => AddQuestion(
+          idCommunity: widget.idCommunity,
+          email: widget.email,
+          user: widget.user,
+          onAddPrivateCommunity: addQuestion,
+        ),
+      ),
     );
   }
 
@@ -98,9 +115,9 @@ class _CreateGroupState extends State<CreateGroup> {
       context,
       MaterialPageRoute(
           builder: (ctx) => AddRules(
-                onAddPrivateRules: addQuestion,
-                onAddCommunity: widget.onAddCommunity,
-                onAddPost: widget.onAddPost,
+                email: widget.email,
+                idCommunity: widget.idCommunity,
+                onAddPrivateCommunity: addQuestion,
                 user: widget.user,
               )),
     );
@@ -108,15 +125,15 @@ class _CreateGroupState extends State<CreateGroup> {
 
   @override
   Widget build(BuildContext context) {
+    print(["lenght", privateCommunity.length]);
+
     List<IfPrivate> choicePrivates = [];
     List<IfPrivate> cheboxesPrivates = [];
     List<IfPrivate> writtenPrivates = [];
     List<IfPrivate> rulesPrivates = [];
 
     if (privateCommunity.length <= 10) {
-      for (var private = 6;
-          private < 10 && private < privateCommunity.length;
-          private++) {
+      for (var private = 0; private < privateCommunity.length; private++) {
         if (privateCommunity[private].choiceQuestion.isNotEmpty) {
           choicePrivates.add(privateCommunity[private]);
         }
@@ -124,9 +141,7 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     if (privateCommunity.length <= 10) {
-      for (var private = 6;
-          private < 10 && private < privateCommunity.length;
-          private++) {
+      for (var private = 0; private < privateCommunity.length; private++) {
         if (privateCommunity[private].cheboxesQuestion.isNotEmpty) {
           cheboxesPrivates.add(privateCommunity[private]);
         }
@@ -134,9 +149,7 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     if (privateCommunity.length <= 10) {
-      for (var private = 6;
-          private < 10 && private < privateCommunity.length;
-          private++) {
+      for (var private = 0; private < privateCommunity.length; private++) {
         if (privateCommunity[private].writtenQuestion.isNotEmpty) {
           writtenPrivates.add(privateCommunity[private]);
         }
@@ -144,9 +157,7 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     if (privateCommunity.length <= 10) {
-      for (var private = 6;
-          private < 10 && private < privateCommunity.length;
-          private++) {
+      for (var private = 0; private < privateCommunity.length; private++) {
         if (privateCommunity[private].writeRules.isNotEmpty) {
           rulesPrivates.add(privateCommunity[private]);
         }
@@ -191,30 +202,42 @@ class _CreateGroupState extends State<CreateGroup> {
               const SizedBox(
                 height: 15,
               ),
-              TextField(
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                  validator: (value) {
+                    if (value!.trim().isEmpty) {
+                      return 'Please enter a title';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _titleCoummunityController.text = value!;
+                  },
+                  cursorColor: Colors.white,
+                  controller: _titleCoummunityController,
+                  maxLength: 25,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    label: Text(
+                      'Name your group',
+                      style: GoogleFonts.inter(
+                        color: const Color(0x3ff454545),
+                        fontSize: 15,
+                      ),
                     ),
-                cursorColor: Colors.white,
-                controller: _titleCoummunityController,
-                maxLength: 25,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
-                  label: Text(
-                    'Name your group',
-                    style: GoogleFonts.inter(
-                      color: const Color(0x3ff454545),
-                      fontSize: 15,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Color(0x3ff454545)),
-                    borderRadius: BorderRadius.circular(20),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0x3ff454545)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
               ),
@@ -329,6 +352,15 @@ class _CreateGroupState extends State<CreateGroup> {
                             const SizedBox(
                               height: 10,
                             ),
+                            Text(
+                              private.choicesAnswer.isEmpty
+                                  ? 'Correct Answer: Not Answer'
+                                  : 'Correct Answer: ${private.choicesAnswer}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
                           ],
                         ),
                     if (cheboxesPrivates.isNotEmpty &&
@@ -339,7 +371,8 @@ class _CreateGroupState extends State<CreateGroup> {
                         indent: 0,
                         endIndent: 0,
                       ),
-                    if (choicePrivates.isNotEmpty)
+                    if (choicePrivates.isNotEmpty &&
+                        cheboxesPrivates.isNotEmpty)
                       Column(
                         children: [
                           Text(
@@ -382,6 +415,18 @@ class _CreateGroupState extends State<CreateGroup> {
                                   color: const Color(0x3ff797979),
                                 ),
                               ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              private.cheboxesAnswer.isEmpty
+                                  ? 'Correct Answer: Not Answer'
+                                  : 'Correct Answer: ${private.cheboxesAnswer}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -432,7 +477,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               height: 5,
                             ),
                             Text(
-                              private.writtenAnswer,
+                              'answer: ${private.writtenAnswer}',
                               style: GoogleFonts.inter(
                                 fontSize: 13,
                                 color: const Color(0x3ff797979),
@@ -457,6 +502,7 @@ class _CreateGroupState extends State<CreateGroup> {
                           ),
                         ),
                         onPressed: onAddQuestion,
+                        // onAddQuestion,
                         child: Text(
                           'Add Questions',
                           style:
@@ -553,6 +599,7 @@ class _CreateGroupState extends State<CreateGroup> {
                           ),
                         ),
                         onPressed: onAddRules,
+                        //onAddRules,
                         child: Text(
                           'Create Rules',
                           style:
