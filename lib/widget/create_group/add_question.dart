@@ -36,6 +36,8 @@ class _AddQuestionState extends State<AddQuestion> {
   bool iconChanged = false;
   final _multipleChoiceQuestionController = TextEditingController();
   final _answerController = TextEditingController();
+  final _choiceAnswerController = TextEditingController();
+  List<String> checkAnswer = [];
   var listOption = <Widget>[];
   var listCheck = <Widget>[];
 
@@ -46,9 +48,11 @@ class _AddQuestionState extends State<AddQuestion> {
           IfPrivate(
             privateCommunityId: widget.idCommunity,
             choiceQuestion: _multipleChoiceQuestionController.text,
+            choicesAnswer: _choiceAnswerController.text,
             choices: addChoiceQuestion,
             cheboxesQuestion: '',
             cheboxes: [],
+            cheboxesAnswer: [],
             writtenQuestion: '',
             writtenAnswer: '',
             writeRules: '',
@@ -64,8 +68,10 @@ class _AddQuestionState extends State<AddQuestion> {
             privateCommunityId: widget.idCommunity,
             choiceQuestion: '',
             choices: [],
+            choicesAnswer: '',
             cheboxesQuestion: _multipleChoiceQuestionController.text,
             cheboxes: addCheckBoxQuestion,
+            cheboxesAnswer: checkAnswer,
             writtenQuestion: '',
             writtenAnswer: '',
             writeRules: '',
@@ -81,8 +87,10 @@ class _AddQuestionState extends State<AddQuestion> {
             privateCommunityId: widget.idCommunity,
             choiceQuestion: '',
             choices: [],
+            choicesAnswer: '',
             cheboxesQuestion: '',
             cheboxes: [],
+            cheboxesAnswer: [],
             writtenQuestion: _multipleChoiceQuestionController.text,
             writtenAnswer: _answerController.text,
             writeRules: '',
@@ -194,6 +202,13 @@ class _AddQuestionState extends State<AddQuestion> {
 
   List<String> addCheckBoxQuestion = [];
   List<TextEditingController> optionCheckBoxControllers = [];
+  bool _onCorrectAnswer = false;
+
+  void _toggleCorrectAnswer() {
+    setState(() {
+      _onCorrectAnswer = !_onCorrectAnswer;
+    });
+  }
 
   void addCheck() {
     var checkBoxController = TextEditingController();
@@ -204,34 +219,68 @@ class _AddQuestionState extends State<AddQuestion> {
 
     setState(() {
       listCheck.add(
-        TextField(
-          style: GoogleFonts.inter(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          controller: checkBoxController,
-          textInputAction: TextInputAction.done,
-          cursorColor: Colors.white,
-          decoration: InputDecoration(
-            prefixIcon: IconButton(
-              onPressed: addCheck,
-              icon: Image.asset(
-                  'assets/images/create_group_community/checkedIcon.png'), // Default icon
-            ),
+        Column(
+          children: [
+            TextField(
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              controller: checkBoxController,
+              textInputAction: TextInputAction.done,
+              cursorColor: Colors.white,
+              decoration: InputDecoration(
+                prefixIcon: IconButton(
+                  onPressed: addCheck,
+                  icon: Image.asset(
+                      'assets/images/create_group_community/checkedIcon.png'), // Default icon
+                ),
 
-            //
-            hintText: 'Add Options',
-            hintStyle: GoogleFonts.inter(
-              color: const Color(0x3ffE89B05),
-              fontSize: 15,
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(
-                width: 2.0,
-                color: const Color(0x3ff454545),
+                //
+                hintText: 'Add Checkbox',
+                hintStyle: GoogleFonts.inter(
+                  color: const Color(0x3ffE89B05),
+                  fontSize: 15,
+                ),
+                enabledBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 2.0,
+                    color: const Color(0x3ff454545),
+                  ),
+                ),
               ),
             ),
-          ),
+            const SizedBox(
+              height: 10,
+            ),
+            if (_onCorrectAnswer == false)
+              IconButton(
+                onPressed: () {
+                  _toggleCorrectAnswer();
+                  print('_onCorrectAnswer: $_onCorrectAnswer');
+
+                  // checkAnswer.add(checkBoxController.text);
+
+                  for (var i = 0; i < checkAnswer.length; i++) {
+                    if (checkAnswer[i] == checkBoxController.text) {
+                      setState(() {
+                        checkAnswer.remove(checkBoxController.text);
+                        print('gwapo ko');
+                        print('object: ${checkAnswer[i]}');
+                      });
+                    }
+                  }
+                  checkAnswer.add(checkBoxController.text);
+                },
+                icon: _onCorrectAnswer == false
+                    ? const Icon(
+                        Icons.check,
+                        color: Colors.yellow,
+                      )
+                    : Icon(Icons.access_time),
+              ),
+            if (_onCorrectAnswer == true) Text('data')
+          ],
         ),
       );
     });
@@ -391,6 +440,32 @@ class _AddQuestionState extends State<AddQuestion> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            TextField(
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              controller: _choiceAnswerController,
+                              textInputAction: TextInputAction.done,
+                              cursorColor: Colors.white,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(
+                                  Icons.question_answer,
+                                  color: Color(0x3ffE89B05),
+                                ),
+                                hintText: 'Answer',
+                                hintStyle: GoogleFonts.inter(
+                                  color: const Color(0x3ffE89B05),
+                                  fontSize: 15,
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    width: 2.0,
+                                    color: const Color(0x3ff454545),
+                                  ),
+                                ),
+                              ),
+                            ),
                             if (listOption.isNotEmpty) ...listOption,
                             const SizedBox(
                               height: 10,
@@ -442,7 +517,7 @@ class _AddQuestionState extends State<AddQuestion> {
                                       'assets/images/create_group_community/checkIcon.png'),
                                 ),
                                 Text(
-                                  'Add Options',
+                                  'Add Checkbox',
                                   style: GoogleFonts.inter(
                                     color: const Color(0x3ffE89B05),
                                     fontSize: 15,
@@ -459,6 +534,13 @@ class _AddQuestionState extends State<AddQuestion> {
                             const SizedBox(
                               height: 15,
                             ),
+                            for (var i = 0; i < checkAnswer.length; i++)
+                              Text(
+                                'Answers: ${checkAnswer[i]}',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                ),
+                              ),
                           ],
                         ),
                       if (selectTab == 3)
@@ -484,50 +566,92 @@ class _AddQuestionState extends State<AddQuestion> {
                             ),
                           ),
                         ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0x3ffFF0000),
+                          minimumSize: const Size(
+                            390,
+                            45,
+                          ),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (selectTab == 1) {
+                            for (var i = 0; i < optionControllers.length; i++) {
+                              addChoiceQuestion.add(optionControllers[i].text);
+                            }
+                          }
+                          if (selectTab == 2) {
+                            for (var i = 0;
+                                i < optionCheckBoxControllers.length;
+                                i++) {
+                              addCheckBoxQuestion
+                                  .add(optionCheckBoxControllers[i].text);
+                            }
+                          }
+
+                          onAddPrivateQuestion();
+                        },
+                        child: Text(
+                          'Continue',
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 14,
+                                  ),
+                        ),
+                      ),
                     ],
                   ),
-                  Positioned(
-                    top: 410,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0x3ffFF0000),
-                        minimumSize: const Size(
-                          390,
-                          45,
-                        ),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (selectTab == 1) {
-                          for (var i = 0; i < optionControllers.length; i++) {
-                            addChoiceQuestion.add(optionControllers[i].text);
-                          }
-                        }
-                        if (selectTab == 2) {
-                          for (var i = 0;
-                              i < optionCheckBoxControllers.length;
-                              i++) {
-                            addCheckBoxQuestion
-                                .add(optionCheckBoxControllers[i].text);
-                          }
-                        }
+                  // Positioned(
+                  //   top: 410,
+                  //   child: ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Color(0x3ffFF0000),
+                  //       minimumSize: const Size(
+                  //         390,
+                  //         45,
+                  //       ),
+                  //       elevation: 0,
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(8),
+                  //       ),
+                  //     ),
+                  //     onPressed: () {
+                  //       if (selectTab == 1) {
+                  //         for (var i = 0; i < optionControllers.length; i++) {
+                  //           addChoiceQuestion.add(optionControllers[i].text);
+                  //         }
+                  //       }
+                  //       if (selectTab == 2) {
+                  //         for (var i = 0;
+                  //             i < optionCheckBoxControllers.length;
+                  //             i++) {
+                  //           addCheckBoxQuestion
+                  //               .add(optionCheckBoxControllers[i].text);
+                  //         }
+                  //       }
 
-                        onAddPrivateQuestion();
-                      },
-                      child: Text(
-                        'Continue',
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 14,
-                                ),
-                      ),
-                    ),
-                  ),
+                  //       onAddPrivateQuestion();
+                  //     },
+                  //     child: Text(
+                  //       'Continue',
+                  //       style:
+                  //           Theme.of(context).textTheme.titleMedium!.copyWith(
+                  //                 color: Colors.white,
+                  //                 fontWeight: FontWeight.w900,
+                  //                 fontSize: 14,
+                  //               ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               )
             ],

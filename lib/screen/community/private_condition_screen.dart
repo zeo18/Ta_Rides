@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/all_controller/private_community_controller.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
 
 class ChoiceItem {
   String choiceText;
@@ -31,14 +34,23 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
   List<IfPrivate> choicePrivates = [];
   List<IfPrivate> cheboxesPrivates = [];
   List<IfPrivate> writtenPrivates = [];
+  // Set<String> selectedChoices = {};
+  Map<String, String> selectedChoices = {};
+  Map<String, Set<String>> selectedCheckBox = {};
+  // String? selectedChoice;
+  TextEditingController writtenUser = TextEditingController();
   bool? isChecked = false;
+  UserController userController = UserController();
 
-  List<ChoiceItem> selecteChoice = [
-    // ChoiceItem("Choice 1", false),
-  ];
+  // List<ChoiceItem> selecteChoice = [
+  //   // ChoiceItem("Choice 1", false),
+  // ];
 
   @override
   void initState() {
+    userController.setEmail(widget.email);
+    userController.getUser(widget.email);
+
     for (var i = 0; i < widget.private.private.length; i++) {
       if (widget.private.private[i].choiceQuestion.isNotEmpty) {
         choicePrivates.add(widget.private.private[i]);
@@ -205,27 +217,48 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
                                     width: 12,
                                   ),
                                   InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 25.0, // Adjust the size as needed
-                                      height: 25.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white, // Border color
-                                          width: 2.0, // Border width
+                                    onTap: () {
+                                      setState(() {
+                                        if (selectedChoices[
+                                                private.choiceQuestion] ==
+                                            choice) {
+                                          selectedChoices
+                                              .remove(private.choiceQuestion);
+                                        } else {
+                                          selectedChoices[
+                                              private.choiceQuestion] = choice;
+                                        }
+                                      });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 25.0,
+                                          height: 25.0,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2.0,
+                                            ),
+                                            color: selectedChoices[private
+                                                        .choiceQuestion] ==
+                                                    choice
+                                                ? Colors.white
+                                                : Colors.transparent,
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    choice,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      color: Colors.white,
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          choice.toString(),
+                                          style: GoogleFonts.inter(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -290,29 +323,69 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
                           ),
                         ),
                         for (var checkbox in private.cheboxes)
-                          Row(
+                          Column(
                             children: [
-                              Checkbox(
-                                value: isChecked,
-                                fillColor: MaterialStateProperty.all(
-                                  Colors.white,
-                                ),
-                                activeColor: Colors.orange,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isChecked = value;
-                                  });
-                                },
+                              const SizedBox(
+                                height: 5,
                               ),
-                              Text(
-                                checkbox,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                ),
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 12,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        final checkboxList =
+                                            selectedCheckBox.putIfAbsent(
+                                                private.cheboxesQuestion,
+                                                () => {});
+                                        if (checkboxList.contains(checkbox)) {
+                                          checkboxList.remove(checkbox);
+                                        } else {
+                                          checkboxList.add(checkbox);
+                                        }
+                                      });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 25.0,
+                                          height: 25.0,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2.0,
+                                            ),
+                                            color: selectedCheckBox[private
+                                                            .cheboxesQuestion]
+                                                        ?.contains(checkbox) ??
+                                                    false
+                                                ? Colors.white
+                                                : Colors.transparent,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          checkbox.toString(),
+                                          style: GoogleFonts.inter(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
                               ),
                             ],
-                          )
+                          ),
                       ],
                     ),
                 if (writtenPrivates.isNotEmpty)
@@ -377,6 +450,7 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
                           ),
                           textInputAction: TextInputAction.done,
                           cursorColor: Colors.white,
+                          controller: writtenUser,
                           decoration: InputDecoration(
                             hintText: 'Answer',
                             hintStyle: GoogleFonts.inter(
@@ -396,6 +470,169 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
                         ),
                       ],
                     ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0x3ffFF0000),
+                    minimumSize: const Size(
+                      395,
+                      45,
+                    ),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () async {
+                    List<bool> isCorrectChoice = [];
+                    List<bool> isCorrectCheckBox = [];
+                    List<bool> isCorrectWritten = [];
+                    List<bool> isallCorrect = [];
+
+                    if (selectedChoices.isNotEmpty) {
+                      for (var i = 0; i < choicePrivates.length; i++) {
+                        if (choicePrivates[i].choicesAnswer ==
+                            selectedChoices.values.elementAt(i)) {
+                          print('correcttt');
+                          print([
+                            choicePrivates[i].choicesAnswer,
+                            selectedChoices.values.elementAt(i)
+                          ]);
+                          isCorrectChoice.add(true);
+                        } else {
+                          print('incorrecttt');
+                          isCorrectChoice.add(false);
+                        }
+                      }
+                      print(['isCorrect', isCorrectChoice]);
+                      if (isCorrectChoice.contains(false)) {
+                        print('incorrect');
+                        isallCorrect.add(false);
+                      } else {
+                        isallCorrect.add(true);
+                        print('correct');
+                      }
+                    }
+
+                    List<List<String>> selectedCheckBoxList = selectedCheckBox
+                        .values
+                        .map((set) => set.toList())
+                        .toList();
+
+                    List<String> flattenedList =
+                        selectedCheckBoxList.expand((i) => i).toList();
+
+                    if (selectedCheckBox.isNotEmpty) {
+                      for (var i = 0; i < flattenedList.length; i++) {
+                        print([
+                          "checkbox answer: ",
+                          cheboxesPrivates[0].cheboxesAnswer[i]
+                        ]);
+                        // print(cheboxesPrivates[0].cheboxesAnswer.length);
+                        print(["user answer: ", flattenedList[i]]);
+                        // print(flattenedList.length);
+
+                        if (flattenedList.any((list) => list
+                            .contains(cheboxesPrivates[0].cheboxesAnswer[i]))) {
+                          isCorrectCheckBox.add(true);
+                        } else {
+                          isCorrectCheckBox.add(false);
+                        }
+                      }
+                      print(['isCorrect', isCorrectCheckBox]);
+                      if (isCorrectCheckBox.contains(false)) {
+                        print('incorrect');
+                        isallCorrect.add(false);
+                      } else {
+                        isallCorrect.add(true);
+                        print('correct');
+                      }
+                    }
+
+                    if (writtenPrivates.isNotEmpty) {
+                      for (var i = 0; i < writtenPrivates.length; i++) {
+                        print([
+                          "written answer: ",
+                          writtenPrivates[i].writtenAnswer
+                        ]);
+                        print(["user answer: ", writtenUser.text]);
+                        if (writtenUser.text ==
+                            writtenPrivates[i].writtenAnswer) {
+                          isCorrectWritten.add(true);
+                        } else {
+                          isCorrectWritten.add(false);
+                        }
+                      }
+                      print(['isCorrect', isCorrectWritten]);
+                      if (isCorrectWritten.contains(false)) {
+                        print('incorrect');
+                        isallCorrect.add(false);
+                      } else {
+                        print('correct');
+                        isallCorrect.add(true);
+                      }
+                    }
+                    if (isallCorrect.contains(false) ||
+                        selectedChoices.isEmpty ||
+                        selectedCheckBox.isEmpty ||
+                        writtenUser.text.isEmpty) {
+                      print('incorrect');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Please answer all the questions correctly.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      print('correct Alllllll');
+
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(userController.user.id)
+                          .update({
+                        'communityId': widget.community.id,
+                        'isCommunity': true,
+                      });
+                      try {
+                        final communityDoc = await FirebaseFirestore.instance
+                            .collection('community')
+                            .where('id', isEqualTo: widget.community.id)
+                            .get();
+
+                        await communityDoc.docs.first.reference.update({
+                          'members': FieldValue.arrayUnion(
+                              [userController.user.username]),
+                        });
+                      } catch (e) {
+                        print('Error updating document: $e');
+                      }
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => TabsScreen(
+                            email: widget.email,
+                            tabsScreen: 0,
+                            communityTabs: 1,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    'Continue',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 14,
+                        ),
+                  ),
+                ),
               ],
             ),
           ),

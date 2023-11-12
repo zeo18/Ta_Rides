@@ -94,41 +94,6 @@ class _RecentSearchState extends State<RecentSearch> {
                         fontWeight: FontWeight.bold,
                         fontSize: 9),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                          0, 0, 3, 0), // Adjusted padding
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: IconButton(
-                          onPressed: () {
-                            // if (community.private) {
-                            //   onClickPrivateGroup(community);
-                            // } else {
-                            //   onPublicGroup(community, userUse, user, post);
-                            // }
-                            if (widget.community.private) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => PrivateConditionScreen(
-                                    community: widget.community,
-                                    email: widget.email,
-                                    private: privateController,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          icon: Image.asset(
-                            'assets/images/joinGroup.png',
-                            height: 25,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),

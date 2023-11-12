@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ta_rides/models/location_info.dart';
+import 'dart:async';
 
 class SetRoute extends StatefulWidget {
-  const SetRoute({
+  SetRoute({
     super.key,
     required this.selectPinPoint,
     required this.selectPinPoint2,
@@ -12,6 +14,11 @@ class SetRoute extends StatefulWidget {
     required this.pinPoint2nd,
     required this.setPlace,
     required this.setPolyline,
+    required this.polylines,
+    required this.startNavigation,
+    required this.stopwatch,
+    required this.startOrStop,
+    required this.distance,
   });
   final Function() selectPinPoint2;
 
@@ -23,8 +30,13 @@ class SetRoute extends StatefulWidget {
     Map<String, dynamic> boundsSw,
   ) setPlace;
   final void Function(List<PointLatLng> points) setPolyline;
+  final Set<Polyline> polylines;
   final String pinPoint1st;
   final String pinPoint2nd;
+  final void Function() startNavigation;
+  final void Function() startOrStop;
+  final Stopwatch stopwatch;
+  final void Function(double distance) distance;
   @override
   State<SetRoute> createState() => _SetRouteState();
 }
@@ -43,7 +55,7 @@ class _SetRouteState extends State<SetRoute> {
             Container(
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: Text(
-                'Pin point your location',
+                'Pin point your Destination',
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: const Color(0x3ff454545),
                       fontWeight: FontWeight.w900,
@@ -75,7 +87,7 @@ class _SetRouteState extends State<SetRoute> {
                       ),
                       Text(
                         widget.pinPoint1st.isEmpty
-                            ? '1st Pinpoint'
+                            ? 'Final Destination'
                             : widget.pinPoint1st,
                         style: GoogleFonts.inter(
                           color: Color(0x3FF989898),
@@ -88,40 +100,40 @@ class _SetRouteState extends State<SetRoute> {
                 ),
               ),
             ),
-            Card(
-              color: Color.fromARGB(255, 255, 255, 255),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              clipBehavior: Clip.hardEdge,
-              elevation: 10,
-              child: InkWell(
-                onTap: () {
-                  widget.selectPinPoint2();
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(15),
-                  child: Row(
-                    children: [
-                      Image.asset('assets/images/pedal/icon1.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        widget.pinPoint2nd.isEmpty
-                            ? '2nd Pinpoint'
-                            : widget.pinPoint2nd,
-                        style: GoogleFonts.inter(
-                          color: Color(0x3FF989898),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Card(
+            //   color: Color.fromARGB(255, 255, 255, 255),
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(20),
+            //   ),
+            //   clipBehavior: Clip.hardEdge,
+            //   elevation: 10,
+            //   child: InkWell(
+            //     onTap: () {
+            //       widget.selectPinPoint2();
+            //     },
+            //     child: Container(
+            //       margin: const EdgeInsets.all(15),
+            //       child: Row(
+            //         children: [
+            //           Image.asset('assets/images/pedal/icon1.png'),
+            //           const SizedBox(
+            //             width: 10,
+            //           ),
+            //           Text(
+            //             widget.pinPoint2nd.isEmpty
+            //                 ? '2nd Pinpoint'
+            //                 : widget.pinPoint2nd,
+            //             style: GoogleFonts.inter(
+            //               color: Color(0x3FF989898),
+            //               fontSize: 12,
+            //               fontWeight: FontWeight.w500,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             // Card(
             //   color: Color.fromARGB(255, 255, 255, 255),
             //   shape: RoundedRectangleBorder(
@@ -168,17 +180,34 @@ class _SetRouteState extends State<SetRoute> {
                 ),
               ),
               onPressed: () async {
+                widget.polylines.clear();
+                setState(() {});
+
                 var direction = await LocationService()
                     .getDirections(widget.pinPoint1st, widget.pinPoint2nd);
 
                 widget.setPlace(
-                  direction['start_location']['lat'],
+                  direction!['start_location']['lat'],
                   direction['start_location']['lng'],
                   direction['bounds_ne'],
                   direction['bounds_sw'],
                 );
 
                 widget.setPolyline(direction['polyline_decoded']);
+                widget.distance(
+                  double.parse(direction['distance'].split(' ')[0]),
+                );
+                widget.startNavigation();
+
+                widget.stopwatch.start();
+
+                // Start a periodic timer to update the UI every second
+                Timer.periodic(Duration(seconds: 1), (timer) {
+                  if (!widget.stopwatch.isRunning) {
+                    timer.cancel();
+                  }
+                  setState(() {});
+                });
               },
               child: Text(
                 'Continue',

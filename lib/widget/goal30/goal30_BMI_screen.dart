@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ta_rides/widget/goal30/goal30_Home.dart';
 
 class Goal30BmiScreen extends StatefulWidget {
@@ -18,6 +19,13 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
   String? result;
   String? bmicategory;
   double? bmi;
+
+  void startGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('startDate', DateTime.now().toIso8601String());
+
+    // Rest of your code to start the goal...
+  }
 
   void _calculateBMI() {
     double height = double.tryParse(_heightController.text) ?? 0.0;
@@ -51,6 +59,7 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
         _weightController.text.isNotEmpty &&
         result != null &&
         bmicategory != null) {
+      startGoal();
       Navigator.push(
         context,
         MaterialPageRoute(

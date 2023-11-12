@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
@@ -43,12 +44,36 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   int _selectedPageIndex = 0;
+  LocationData? _locationData;
+  Location location = new Location();
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
 
   @override
   void initState() {
     super.initState();
-    // Set the initial selected page index based on selectButtomTab
+    initializeLocation();
     _selectedPageIndex = widget.tabsScreen;
+  }
+
+  void initializeLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
   }
 
   void selectedPage(int index) {
@@ -112,11 +137,13 @@ class _TabsScreenState extends State<TabsScreen> {
     //var activePageTitle = 'Community';
 
     if (_selectedPageIndex == 1) {
-      activePage = const RidesScreen();
+      activePage = RidesScreen(
+        email: widget.email,
+      );
       //    activePageTitle = 'Rides';
     }
     if (_selectedPageIndex == 2) {
-      activePage = const PedalScreen();
+      activePage = PedalScreen(locationData: _locationData);
       //   activePageTitle = 'Pedal';
     }
     if (_selectedPageIndex == 3) {

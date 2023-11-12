@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/screen/community/private_condition_screen.dart';
 import 'package:ta_rides/screen/community/public_screen.dart';
 import 'package:ta_rides/widget/all_controller/community_controller.dart';
@@ -194,7 +196,7 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                     top: 10,
                     right: 10,
                     child: IconButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // setState(() {
                         //   if (widget.community.private) {
                         //     widget.onClickPrivateGroup(widget.community);
@@ -203,18 +205,62 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                         //         widget.users, widget.posts);
                         //   }
                         // });
-
-                        if (widget.community.private) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => PrivateConditionScreen(
-                                community: widget.community,
-                                email: widget.email,
-                                private: privateCommunityController,
-                              ),
+                        if (userController.user.isCommunity == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'You are already a part of a community. Before joining another community, make sure to leave your current one first.'),
                             ),
                           );
+                        } else {
+                          if (widget.community.private == false) {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(userController.user.id)
+                                .update({
+                              'communityId': widget.community.id,
+                              'isCommunity': true,
+                            });
+
+                            try {
+                              final communityDoc = await FirebaseFirestore
+                                  .instance
+                                  .collection('community')
+                                  .where('id', isEqualTo: widget.community.id)
+                                  .get();
+
+                              await communityDoc.docs.first.reference.update({
+                                'members': FieldValue.arrayUnion(
+                                    [userController.user.username]),
+                              });
+                            } catch (e) {
+                              print('Error updating document: $e');
+                            }
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => TabsScreen(
+                                  email: widget.email,
+                                  tabsScreen: 0,
+                                  communityTabs: 1,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (widget.community.private) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => PrivateConditionScreen(
+                                  community: widget.community,
+                                  email: widget.email,
+                                  private: privateCommunityController,
+                                ),
+                              ),
+                            );
+                          }
                         }
                       },
                       icon: Image.asset(
@@ -224,6 +270,33 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                       ),
                     ),
                   ),
+                  AnimatedBuilder(
+                      animation: userController,
+                      builder: (context, snapshot) {
+                        if (userController.isLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return Positioned(
+                          top: 10,
+                          right: 5,
+                          child: Column(
+                            children: [
+                              if (userController.user.communityId ==
+                                  widget.community.id)
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Image.asset(
+                                    'assets/images/joinedGroup.png',
+                                    height: 40,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      }),
                 ],
               ),
               Container(

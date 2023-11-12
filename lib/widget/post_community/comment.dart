@@ -45,6 +45,7 @@ class _CommentsState extends State<Comments> {
   UserController userController = UserController();
   CommunityController communityController = CommunityController();
   late int commentLength = 0;
+  bool onPressDelete = false;
 
   @override
   void initState() {
@@ -450,89 +451,399 @@ class _CommentsState extends State<Comments> {
                                   i < communityController.comment.length;
                                   i++)
                                 //   if (i < widget.userComment.length)
-
-                                Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ClipOval(
-                                          child: Image.network(
-                                            communityController
-                                                .comment[i].userImage,
-                                            height: 45,
-                                            width: 45,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 18,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${communityController.comment[i].firstName} ${communityController.comment[i].lastName}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium!
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w900,
-                                                  ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              communityController
-                                                  .comment[i].comment,
-                                              style: GoogleFonts.inter(
-                                                fontSize: 15,
-                                                color: Colors.white,
+                                if (widget.realUser.user.username ==
+                                    communityController.comment[i].usersName)
+                                  InkWell(
+                                      onLongPress: () {
+                                        setState(() {
+                                          onPressDelete = !onPressDelete;
+                                        });
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ClipOval(
+                                                child: Image.network(
+                                                  communityController
+                                                      .comment[i].userImage,
+                                                  height: 45,
+                                                  width: 45,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
+                                              const SizedBox(
+                                                width: 15,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "${communityController.comment[i].firstName} ${communityController.comment[i].lastName}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium!
+                                                        .copyWith(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: (communityController
+                                                                          .comment[
+                                                                              i]
+                                                                          .firstName
+                                                                          .length +
+                                                                      communityController
+                                                                          .comment[
+                                                                              i]
+                                                                          .lastName
+                                                                          .length >
+                                                                  18)
+                                                              ? 12
+                                                              : 15,
+                                                        ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    communityController
+                                                        .comment[i].comment,
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 15,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 2, 0, 0),
+                                                child: Text(
+                                                  '@${communityController.comment[i].usersName}',
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: (communityController
+                                                                    .comment[i]
+                                                                    .firstName
+                                                                    .length +
+                                                                communityController
+                                                                    .comment[i]
+                                                                    .lastName
+                                                                    .length >
+                                                            18)
+                                                        ? 12
+                                                        : 15,
+                                                    color: const Color(
+                                                        0x3ff797979),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 2, 0, 0),
+                                                child: Text(
+                                                  getTimeString(
+                                                      communityController
+                                                          .comment[i]
+                                                          .timestamp),
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: (communityController
+                                                                    .comment[i]
+                                                                    .firstName
+                                                                    .length +
+                                                                communityController
+                                                                    .comment[i]
+                                                                    .lastName
+                                                                    .length >
+                                                            18)
+                                                        ? 12
+                                                        : 15,
+                                                    color: const Color.fromARGB(
+                                                        255, 248, 216, 216),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          if (onPressDelete)
+                                            if (widget.realUser.user.username ==
+                                                communityController
+                                                    .comment[i].usersName)
+                                              IconButton(
+                                                onPressed: () {
+                                                  FirebaseFirestore.instance
+                                                      .collection('comment')
+                                                      .where('comment',
+                                                          isEqualTo:
+                                                              communityController
+                                                                  .comment[i]
+                                                                  .comment)
+                                                      .where('usersName',
+                                                          isEqualTo:
+                                                              communityController
+                                                                  .comment[i]
+                                                                  .usersName)
+                                                      .where('postId',
+                                                          isEqualTo:
+                                                              communityController
+                                                                  .comment[i]
+                                                                  .postId)
+                                                      .get()
+                                                      .then((value) {
+                                                    value.docs
+                                                        .forEach((element) {
+                                                      element.reference
+                                                          .delete();
+                                                    });
+                                                  });
+
+                                                  FirebaseFirestore.instance
+                                                      .collection('post')
+                                                      .where('caption',
+                                                          isEqualTo: widget
+                                                              .community
+                                                              .caption)
+                                                      .where('usersName',
+                                                          isEqualTo: widget
+                                                              .community
+                                                              .usersName)
+                                                      .where('postId',
+                                                          isEqualTo: widget
+                                                              .community.postId)
+                                                      .get()
+                                                      .then((value) {
+                                                    value.docs
+                                                        .forEach((element) {
+                                                      element.reference.update({
+                                                        'comment': FieldValue
+                                                            .arrayRemove([
+                                                          communityController
+                                                              .comment[i - 1]
+                                                              .comment
+                                                        ])
+                                                      });
+                                                    });
+                                                  });
+
+                                                  setState(() {
+                                                    communityController.comment
+                                                        .removeAt(i);
+                                                    communityController
+                                                        .notifyListeners();
+                                                    commentLength =
+                                                        communityController
+                                                            .comment.length;
+                                                  });
+                                                },
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                        ],
+                                      ))
+                                else
+                                  Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipOval(
+                                            child: Image.network(
+                                              communityController
+                                                  .comment[i].userImage,
+                                              height: 45,
+                                              width: 45,
+                                              fit: BoxFit.cover,
                                             ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 2, 0, 0),
-                                          child: Text(
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${communityController.comment[i].firstName} ${communityController.comment[i].lastName}",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium!
+                                                    .copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      fontSize: (communityController
+                                                                      .comment[
+                                                                          i]
+                                                                      .firstName
+                                                                      .length +
+                                                                  communityController
+                                                                      .comment[
+                                                                          i]
+                                                                      .lastName
+                                                                      .length >
+                                                              18)
+                                                          ? 12
+                                                          : 15,
+                                                    ),
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                communityController
+                                                    .comment[i].comment,
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 15,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 2, 0, 0),
+                                            child: Text(
                                               '@${communityController.comment[i].usersName}',
                                               style: GoogleFonts.inter(
-                                                fontSize: 14,
+                                                fontSize: (communityController
+                                                                .comment[i]
+                                                                .firstName
+                                                                .length +
+                                                            communityController
+                                                                .comment[i]
+                                                                .lastName
+                                                                .length >
+                                                        18)
+                                                    ? 12
+                                                    : 15,
                                                 color: const Color(0x3ff797979),
-                                              )),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 2, 0, 0),
-                                          child: Text(
-                                            getTimeString(communityController
-                                                .comment[i].timestamp),
-                                            style: GoogleFonts.inter(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  255, 248, 216, 216),
-                                              fontWeight: FontWeight.w500,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 2, 0, 0),
+                                            child: Text(
+                                              getTimeString(communityController
+                                                  .comment[i].timestamp),
+                                              style: GoogleFonts.inter(
+                                                fontSize: (communityController
+                                                                .comment[i]
+                                                                .firstName
+                                                                .length +
+                                                            communityController
+                                                                .comment[i]
+                                                                .lastName
+                                                                .length >
+                                                        18)
+                                                    ? 12
+                                                    : 15,
+                                                color: const Color.fromARGB(
+                                                    255, 248, 216, 216),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      if (onPressDelete)
+                                        if (widget.realUser.user.username ==
+                                            communityController
+                                                .comment[i].usersName)
+                                          IconButton(
+                                            onPressed: () {
+                                              FirebaseFirestore.instance
+                                                  .collection('comment')
+                                                  .where('comment',
+                                                      isEqualTo:
+                                                          communityController
+                                                              .comment[i]
+                                                              .comment)
+                                                  .where('usersName',
+                                                      isEqualTo:
+                                                          communityController
+                                                              .comment[i]
+                                                              .usersName)
+                                                  .where('postId',
+                                                      isEqualTo:
+                                                          communityController
+                                                              .comment[i]
+                                                              .postId)
+                                                  .get()
+                                                  .then((value) {
+                                                value.docs.forEach((element) {
+                                                  element.reference.delete();
+                                                });
+                                              });
+
+                                              FirebaseFirestore.instance
+                                                  .collection('post')
+                                                  .where('caption',
+                                                      isEqualTo: widget
+                                                          .community.caption)
+                                                  .where('usersName',
+                                                      isEqualTo: widget
+                                                          .community.usersName)
+                                                  .where('postId',
+                                                      isEqualTo: widget
+                                                          .community.postId)
+                                                  .get()
+                                                  .then((value) {
+                                                value.docs.forEach((element) {
+                                                  element.reference.update({
+                                                    'comment':
+                                                        FieldValue.arrayRemove([
+                                                      communityController
+                                                          .comment[i - 1]
+                                                          .comment
+                                                    ])
+                                                  });
+                                                });
+                                              });
+
+                                              setState(() {
+                                                communityController.comment
+                                                    .removeAt(i);
+                                                communityController
+                                                    .notifyListeners();
+                                                commentLength =
+                                                    communityController
+                                                        .comment.length;
+                                              });
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                      const SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
+                                  ),
 
                               // Container(
                               //   margin: const EdgeInsets.fromLTRB(60, 0, 0, 0),

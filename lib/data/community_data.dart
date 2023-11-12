@@ -207,6 +207,8 @@ final privateCommunity = [
   //       'A glacier',
   //       'A cliff',
   //     ],
+  //     cheboxesAnswer: [],
+  //     choicesAnswer: '',
   //     cheboxesQuestion: '',
   //     cheboxes: [],
   //     writtenQuestion: '',

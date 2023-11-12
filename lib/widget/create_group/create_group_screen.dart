@@ -352,6 +352,15 @@ class _CreateGroupState extends State<CreateGroup> {
                             const SizedBox(
                               height: 10,
                             ),
+                            Text(
+                              private.choicesAnswer.isEmpty
+                                  ? 'Correct Answer: Not Answer'
+                                  : 'Correct Answer: ${private.choicesAnswer}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
                           ],
                         ),
                     if (cheboxesPrivates.isNotEmpty &&
@@ -362,7 +371,8 @@ class _CreateGroupState extends State<CreateGroup> {
                         indent: 0,
                         endIndent: 0,
                       ),
-                    if (choicePrivates.isNotEmpty)
+                    if (choicePrivates.isNotEmpty &&
+                        cheboxesPrivates.isNotEmpty)
                       Column(
                         children: [
                           Text(
@@ -405,6 +415,18 @@ class _CreateGroupState extends State<CreateGroup> {
                                   color: const Color(0x3ff797979),
                                 ),
                               ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              private.cheboxesAnswer.isEmpty
+                                  ? 'Correct Answer: Not Answer'
+                                  : 'Correct Answer: ${private.cheboxesAnswer}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: const Color(0x3ff797979),
+                              ),
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -455,7 +477,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               height: 5,
                             ),
                             Text(
-                              private.writtenAnswer,
+                              'answer: ${private.writtenAnswer}',
                               style: GoogleFonts.inter(
                                 fontSize: 13,
                                 color: const Color(0x3ff797979),

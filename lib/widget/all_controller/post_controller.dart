@@ -22,6 +22,7 @@ class PostController extends ChangeNotifier {
     final postsQuerySnapshot = await FirebaseFirestore.instance
         .collection('post')
         .where('communityId', isEqualTo: communityId)
+        .orderBy('timestamp', descending: true)
         .get();
 
     if (postsQuerySnapshot.docs.isEmpty) {
@@ -60,6 +61,7 @@ class PostController extends ChangeNotifier {
         if (post.usersName == user.username) {
           users.add(user);
           notifyListeners();
+
           print('Match found!');
         }
       }

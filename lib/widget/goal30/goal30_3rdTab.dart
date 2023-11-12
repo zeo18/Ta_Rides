@@ -13,7 +13,7 @@ class Goal30_3rdTab extends StatelessWidget {
         color: Color(0x3fff0c0d11),
         border: Border.all(color: Colors.white),
         borderRadius: BorderRadius.circular(30),
-        image: DecorationImage(
+        image: const DecorationImage(
           image: AssetImage('assets/images/goal30/goal30BG.png'),
           fit: BoxFit.fitWidth,
         ),

@@ -116,7 +116,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
-                        fontSize: 25,
+                        fontSize: (userController.user.firstName.length +
+                                    userController.user.lastName.length >
+                                15)
+                            ? 20
+                            : 25,
                       ),
                 ),
                 const SizedBox(
@@ -224,7 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       ProfileTabs(user: userController),
                       AchievementsTabs(
-                        user: userController,
+                        email: widget.email,
                       ),
                       ProgressTabs(user: userController),
                     ],

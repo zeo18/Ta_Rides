@@ -6,6 +6,7 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/all_controller/community_controller.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/post_community/comment.dart';
@@ -35,6 +36,7 @@ class PostCommunityScreen extends StatefulWidget {
 }
 
 class _PostCommunityScreenState extends State<PostCommunityScreen> {
+  bool onTapDot = false;
   void commentSection() {
     // List<Comment> comments = [];
     // List<Users> userComment = [];
@@ -190,11 +192,12 @@ class _PostCommunityScreenState extends State<PostCommunityScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${widget.user.firstName} ${widget.user.lastName}",
+                        "${widget.user.firstName.replaceRange(0, 1, widget.user.firstName[0].toUpperCase())} ${widget.user.lastName.replaceRange(0, 1, widget.user.lastName[0].toUpperCase())}",
                         style:
                             Theme.of(context).textTheme.titleMedium!.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
+                                  fontSize: 14,
                                 ),
                       ),
                       Text(
@@ -308,12 +311,12 @@ class _PostCommunityScreenState extends State<PostCommunityScreen> {
                       const SizedBox(
                         width: 210,
                       ),
-                      Expanded(
-                        child: Image.asset(
-                          'assets/images/community_images/post_community/icon.png',
-                          height: 25,
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Image.asset(
+                      //     'assets/images/community_images/post_community/icon.png',
+                      //     height: 25,
+                      //   ),
+                      // ),
                     ],
                   )
                 ],
@@ -324,12 +327,67 @@ class _PostCommunityScreenState extends State<PostCommunityScreen> {
         Positioned(
           top: 14,
           right: 12,
-          child: Image.asset(
-            'assets/images/community_images/post_community/iconDot.png',
-            height: 20,
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    onTapDot = !onTapDot;
+                  });
+                },
+                child: Image.asset(
+                  'assets/images/community_images/post_community/iconDot.png',
+                  height: 20,
+                ),
+              ),
+            ],
           ),
         ),
+        if (onTapDot)
+          Positioned(
+            top: 6,
+            right: 22,
+            child: Column(
+              children: [
+                if (widget.realUser.user.username == widget.post.usersName)
+                  InkWell(
+                    onTap: () async {
+                      final delete = await FirebaseFirestore.instance
+                          .collection('post')
+                          .where('postId', isEqualTo: widget.post.postId)
+                          .get();
+
+                      await delete.docs.first.reference.delete();
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => TabsScreen(
+                            email: widget.email,
+                            tabsScreen: 0,
+                            communityTabs: 1,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/images/community_images/post_community/deletePost.png',
+                    ),
+                  )
+                else
+                  InkWell(
+                    onTap: () {},
+                    child: Image.asset(
+                      'assets/images/community_images/post_community/reportPost.png',
+                    ),
+                  ),
+              ],
+            ),
+          ),
       ],
     );
   }
 }
+
+
+//  if (widget.realUser.user.username == widget.post.usersName)

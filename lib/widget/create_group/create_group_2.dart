@@ -149,8 +149,10 @@ class _CreateGroup2State extends State<CreateGroup2> {
               'privateCommunityId': privateCommunity[i].privateCommunityId,
               'choiceQuestion': privateCommunity[i].choiceQuestion,
               'choices': privateCommunity[i].choices,
+              'choicesAnswer': privateCommunity[i].choicesAnswer,
               'cheboxesQuestion': privateCommunity[i].cheboxesQuestion,
               'cheboxes': privateCommunity[i].cheboxes,
+              'cheboxesAnswer': privateCommunity[i].cheboxesAnswer,
               'writtenQuestion': privateCommunity[i].writtenQuestion,
               'writtenAnswer': privateCommunity[i].writtenAnswer,
               'writeRules': privateCommunity[i].writeRules,
@@ -159,6 +161,8 @@ class _CreateGroup2State extends State<CreateGroup2> {
           }
         }
       }
+
+      privateCommunity.clear();
 
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
@@ -180,8 +184,8 @@ class _CreateGroup2State extends State<CreateGroup2> {
     //   // print(["private community", privateCommunity[0].privateCommunityId]);
     //   // print(["community id", privateCommunity[0].privateCommunityId]);
     // }
-      return AnimatedBuilder(
-          animation: widget.user,
+    return AnimatedBuilder(
+        animation: widget.user,
         builder: (context, snapshot) {
           if (widget.user.isLoading) {
             return const Center(

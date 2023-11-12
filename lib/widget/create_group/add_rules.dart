@@ -44,7 +44,9 @@ class _AddRulesState extends State<AddRules> {
           privateCommunityId: widget.idCommunity,
           choiceQuestion: '',
           choices: [],
+          choicesAnswer: '',
           cheboxesQuestion: '',
+          cheboxesAnswer: [],
           cheboxes: [],
           writtenQuestion: '',
           writtenAnswer: '',
@@ -124,6 +126,8 @@ class _AddRulesState extends State<AddRules> {
                 controller: addDetailsController,
                 textInputAction: TextInputAction.done,
                 cursorColor: Colors.white,
+                minLines: 5,
+                maxLines: 10,
                 decoration: InputDecoration(
                   hintText: 'Add Details',
                   hintStyle: GoogleFonts.inter(

@@ -94,7 +94,7 @@ class UserController extends ChangeNotifier {
     }
 
     final achievementDoc = achievementSnapshot.docs.first;
-    final achievement = Achievements.fromDocument(achievementDoc);
+    achievement = Achievements.fromDocument(achievementDoc);
 
     isLoading = false;
     notifyListeners();
@@ -103,10 +103,10 @@ class UserController extends ChangeNotifier {
     print('Achievement: ${achievement.userName}');
     print('Achievement: ${achievement.legendary}');
 
-    if (achievement.userName == user.username) {
-      achievementsInformation.add(achievement);
-      notifyListeners();
-    }
+    // if (achievement.userName == user.username) {
+    //   achievementsInformation.add(achievement);
+    //   notifyListeners();
+    // }
     print('hello3');
   }
 }

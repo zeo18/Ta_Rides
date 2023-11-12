@@ -134,12 +134,17 @@ class IfPrivate {
     required this.writtenAnswer,
     required this.writeRules,
     required this.detailsRules,
+    required this.cheboxesAnswer,
+    required this.choicesAnswer,
   });
+
   final String privateCommunityId;
   final String choiceQuestion;
   final List<String> choices;
+  final String choicesAnswer;
   final String cheboxesQuestion;
   final List<String> cheboxes;
+  final List<String> cheboxesAnswer;
   final String writtenQuestion;
   final String writtenAnswer;
   final String writeRules;
@@ -158,12 +163,19 @@ class IfPrivate {
       return chebox as String;
     }).toList();
 
+    final List<dynamic> cheboxesAnswerData = data['cheboxesAnswer'] ?? [];
+    final List<String> cheboxesAnswer = cheboxesAnswerData.map((answer) {
+      return answer as String;
+    }).toList();
+
     return IfPrivate(
       privateCommunityId: data['privateCommunityId'] as String,
       choiceQuestion: data['choiceQuestion'] as String,
       choices: choices,
+      choicesAnswer: data['choicesAnswer'] as String,
       cheboxesQuestion: data['cheboxesQuestion'] as String,
       cheboxes: cheboxes,
+      cheboxesAnswer: cheboxesAnswer,
       writtenQuestion: data['writtenQuestion'] as String,
       writtenAnswer: data['writtenAnswer'] as String,
       writeRules: data['writeRules'] as String,

@@ -14,7 +14,7 @@ class CommunityController extends ChangeNotifier {
   late Users user;
 
   late Post post;
-  late Community community;
+  Community? community;
   bool isLoading = false;
   // late List<Users> users;
   late final userPost = <Users>[];
@@ -70,7 +70,7 @@ class CommunityController extends ChangeNotifier {
     notifyListeners();
 
     print(["user", user.communityId]);
-    print(["community", community.id]);
+    print(["community", community!.id]);
 
     // if (community.id == user.communityId) {
     //   communityInformation.add(community);
@@ -81,7 +81,7 @@ class CommunityController extends ChangeNotifier {
 
     final postQuerySnapshot = await FirebaseFirestore.instance
         .collection('post')
-        .where('communityId', isEqualTo: community.id)
+        .where('communityId', isEqualTo: community!.id)
         .get();
 
     if (postQuerySnapshot.docs.isEmpty) {
@@ -97,50 +97,11 @@ class CommunityController extends ChangeNotifier {
     notifyListeners();
 
     print(["post", post.communityId]);
-    print(["community", community.id]);
+    print(["community", community!.id]);
 
-    if (post.communityId == community.id) {
+    if (post.communityId == community!.id) {
       PostCommunity.add(post);
     }
-
-    // try {
-    //   final communityQuerySnapshot = await FirebaseFirestore.instance
-    //       .collection('community')
-    //       .doc(user.communityId)
-    //       .get();
-
-    //   if (!communityQuerySnapshot.exists) {
-    //     throw Exception('Community not found');
-    //   }
-
-    //   community = Community.fromDocument(communityQuerySnapshot);
-    // } catch (e) {
-    //   isLoading = false;
-    //   notifyListeners();
-    //   throw Exception(e);
-    // }
-
-// get all community
-
-    // final communitiesQuerySnapshot =
-    //     await FirebaseFirestore.instance.collection('community').get();
-
-    // if (communitiesQuerySnapshot.docs.isEmpty) {
-    //   isLoading = false;
-    //   notifyListeners();
-    //   throw Exception('No communities found');
-    // }
-
-    // communities = communitiesQuerySnapshot.docs.map((documentSnapshot) {
-    //   return Community.fromDocument(documentSnapshot);
-    // }).toList();
-
-    // isLoading = false;
-    // notifyListeners();
-    // print(["communities lenght", communities.length]);
-    // for (var i = 0; i < communities.length; i++) {
-    //   print(["communities", communities[i].id]);
-    // }
   }
 
   void getAllCommunity() async {
@@ -185,7 +146,44 @@ class CommunityController extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
   }
+  // try {
+  //   final communityQuerySnapshot = await FirebaseFirestore.instance
+  //       .collection('community')
+  //       .doc(user.communityId)
+  //       .get();
 
+  //   if (!communityQuerySnapshot.exists) {
+  //     throw Exception('Community not found');
+  //   }
+
+  //   community = Community.fromDocument(communityQuerySnapshot);
+  // } catch (e) {
+  //   isLoading = false;
+  //   notifyListeners();
+  //   throw Exception(e);
+  // }
+
+// get all community
+
+  // final communitiesQuerySnapshot =
+  //     await FirebaseFirestore.instance.collection('community').get();
+
+  // if (communitiesQuerySnapshot.docs.isEmpty) {
+  //   isLoading = false;
+  //   notifyListeners();
+  //   throw Exception('No communities found');
+  // }
+
+  // communities = communitiesQuerySnapshot.docs.map((documentSnapshot) {
+  //   return Community.fromDocument(documentSnapshot);
+  // }).toList();
+
+  // isLoading = false;
+  // notifyListeners();
+  // print(["communities lenght", communities.length]);
+  // for (var i = 0; i < communities.length; i++) {
+  //   print(["communities", communities[i].id]);
+  // }
   // Future<List<Post>> getAllPost() async {
 
   //   return posts;

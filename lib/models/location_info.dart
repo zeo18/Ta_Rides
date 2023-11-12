@@ -1,4 +1,5 @@
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -35,13 +36,46 @@ class LocationService {
     return results;
   }
 
-  Future<Map<String, dynamic>> getDirections(
-      String origin, String destination) async {
-    final String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&key=$key';
+  Future<Map<String, dynamic>?> getDirections(
+      String destination, String text) async {
+    Location location = new Location();
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
 
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return null;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return null;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    String origin = '${_locationData.latitude},${_locationData.longitude}';
+    print(origin);
+    print('destination: $destination');
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&mode=walking&alternatives=true&key=$key';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
 
     Map<String, dynamic> results = {
       'bounds_ne': json['routes'][0]['bounds']['northeast'],
@@ -51,8 +85,8 @@ class LocationService {
       'polyline': json['routes'][0]['overview_polyline']['points'],
       'polyline_decoded': PolylinePoints()
           .decodePolyline(json['routes'][0]['overview_polyline']['points']),
+      'distance': distance,
     };
-
     print(results);
 
     return results;

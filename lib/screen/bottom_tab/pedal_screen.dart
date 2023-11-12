@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,9 @@ import 'package:ta_rides/widget/pedal/route.dart';
 import 'package:ta_rides/widget/pedal/saved_route.dart';
 
 class PedalScreen extends StatefulWidget {
-  const PedalScreen({super.key});
+  const PedalScreen({Key? key, this.locationData}) : super(key: key);
 
+  final LocationData? locationData;
   @override
   State<PedalScreen> createState() => _PedalScreenState();
 }
@@ -24,6 +26,23 @@ class PedalScreen extends StatefulWidget {
 class _PedalScreenState extends State<PedalScreen> {
   TextEditingController pinPoint1stController = TextEditingController();
   TextEditingController pinPoint2ndController = TextEditingController();
+
+  bool startNavigation = false;
+  late Timer _timer;
+  Duration _duration = Duration();
+  Stopwatch _stopwatch = Stopwatch();
+  bool focusCameraCurrenLocation = false;
+  bool _isRunning = false;
+
+  LocationData? previousLocation;
+  double distance = 0.0;
+  double avgSpeed = 0.0;
+  double elevationGain = 0.0;
+  double maxSpeed = 0.0;
+  DateTime startTime = DateTime.now();
+  double totalDistance = 0.0;
+  int _start = 0;
+
   int selectTab = 0;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -32,7 +51,7 @@ class _PedalScreenState extends State<PedalScreen> {
   Location _locationController = new Location();
 
   List<Marker> _markers = [];
-  List<Marker> _markers2 = [];
+
   Set<Marker> _currentLocation = Set<Marker>();
   Set<Polygon> _polygons = Set<Polygon>();
   Set<Polyline> _polylines = Set<Polyline>();
@@ -41,6 +60,28 @@ class _PedalScreenState extends State<PedalScreen> {
   int _polygonIdCounter = 1;
   int _polylineIdCounter = 1;
 
+  void startOrStop() {
+    setState(() {
+      _isRunning = !_isRunning;
+
+      if (_isRunning) {
+        _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+          setState(() {
+            _start++;
+          });
+        });
+      } else {
+        _timer.cancel();
+      }
+    });
+  }
+
+  void startNavigate() {
+    setState(() {
+      startNavigation = true;
+    });
+  }
+
   void selectedPage(int index) {
     setState(() {
       selectTab = index;
@@ -48,15 +89,94 @@ class _PedalScreenState extends State<PedalScreen> {
     print(selectTab);
   }
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  void setDistance(double distance) {
+    setState(() {
+      this.distance = distance;
+    });
+  }
+
+  void onLocationChanged(LocationData currentLocation) {
+    setState(() {
+      if (previousLocation != null) {
+        distance += calculateDistance(previousLocation!, currentLocation);
+        if (mounted) {
+          totalDistance += distance;
+        }
+        avgSpeed = distance / DateTime.now().difference(startTime).inHours;
+        // elevationGain +=
+        //     calculateElevationGain(previousLocation!, currentLocation);
+        maxSpeed =
+            max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
+      }
+
+      previousLocation = currentLocation;
+    });
+  }
+
+  double calculateDistance(LocationData location1, LocationData location2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((location2.latitude! - location1.latitude!) * p) / 2 +
+        c(location1.latitude! * p) *
+            c(location2.latitude! * p) *
+            (1 - c((location2.longitude! - location1.longitude!) * p)) /
+            2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  // double calculateElevationGain(
+  //     LocationData location1, LocationData location2) {
+  //   // replace with your actual calculation
+  //   //    double elevationGain = endElevation - startElevation;
+  //   // return elevationGain > 0 ? elevationGain : 0;
+  // }
+
+  double calculateSpeed(LocationData location1, LocationData location2) {
+    double distance = calculateDistance(location1, location2); // in kilometers
+    double time = _duration.inHours.toDouble(); // in hours
+
+    if (time == 0) {
+      return 0;
+    }
+
+    return distance / time;
+  }
+  // static const CameraPosition _kGooglePlex = CameraPosition(
+  //   target: LatLng(37.42796133580664, -122.085749655962),
+  //   zoom: 14.4746,
+  // );
 
   @override
   void initState() {
-    _setMarker(LatLng(37.42796133580664, -122.085749655962));
     super.initState();
+    _currentLocation.add(
+      Marker(
+        markerId: MarkerId('initial_position'),
+        position: LatLng(widget.locationData?.latitude ?? 10.2899758,
+            widget.locationData?.longitude ?? 123.861891),
+      ),
+    );
+
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _duration += Duration(seconds: 1);
+      });
+    });
+  }
+
+  void stopTimer() {
+    _timer.cancel();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void _setMarker(LatLng point) {
@@ -139,6 +259,13 @@ class _PedalScreenState extends State<PedalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String _formatDuration(Duration duration) {
+      String twoDigits(int n) => n.toString().padLeft(2, '0');
+      String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+      String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -184,72 +311,322 @@ class _PedalScreenState extends State<PedalScreen> {
                     _setPolygon();
                   });
                 },
-                initialCameraPosition: _kGooglePlex,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(widget.locationData?.latitude ?? 10.2899758,
+                      widget.locationData?.longitude ?? 123.861891),
+                  zoom: 14.4746,
+                ),
                 onMapCreated: (GoogleMapController controller) {
                   _googleController = controller;
                   _controller.complete(controller);
                 },
               ),
             ),
-            if (selectPoint && selectPoint2)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 490, 10, 10),
-                child: Stack(
-                  children: [
-                    Container(
-                      height: 400,
-                      width: 500,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(
-                            30.0), // Adjust the radius as needed
-                      ),
+            if (startNavigation == false)
+              if (selectPoint)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(220, 430, 0, 0),
+                  child: FloatingActionButton.extended(
+                    onPressed: () async {
+                      focusCameraCurrenLocation = true;
+                      setState(() {});
+                      getLocationUpdates();
+                    },
+                    label: Text('Current location'),
+                    icon: Icon(Icons.location_history),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+            if (startNavigation)
+              if (selectPoint)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(220, 415, 0, 0),
+                  child: FloatingActionButton.extended(
+                    onPressed: () async {
+                      focusCameraCurrenLocation = false;
+                      setState(() {});
+                      getLocationUpdates();
+                    },
+                    label: Text(
+                      'Focus Your Location',
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DefaultTabController(
-                        length: 2,
+                    icon: Icon(Icons.location_history, color: Colors.white),
+                    backgroundColor: Color(0x3FF0C0D11),
+                  ),
+                ),
+            if (startNavigation)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 475, 5, 5),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 290,
+                        width: 500,
+                        decoration: BoxDecoration(
+                          color: Color(0x3FF0C0D11),
+                          borderRadius: BorderRadius.circular(
+                              20.0), // Adjust the radius as needed
+                        ),
                         child: Column(
                           children: [
-                            TabBar(
-                              labelStyle: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(
-                                    color: const Color(0x3ffff0000),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                              indicatorSize: TabBarIndicatorSize.label,
-                              unselectedLabelColor: const Color(0x3ff666666),
-                              labelColor: const Color(0x3ffff0000),
-                              indicatorWeight: 4,
-                              indicatorColor: const Color(0x3ffff0000),
-                              onTap: selectedPage,
-                              tabs: const [
-                                Tab(
-                                  text: 'Routes',
+                            Container(
+                              height: 65,
+                              width: 500,
+                              margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                              child: Card(
+                                color: Color(0x3ff181A20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                Tab(
-                                  text: "Save Route",
+                                clipBehavior: Clip.hardEdge,
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'Time',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: const Color(0x3ffE8AA0A),
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 12,
+                                          ),
+                                    ),
+                                    Text(
+                                      _formatDuration(_stopwatch.elapsed),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 20,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                            Expanded(
-                              child: TabBarView(
+                            Container(
+                              height: 115,
+                              width: 500,
+                              margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                              child: Card(
+                                color: Color(0x3ff181A20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                elevation: 10,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 40,
+                                          ),
+                                          Text(
+                                            'DISTANCE(km)',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
+                                          SizedBox(
+                                            width: 85,
+                                          ),
+                                          Text(
+                                            'AVG SPEED(km/h)',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                        ),
+                                        Text(
+                                          '${distance.toStringAsFixed(2)}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                        SizedBox(
+                                          width: 150,
+                                        ),
+                                        Text(
+                                          '${avgSpeed.toStringAsFixed(2)}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(5),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
+                                            'ELEVATION GAIN (m)',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
+                                          SizedBox(
+                                            width: 78,
+                                          ),
+                                          Text(
+                                            'MAX SPEED',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                        ),
+                                        Text(
+                                          '0.0',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                        SizedBox(
+                                          width: 165,
+                                        ),
+                                        Text(
+                                          '0.0',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                              child: Row(
                                 children: [
-                                  SetRoute(
-                                    pinPoint1st: pinPoint1stController.text,
-                                    pinPoint2nd: pinPoint2ndController.text,
-                                    selectPinPoint: selectPinPoint,
-                                    selectPinPoint2: selectPinPoint2,
-                                    setPlace: ((lat, lng, boundsNe, boundsSw) =>
-                                        _setPlace(
-                                            lat, lng, boundsNe, boundsSw)),
-                                    setPolyline: (points) =>
-                                        _setPolyline(points),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0x3FF0C0D11),
+                                      minimumSize: const Size(178, 35),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: startOrStop,
+                                    child: Text(
+                                      _isRunning ? 'Stop' : 'Start',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14,
+                                          ),
+                                    ),
                                   ),
-                                  SavedRoute(),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0x3ffFF0000),
+                                      minimumSize: const Size(
+                                        178,
+                                        35,
+                                      ),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    onPressed: () {},
+                                    child: Text(
+                                      'Finish',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14,
+                                          ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -260,6 +637,83 @@ class _PedalScreenState extends State<PedalScreen> {
                   ],
                 ),
               ),
+            if (startNavigation == false)
+              if (selectPoint)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 490, 10, 10),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 400,
+                        width: 500,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                              30.0), // Adjust the radius as needed
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            children: [
+                              TabBar(
+                                labelStyle: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: const Color(0x3ffff0000),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                indicatorSize: TabBarIndicatorSize.label,
+                                unselectedLabelColor: const Color(0x3ff666666),
+                                labelColor: const Color(0x3ffff0000),
+                                indicatorWeight: 4,
+                                indicatorColor: const Color(0x3ffff0000),
+                                onTap: selectedPage,
+                                tabs: const [
+                                  Tab(
+                                    text: 'Routes',
+                                  ),
+                                  Tab(
+                                    text: "Save Route",
+                                  ),
+                                ],
+                              ),
+                              if (startNavigation == false)
+                                Expanded(
+                                  child: TabBarView(
+                                    children: [
+                                      SetRoute(
+                                        pinPoint1st: pinPoint1stController.text,
+                                        pinPoint2nd: pinPoint2ndController.text,
+                                        selectPinPoint: selectPinPoint,
+                                        selectPinPoint2: selectPinPoint2,
+                                        setPlace: ((lat, lng, boundsNe,
+                                                boundsSw) =>
+                                            _setPlace(
+                                                lat, lng, boundsNe, boundsSw)),
+                                        setPolyline: (points) =>
+                                            _setPolyline(points),
+                                        polylines: _polylines,
+                                        startNavigation: startNavigate,
+                                        stopwatch: _stopwatch,
+                                        startOrStop: startOrStop,
+                                        distance: setDistance,
+                                      ),
+                                      SavedRoute(),
+                                    ],
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             if (selectPoint == false)
               Stack(
                 children: [
@@ -282,7 +736,7 @@ class _PedalScreenState extends State<PedalScreen> {
                           icon: Icon(Icons.arrow_back),
                         ),
                         Text(
-                          '1st Pin point',
+                          'Destination',
                           style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: const Color(0x3ff454545),
@@ -351,7 +805,7 @@ class _PedalScreenState extends State<PedalScreen> {
                               // },
                               decoration: InputDecoration(
                                 label: Text(
-                                  'Search your 1st Pin point...',
+                                  'Search your Destination...',
                                   style: GoogleFonts.inter(
                                     color: const Color(0x3ff454545),
                                     fontSize: 13,
@@ -387,125 +841,6 @@ class _PedalScreenState extends State<PedalScreen> {
                               20)), // Adjust the radius as needed
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: selectBack2,
-                          icon: Icon(Icons.arrow_back),
-                        ),
-                        IconButton(
-                            onPressed: () async {
-                              var direction = await LocationService()
-                                  .getDirections(pinPoint1stController.text,
-                                      pinPoint2ndController.text);
-
-                              _setPlace(
-                                direction['start_location']['lat'],
-                                direction['start_location']['lng'],
-                                direction['bounds_ne'],
-                                direction['bounds_sw'],
-                              );
-
-                              _setPolyline(direction['polyline_decoded']);
-                            },
-                            icon: Icon(Icons.arrow_circle_up_sharp)),
-                        Text(
-                          '2nd Pin point',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: const Color(0x3ff454545),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                        ),
-                        SizedBox(
-                          width: 180,
-                        ),
-                        // Container(
-                        //   height: 30,
-                        //   width: 80,
-                        //   decoration: BoxDecoration(
-                        //     color: const Color(0x3ffff0000),
-                        //     borderRadius: BorderRadius.circular(50),
-                        //   ),
-                        //   child: TextButton(
-                        //     onPressed: () {},
-                        //     child: Text(
-                        //       'Done',
-                        //       style:
-                        //           Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        //                 color: Colors.white,
-                        //                 fontWeight: FontWeight.bold,
-                        //                 fontSize: 13,
-                        //               ),
-                        //     ),
-                        //   ),
-                        // )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                    child: Container(
-                      margin: EdgeInsets.all(10),
-                      child: Card(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        elevation: 10,
-                        child: InkWell(
-                          onTap: () {},
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            child: TextFormField(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                              // onChanged: (value) {
-                              //   _setMarker(LatLng(
-                              //     double.parse(pinPoint2ndController.text),
-                              //     double.parse(pinPoint1stController.text),
-                              //   ));
-                              // },
-                              cursorColor: Colors.white,
-                              controller: pinPoint2ndController,
-                              textInputAction: TextInputAction.done,
-                              decoration: InputDecoration(
-                                label: Text(
-                                  'Input your 2nd Pin point...',
-                                  style: GoogleFonts.inter(
-                                    color: const Color(0x3ff454545),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                suffix: IconButton(
-                                  onPressed: () async {
-                                    var place = await LocationService()
-                                        .getPlace(pinPoint2ndController.text);
-                                    _goToPlace(place);
-                                  },
-                                  // () async {
-                                  //   var place = await LocationService()
-                                  //       .getPlace(pinPoint2ndController.text);
-                                  //   _goToPlace(place);
-                                  // },
-                                  icon: Icon(Icons.search),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
           ],
@@ -516,27 +851,32 @@ class _PedalScreenState extends State<PedalScreen> {
         //   icon: const Icon(Icons.directions_boat),
         // ),
 
-        floatingActionButton: Column(
-          children: [
-            if (selectPoint == false)
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 700, 0, 0),
-                child: FloatingActionButton.extended(
-                  onPressed: () async {
-                    getLocationUpdates();
-                  },
-                  label: Text('Current location'),
-                  icon: Icon(Icons.location_history),
-                  backgroundColor: Colors.white,
-                ),
-              ),
-          ],
-        ),
+        // floatingActionButton: Column(
+        //   children: [
+        //     if (selectPoint == false)
+        //       Padding(
+        //         padding: EdgeInsets.fromLTRB(0, 700, 0, 0),
+        //         child: FloatingActionButton.extended(
+        //           onPressed: () async {
+        //             getLocationUpdates();
+        //           },
+        //           label: Text('Current location'),
+        //           icon: Icon(Icons.location_history),
+        //           backgroundColor: Colors.white,
+        //         ),
+        //       ),
+        //   ],
+        // ),
       ),
     );
   }
 
+  late bool _shouldUpdateCamera;
+
   Future<void> getLocationUpdates() async {
+    // if (!mounted) {
+    //   return;
+    // }
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
 
@@ -553,71 +893,36 @@ class _PedalScreenState extends State<PedalScreen> {
         return;
       }
     }
-
+    _shouldUpdateCamera = true;
     _locationController.onLocationChanged
         .listen((LocationData currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
-        _googleController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(
-                    currentLocation.latitude!, currentLocation.longitude!),
-                zoom: 15.5),
-          ),
-        );
-        _markers.clear();
+        if (_shouldUpdateCamera) {
+          Future.delayed(Duration(seconds: 1), () {
+            _googleController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                    target: LatLng(
+                        currentLocation.latitude!, currentLocation.longitude!),
+                    zoom: 16.5),
+              ),
+            );
+          });
+        }
 
         _currentLocation.add(Marker(
             markerId: MarkerId('currentLocation'),
             position:
                 LatLng(currentLocation.latitude!, currentLocation.longitude!)));
+        if (focusCameraCurrenLocation) {
+          _shouldUpdateCamera = false;
+        }
 
         setState(() {});
       }
-      // _googleController.animateCamera(
-      //   CameraUpdate.newCameraPosition(
-      //     CameraPosition(
-      //         target: LatLng(currentLocation.latitude!, currentLocation.longitude!),
-      //         zoom: 15.5),
-      //   ),
-      // );
-      // _markers.clear();
-
-      // _currentLocation.add(Marker(
-      //     markerId: MarkerId('currentLocation'),
-      //     position: LatLng(currentLocation.latitude!, currentLocation.longitude!)));
-
-      // setState(() {});
     });
   }
-
-  // Future<Position> _determinePosition() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     return Future.error('Location services are disabled.');
-  //   }
-
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.deniedForever) {
-  //     return Future.error(
-  //         'Location permissions are permantly denied, we cannot request permissions.');
-  //   }
-
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission != LocationPermission.whileInUse &&
-  //         permission != LocationPermission.always) {
-  //       return Future.error(
-  //           'Location permissions are denied (actual value: $permission).');
-  //     }
-  //   }
-
-  //   return await Geolocator.getCurrentPosition();
-  // }
 
   Future<void> _goToPlace(Map<String, dynamic> place) async {
     final double lat = place['geometry']['location']['lat'];
@@ -653,42 +958,123 @@ class _PedalScreenState extends State<PedalScreen> {
   }
 }
 
-// static final Marker _kGooglePlexMarker = Marker(
-//   markerId: MarkerId('_kGooglePlex'),
-//   infoWindow: InfoWindow(title: 'Google Plex'),
-//   icon: BitmapDescriptor.defaultMarker,
-//   position: LatLng(37.42796133580664, -122.085749655962),
-// );
+// Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                   child: Row(
+//                     children: [
+//                       IconButton(
+//                         onPressed: selectBack2,
+//                         icon: Icon(Icons.arrow_back),
+//                       ),
+//                       IconButton(
+//                           onPressed: () async {
+//                             var direction = await LocationService()
+//                                 .getDirections(pinPoint1stController.text,
+//                                     pinPoint2ndController.text);
 
-// static const CameraPosition _kLake = CameraPosition(
-//     bearing: 192.8334901395799,
-//     target: LatLng(37.43296265331129, -122.08832357078792),
-//     tilt: 59.440717697143555,
-//     zoom: 19.151926040649414);
+//                             _setPlace(
+//                               direction!['start_location']['lat'],
+//                               direction['start_location']['lng'],
+//                               direction['bounds_ne'],
+//                               direction['bounds_sw'],
+//                             );
 
-// static final Marker _kLakeMarker = Marker(
-//   markerId: MarkerId('_kLakeMarker'),
-//   infoWindow: InfoWindow(title: 'Lake'),
-//   icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-//   position: LatLng(37.43296265331129, -122.08832357078792),
-// );
-
-// static final Polyline _kPolyline = Polyline(
-//     polylineId: PolylineId('_kPolyline'),
-//     points: const [
-//       LatLng(37.42796133580664, -122.085749655962),
-//       LatLng(37.43296265331129, -122.08832357078792),
-//     ],
-//     width: 5);
-
-// static final Polygon _kPolygon = Polygon(
-//   polygonId: PolygonId('_kPolygon'),
-//   points: const [
-//     LatLng(37.43296265331129, -122.08832357078792),
-//     LatLng(37.42796133580664, -122.085749655962),
-//     LatLng(37.418, -122.092),
-//     LatLng(37.435, -122.092),
-//   ],
-//   strokeWidth: 5,
-//   fillColor: Colors.transparent,
-// );
+//                             _setPolyline(direction['polyline_decoded']);
+//                           },
+//                           icon: Icon(Icons.arrow_circle_up_sharp)),
+//                       Text(
+//                         '2nd Pin point',
+//                         style:
+//                             Theme.of(context).textTheme.bodyLarge!.copyWith(
+//                                   color: const Color(0x3ff454545),
+//                                   fontWeight: FontWeight.bold,
+//                                   fontSize: 13,
+//                                 ),
+//                       ),
+//                       SizedBox(
+//                         width: 180,
+//                       ),
+//                       // Container(
+//                       //   height: 30,
+//                       //   width: 80,
+//                       //   decoration: BoxDecoration(
+//                       //     color: const Color(0x3ffff0000),
+//                       //     borderRadius: BorderRadius.circular(50),
+//                       //   ),
+//                       //   child: TextButton(
+//                       //     onPressed: () {},
+//                       //     child: Text(
+//                       //       'Done',
+//                       //       style:
+//                       //           Theme.of(context).textTheme.bodyLarge!.copyWith(
+//                       //                 color: Colors.white,
+//                       //                 fontWeight: FontWeight.bold,
+//                       //                 fontSize: 13,
+//                       //               ),
+//                       //     ),
+//                       //   ),
+//                       // )
+//                     ],
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+//                   child: Container(
+//                     margin: EdgeInsets.all(10),
+//                     child: Card(
+//                       color: Color.fromARGB(255, 255, 255, 255),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       clipBehavior: Clip.hardEdge,
+//                       elevation: 10,
+//                       child: InkWell(
+//                         onTap: () {},
+//                         child: Container(
+//                           margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+//                           child: TextFormField(
+//                             style: Theme.of(context)
+//                                 .textTheme
+//                                 .bodyMedium!
+//                                 .copyWith(
+//                                   color: Colors.black,
+//                                   fontWeight: FontWeight.bold,
+//                                 ),
+//                             // onChanged: (value) {
+//                             //   _setMarker(LatLng(
+//                             //     double.parse(pinPoint2ndController.text),
+//                             //     double.parse(pinPoint1stController.text),
+//                             //   ));
+//                             // },
+//                             cursorColor: Colors.white,
+//                             controller: pinPoint2ndController,
+//                             textInputAction: TextInputAction.done,
+//                             decoration: InputDecoration(
+//                               label: Text(
+//                                 'Input your 2nd Pin point...',
+//                                 style: GoogleFonts.inter(
+//                                   color: const Color(0x3ff454545),
+//                                   fontSize: 12,
+//                                 ),
+//                               ),
+//                               suffix: IconButton(
+//                                 onPressed: () async {
+//                                   var place = await LocationService()
+//                                       .getPlace(pinPoint2ndController.text);
+//                                   _goToPlace(place);
+//                                   print(place);
+//                                 },
+//                                 // () async {
+//                                 //   var place = await LocationService()
+//                                 //       .getPlace(pinPoint2ndController.text);
+//                                 //   _goToPlace(place);
+//                                 // },
+//                                 icon: Icon(Icons.search),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
