@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ta_rides/widget/goal30/goal30_Home.dart';
+import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/widget/goal30/goal30_Category.dart';
 
 class Goal30BmiScreen extends StatefulWidget {
-  const Goal30BmiScreen({super.key});
+  const Goal30BmiScreen({
+    super.key,
+    required this.user,
+    required this.email,
+  });
+
+  final Users user;
+  final String email;
 
   @override
   State<Goal30BmiScreen> createState() => _Goal30BmiScreenState();
@@ -63,7 +71,11 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Goal30Home(yourCategory: bmicategory!),
+          builder: (context) => Goal30Category(
+            email: widget.email,
+            user: widget.user,
+            bmi: bmicategory!,
+          ),
         ),
       );
     } else {
@@ -92,6 +104,14 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0x3FFF0C0D11),
+        title: Text(
+          'Check your BMI',
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+              ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.info_outline),

@@ -1,9 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 
 class Goal30_3rdTab extends StatelessWidget {
-  const Goal30_3rdTab({super.key});
+  const Goal30_3rdTab({
+    super.key,
+    required this.user,
+    required this.email,
+  });
+
+  final Users user;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +109,7 @@ class Goal30_3rdTab extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(185, 170, 0, 0),
+            margin: EdgeInsets.fromLTRB(185, 20, 0, 0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 fixedSize: const Size.fromHeight(50),
@@ -115,7 +124,10 @@ class Goal30_3rdTab extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const Goal30BmiScreen(),
+                    builder: (context) => Goal30BmiScreen(
+                      email: email,
+                      user: user,
+                    ),
                   ),
                 );
               },

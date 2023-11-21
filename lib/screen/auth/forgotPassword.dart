@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/screen/auth/forgotPassword2.dart';
+import 'package:ta_rides/screen/auth/logInPage.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -15,6 +17,37 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   void dispose() {
     emailController.dispose();
     super.dispose();
+  }
+
+  Future passwordReset() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: emailController.text.trim());
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text(
+                  'Password reset link has been sent to your email Check your email${emailController.text.trim()}to reset your password'),
+            );
+          }).then((value) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+      });
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Text(e.message.toString()),
+            );
+          });
+    }
   }
 
   void forgotPassword1Checker() {
@@ -156,7 +189,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     backgroundColor: const Color(0x3ffFF0000),
                   ),
                   onPressed: () {
-                    forgotPassword1Checker();
+                    passwordReset();
                   },
                   child: Text(
                     'Submit',

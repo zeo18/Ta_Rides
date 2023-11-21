@@ -211,13 +211,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.6.7"
-  fl_country_code_picker:
-    dependency: "direct main"
-    description:
-      name: fl_country_code_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -570,12 +563,12 @@ packages:
     source: hosted
     version: "2.0.0"
   scrollable_positioned_list:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: scrollable_positioned_list
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.8"
+    version: "0.2.3"
   shared_preferences:
     dependency: "direct main"
     description:

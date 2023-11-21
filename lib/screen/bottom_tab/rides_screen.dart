@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/community_controller.dart';
 import 'package:ta_rides/widget/all_controller/rides_controller.dart';
 import 'package:ta_rides/widget/all_controller/search_controller.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/rides/community_list.dart';
+import 'package:ta_rides/widget/rides/user_rides.dart';
+import 'package:ta_rides/widget/rides/user_ridesList.dart';
 
 class RidesScreen extends StatefulWidget {
   const RidesScreen({
     super.key,
     required this.email,
+    required this.user,
   });
 
   final String email;
+  final Users user;
   @override
   State<RidesScreen> createState() => _RidesScreenState();
 }
@@ -32,7 +37,8 @@ class _RidesScreenState extends State<RidesScreen> {
     communityController.getCommunityAndUser(widget.email);
     communityController.getAllCommunity();
     searchController = SearchController();
-    // ridesController.getUserRide(rideId);
+    ridesController.getUserChallenge(widget.user.username);
+
     super.initState();
   }
 
@@ -284,7 +290,7 @@ class _RidesScreenState extends State<RidesScreen> {
                                               const SizedBox(
                                                 width: 5,
                                               ),
-                                              Icon(Icons.verified,
+                                              const Icon(Icons.verified,
                                                   color: Colors.green, size: 15)
                                             ],
                                           ),
@@ -308,215 +314,273 @@ class _RidesScreenState extends State<RidesScreen> {
                         const SizedBox(
                           height: 30,
                         ),
-                        Text(
-                          'Enemy Team',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      ],
+                    );
+                  }),
+            if (isChecked == false)
+              Expanded(
+                child: AnimatedBuilder(
+                    animation: ridesController,
+                    builder: (context, snapshot) {
+                      if (ridesController.isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('CHALLENGER',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Color(0x3ffE8AA0A),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25,
+                                  )),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (ridesController.rider.isNotEmpty)
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: ridesController.rider.length,
+                                itemBuilder: (context, index) => UserRideList(
+                                  ride: ridesController.rider[index],
+                                ),
+                              ),
+                            )
+                          else
+                            Text(
+                              'There is no challenge yet.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
-                        ),
-                        AnimatedBuilder(
-                            animation: ridesController,
-                            builder: (context, snapshot) {
-                              if (ridesController.isLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return SizedBox();
-                              // return Column(
-                              //   children: [
-                              //     if (ridesController.ride.isEnemy == true)
-                              //       Container(
-                              //         height: 150,
-                              //         width: 500,
-                              //         child: Card(
-                              //           color: const Color(0xff282828),
-                              //           shape: RoundedRectangleBorder(
-                              //             borderRadius:
-                              //                 BorderRadius.circular(15),
-                              //           ),
-                              //           clipBehavior: Clip.hardEdge,
-                              //           elevation: 10,
-                              //           child: Container(
-                              //             margin: const EdgeInsets.all(25),
-                              //             child: Column(
-                              //               crossAxisAlignment:
-                              //                   CrossAxisAlignment.start,
-                              //               children: [
-                              //                 Text(
-                              //                   ridesController
-                              //                       .ride.enemyCommunityTitle,
-                              //                   style: Theme.of(context)
-                              //                       .textTheme
-                              //                       .bodyLarge!
-                              //                       .copyWith(
-                              //                         color: Colors.white,
-                              //                         fontWeight:
-                              //                             FontWeight.bold,
-                              //                       ),
-                              //                 ),
-                              //                 const SizedBox(
-                              //                   height: 10,
-                              //                 ),
-                              //                 Row(
-                              //                   crossAxisAlignment:
-                              //                       CrossAxisAlignment.start,
-                              //                   children: [
-                              //                     const SizedBox(
-                              //                       width: 10,
-                              //                     ),
-                              //                     ClipOval(
-                              //                       child: Image.network(
-                              //                         ridesController
-                              //                             .ride.enemyImage,
-                              //                         height: 45,
-                              //                         width: 45,
-                              //                         fit: BoxFit.cover,
-                              //                       ),
-                              //                     ),
-                              //                     const SizedBox(
-                              //                       width: 10,
-                              //                     ),
-                              //                     Column(
-                              //                       crossAxisAlignment:
-                              //                           CrossAxisAlignment
-                              //                               .start,
-                              //                       children: [
-                              //                         Row(
-                              //                           children: [
-                              //                             Text(
-                              //                               "${ridesController.ride.enemyFirstname.replaceRange(0, 1, ridesController.ride.enemyFirstname[0].toUpperCase())} ${ridesController.ride.enemyLastname.replaceRange(0, 1, ridesController.ride.enemyLastname[0].toUpperCase())}",
-                              //                               style: Theme.of(
-                              //                                       context)
-                              //                                   .textTheme
-                              //                                   .titleMedium!
-                              //                                   .copyWith(
-                              //                                     color: Colors
-                              //                                         .white,
-                              //                                     fontWeight:
-                              //                                         FontWeight
-                              //                                             .w900,
-                              //                                     fontSize: 14,
-                              //                                   ),
-                              //                             ),
-                              //                             const SizedBox(
-                              //                               width: 5,
-                              //                             ),
-                              //                             const Icon(
-                              //                                 Icons.verified,
-                              //                                 color:
-                              //                                     Colors.green,
-                              //                                 size: 15)
-                              //                           ],
-                              //                         ),
-                              //                         Text(
-                              //                           '@${ridesController.ride.enemyUsername}',
-                              //                           style:
-                              //                               GoogleFonts.inter(
-                              //                             fontSize: 15,
-                              //                             color: Color(
-                              //                                 0x3ff797979),
-                              //                             fontWeight:
-                              //                                 FontWeight.w500,
-                              //                           ),
-                              //                         ),
-                              //                       ],
-                              //                     ),
-                              //                   ],
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       )
-                              //     else
-                              //       Center(
-                              //         child: Column(
-                              //           children: [
-                              //             const SizedBox(
-                              //               height: 100,
-                              //             ),
-                              //             Text(
-                              //               'No Compitetor',
-                              //               style: Theme.of(context)
-                              //                   .textTheme
-                              //                   .titleMedium!
-                              //                   .copyWith(
-                              //                     color: Colors.white,
-                              //                     fontWeight: FontWeight.w900,
-                              //                     fontSize: 14,
-                              //                   ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //   ],
-                              // );
-                            }),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0x3ffFF0000),
-                            minimumSize: const Size(
-                              375,
-                              45,
                             ),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            'Pick a Route',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 14,
-                                ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0x3ffFF0000),
-                            minimumSize: const Size(
-                              375,
-                              45,
-                            ),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            'Start',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 14,
-                                ),
-                          ),
-                        ),
-                      ],
-                    );
-                  })
+                        ],
+                      );
+                    }),
+              ),
           ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: Color(0x3ffFF0000),
+                        //     minimumSize: const Size(
+                        //       375,
+                        //       45,
+                        //     ),
+                        //     elevation: 0,
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //     ),
+                        //   ),
+                        //   onPressed: () {},
+                        //   child: Text(
+                        //     'Pick a Route',
+                        //     style: Theme.of(context)
+                        //         .textTheme
+                        //         .titleMedium!
+                        //         .copyWith(
+                        //           color: Colors.white,
+                        //           fontWeight: FontWeight.w900,
+                        //           fontSize: 14,
+                        //         ),
+                        //   ),
+                        // ),
+
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: Color(0x3ffFF0000),
+                        //     minimumSize: const Size(
+                        //       375,
+                        //       45,
+                        //     ),
+                        //     elevation: 0,
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //     ),
+                        //   ),
+                        //   onPressed: () {},
+                        //   child: Text(
+                        //     'Start',
+                        //     style: Theme.of(context)
+                        //         .textTheme
+                        //         .titleMedium!
+                        //         .copyWith(
+                        //           color: Colors.white,
+                        //           fontWeight: FontWeight.w900,
+                        //           fontSize: 14,
+                        //         ),
+                        //   ),
+                        // ),
+
+
+
+
+
+ // Text(
+                        //   'Enemy Team',
+                        //   style:
+                        //       Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        //             color: Colors.white,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        // ),
+                        // AnimatedBuilder(
+                        //     animation: ridesController,
+                        //     builder: (context, snapshot) {
+                        //       if (ridesController.isLoading) {
+                        //         return const Center(
+                        //           child: CircularProgressIndicator(),
+                        //         );
+                        //       }
+
+                        //       return Column(
+                        //         children: [
+                        //           if (ridesController.ride.isEnemy == true)
+                        //             Container(
+                        //               height: 150,
+                        //               width: 500,
+                        //               child: Card(
+                        //                 color: const Color(0xff282828),
+                        //                 shape: RoundedRectangleBorder(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(15),
+                        //                 ),
+                        //                 clipBehavior: Clip.hardEdge,
+                        //                 elevation: 10,
+                        //                 child: Container(
+                        //                   margin: const EdgeInsets.all(25),
+                        //                   child: Column(
+                        //                     crossAxisAlignment:
+                        //                         CrossAxisAlignment.start,
+                        //                     children: [
+                        //                       Text(
+                        //                         ridesController
+                        //                             .ride.enemyCommunityTitle,
+                        //                         style: Theme.of(context)
+                        //                             .textTheme
+                        //                             .bodyLarge!
+                        //                             .copyWith(
+                        //                               color: Colors.white,
+                        //                               fontWeight:
+                        //                                   FontWeight.bold,
+                        //                             ),
+                        //                       ),
+                        //                       const SizedBox(
+                        //                         height: 10,
+                        //                       ),
+                        //                       Row(
+                        //                         crossAxisAlignment:
+                        //                             CrossAxisAlignment.start,
+                        //                         children: [
+                        //                           const SizedBox(
+                        //                             width: 10,
+                        //                           ),
+                        //                           ClipOval(
+                        //                             child: Image.network(
+                        //                               ridesController
+                        //                                   .ride.enemyImage,
+                        //                               height: 45,
+                        //                               width: 45,
+                        //                               fit: BoxFit.cover,
+                        //                             ),
+                        //                           ),
+                        //                           const SizedBox(
+                        //                             width: 10,
+                        //                           ),
+                        //                           Column(
+                        //                             crossAxisAlignment:
+                        //                                 CrossAxisAlignment
+                        //                                     .start,
+                        //                             children: [
+                        //                               Row(
+                        //                                 children: [
+                        //                                   Text(
+                        //                                     "${ridesController.ride.enemyFirstname.replaceRange(0, 1, ridesController.ride.enemyFirstname[0].toUpperCase())} ${ridesController.ride.enemyLastname.replaceRange(0, 1, ridesController.ride.enemyLastname[0].toUpperCase())}",
+                        //                                     style: Theme.of(
+                        //                                             context)
+                        //                                         .textTheme
+                        //                                         .titleMedium!
+                        //                                         .copyWith(
+                        //                                           color: Colors
+                        //                                               .white,
+                        //                                           fontWeight:
+                        //                                               FontWeight
+                        //                                                   .w900,
+                        //                                           fontSize: 14,
+                        //                                         ),
+                        //                                   ),
+                        //                                   const SizedBox(
+                        //                                     width: 5,
+                        //                                   ),
+                        //                                   const Icon(
+                        //                                       Icons.verified,
+                        //                                       color:
+                        //                                           Colors.green,
+                        //                                       size: 15)
+                        //                                 ],
+                        //                               ),
+                        //                               Text(
+                        //                                 '@${ridesController.ride.enemyUsername}',
+                        //                                 style:
+                        //                                     GoogleFonts.inter(
+                        //                                   fontSize: 15,
+                        //                                   color: Color(
+                        //                                       0x3ff797979),
+                        //                                   fontWeight:
+                        //                                       FontWeight.w500,
+                        //                                 ),
+                        //                               ),
+                        //                             ],
+                        //                           ),
+                        //                         ],
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //             )
+                        //           else
+                        //             Center(
+                        //               child: Column(
+                        //                 children: [
+                        //                   const SizedBox(
+                        //                     height: 100,
+                        //                   ),
+                        //                   Text(
+                        //                     'No Compitetor',
+                        //                     style: Theme.of(context)
+                        //                         .textTheme
+                        //                         .titleMedium!
+                        //                         .copyWith(
+                        //                           color: Colors.white,
+                        //                           fontWeight: FontWeight.w900,
+                        //                           fontSize: 14,
+                        //                         ),
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //         ],
+                        //       );
+                        //     }),

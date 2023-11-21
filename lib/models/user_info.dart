@@ -123,16 +123,18 @@ class Statistic {
   final int elevationGain;
 }
 
-class Goal30 {
-  Goal30({
-    required this.distance,
-    required this.time,
-    required this.elevationGain,
-  });
-  final int distance;
-  final int time;
-  final int elevationGain;
-}
+// class Goal30 {
+//   Goal30({
+//     required this.distance,
+//     required this.time,
+//     required this.elevationGain,
+//   });
+//   final int distance;
+//   final int time;
+//   final int elevationGain;
+
+//   static Goal30 fromDocument(QueryDocumentSnapshot<Map<String, dynamic>> goal30documentSnapshot) {}
+// }
 // Map<String, dynamic> toJson() {
 //     return {
 //       'id': id,

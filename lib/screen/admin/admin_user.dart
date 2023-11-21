@@ -14,7 +14,7 @@ class _AdminUserState extends State<AdminUser> {
       appBar: AppBar(
         title: const Text('Admin User'),
       ),
-      body: const Center(
+      body:  Center(
         child: Text('Admin User'),
       ),
     );

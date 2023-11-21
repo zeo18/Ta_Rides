@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Rides {
   Rides({
@@ -47,6 +50,13 @@ class Rides {
   final String enemyCommunityTitle;
   final String enemyCommunityImage;
 
+  // final Location enemyCurrent;
+  // final Location userCurrent;
+
+  // final Location enemyStart;
+  // final Location userStart;
+  // final Location finalEnd;
+
   factory Rides.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data() as Map<String, dynamic>;
     return Rides(
@@ -72,4 +82,13 @@ class Rides {
       enemyCommunityImage: data['enemyCommunityImage'] as String,
     );
   }
+}
+
+class Location {
+  Location({
+    required this.lat,
+    required this.lng,
+  });
+  final double lat;
+  final double lng;
 }

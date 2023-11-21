@@ -50,6 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     userController.setEmail(widget.email);
     userController.getUser(widget.email);
     userController.getAchievement(widget.email);
+   
     super.initState();
   }
 
