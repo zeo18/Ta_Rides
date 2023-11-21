@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:async';
 import 'dart:math';
 
@@ -12,18 +10,22 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
+import 'package:ta_rides/widget/goal30/goal30_Route.dart';
 import 'package:ta_rides/widget/pedal/route.dart';
 import 'package:ta_rides/widget/pedal/saved_route.dart';
 
-class PedalScreen extends StatefulWidget {
-  const PedalScreen({Key? key, this.locationData}) : super(key: key);
+class Goal30Start extends StatefulWidget {
+  const Goal30Start(
+      {Key? key, this.locationData, required this.goal30PinController})
+      : super(key: key);
 
   final LocationData? locationData;
+  final String goal30PinController;
   @override
-  State<PedalScreen> createState() => _PedalScreenState();
+  State<Goal30Start> createState() => _Goal30StartState();
 }
 
-class _PedalScreenState extends State<PedalScreen> {
+class _Goal30StartState extends State<Goal30Start> {
   TextEditingController pinPoint1stController = TextEditingController();
   TextEditingController pinPoint2ndController = TextEditingController();
 
@@ -116,58 +118,6 @@ class _PedalScreenState extends State<PedalScreen> {
     });
   }
 
-  // void onLocationChanged(LocationData currentLocation) {
-  //   setState(() {
-  //     if (previousLocation != null) {
-  //       distance += calculateDistance(previousLocation!, currentLocation);
-  //       if (mounted) {
-  //         totalDistance += distance;
-  //       }
-  //       avgSpeed = distance / DateTime.now().difference(startTime).inHours;
-  //       // elevationGain +=
-  //       //     calculateElevationGain(previousLocation!, currentLocation);
-  //       maxSpeed =
-  //           max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
-  //     }
-
-  //     previousLocation = currentLocation;
-  //   });
-  // }
-
-  // double calculateDistance(LocationData location1, LocationData location2) {
-  //   var p = 0.017453292519943295;
-  //   var c = cos;
-  //   var a = 0.5 -
-  //       c((location2.latitude! - location1.latitude!) * p) / 2 +
-  //       c(location1.latitude! * p) *
-  //           c(location2.latitude! * p) *
-  //           (1 - c((location2.longitude! - location1.longitude!) * p)) /
-  //           2;
-  //   return 12742 * asin(sqrt(a));
-  // }
-
-  // // double calculateElevationGain(
-  // //     LocationData location1, LocationData location2) {
-  // //   // replace with your actual calculation
-  // //   //    double elevationGain = endElevation - startElevation;
-  // //   // return elevationGain > 0 ? elevationGain : 0;
-  // // }
-
-  // double calculateSpeed(LocationData location1, LocationData location2) {
-  //   double distance = calculateDistance(location1, location2); // in kilometers
-  //   double time = _duration.inHours.toDouble(); // in hours
-
-  //   if (time == 0) {
-  //     return 0;
-  //   }
-
-  //   return distance / time;
-  // }
-  // // static const CameraPosition _kGooglePlex = CameraPosition(
-  // //   target: LatLng(37.42796133580664, -122.085749655962),
-  // //   zoom: 14.4746,
-  // // );
-
   @override
   void initState() {
     super.initState();
@@ -180,6 +130,7 @@ class _PedalScreenState extends State<PedalScreen> {
     );
 
     _startTimer();
+    pinPoint1stController.text = widget.goal30PinController;
   }
 
   void _startTimer() {
@@ -219,31 +170,6 @@ class _PedalScreenState extends State<PedalScreen> {
       });
     }
   }
-
-  // double calculateSpeed(LocationData previousLocation, DateTime previousTime,
-  //     LocationData currentLocation, DateTime currentTime) {
-  //   double earthRadius = 6371; // radius of the earth in km
-  //   double latDistance =
-  //       toRadians(currentLocation.latitude! - previousLocation.latitude!);
-  //   double lonDistance =
-  //       toRadians(currentLocation.longitude! - previousLocation.longitude!);
-  //   double a = sin(latDistance / 2) * sin(latDistance / 2) +
-  //       cos(toRadians(previousLocation.latitude!)) *
-  //           cos(toRadians(currentLocation.latitude!)) *
-  //           sin(lonDistance / 2) *
-  //           sin(lonDistance / 2);
-  //   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-  //   double distance = earthRadius * c; // distance in km
-
-  //   double timeDifference = currentTime.difference(_previousTime!).inSeconds /
-  //       3600; // time difference in hours
-
-  //   if (timeDifference == 0) {
-  //     return 0;
-  //   }
-
-  //   return distance / timeDifference; // speed in km/h
-  // }
 
   double toRadians(double degree) {
     return degree * pi / 180;
@@ -319,11 +245,10 @@ class _PedalScreenState extends State<PedalScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(
-            'Pedal',
+            'GOAL 30',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -345,16 +270,6 @@ class _PedalScreenState extends State<PedalScreen> {
                 },
                 polygons: _polygons,
                 polylines: _polylines,
-                // markers: {
-                //   _kGooglePlexMarker,
-                //   // _kLakeMarker,
-                // },
-                // // polylines: {
-                // //   _kPolyline,
-                // // },
-                // // polygons: {
-                // //   _kPolygon,
-                // // },
                 onTap: (point) {
                   setState(() {
                     polygonLatLngs.add(point);
@@ -575,20 +490,6 @@ class _PedalScreenState extends State<PedalScreen> {
                                                 fontSize: 20,
                                               ),
                                         ),
-                                        // SizedBox(
-                                        //   width: 120,
-                                        // ),
-                                        // Text(
-                                        //   '${maxSpeed.toStringAsFixed(2)}',
-                                        //   style: Theme.of(context)
-                                        //       .textTheme
-                                        //       .bodyLarge!
-                                        //       .copyWith(
-                                        //         color: Colors.white,
-                                        //         fontWeight: FontWeight.w900,
-                                        //         fontSize: 20,
-                                        //       ),
-                                        // ),
                                       ],
                                     ),
                                   ],
@@ -728,7 +629,9 @@ class _PedalScreenState extends State<PedalScreen> {
                                 Expanded(
                                   child: TabBarView(
                                     children: [
-                                      SetRoute(
+                                      Goal30Route(
+                                        goal30PinController:
+                                            widget.goal30PinController,
                                         pinPoint1st: pinPoint1stController.text,
                                         pinPoint2nd: pinPoint2ndController.text,
                                         selectPinPoint: selectPinPoint,
@@ -790,26 +693,6 @@ class _PedalScreenState extends State<PedalScreen> {
                         SizedBox(
                           width: 180,
                         ),
-                        // Container(
-                        //   height: 30,
-                        //   width: 80,
-                        //   decoration: BoxDecoration(
-                        //     color: const Color(0x3ffff0000),
-                        //     borderRadius: BorderRadius.circular(50),
-                        //   ),
-                        //   child: TextButton(
-                        //     onPressed: () {},
-                        //     child: Text(
-                        //       'Done',
-                        //       style:
-                        //           Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        //                 color: Colors.white,
-                        //                 fontWeight: FontWeight.bold,
-                        //                 fontSize: 13,
-                        //               ),
-                        //     ),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
@@ -840,15 +723,11 @@ class _PedalScreenState extends State<PedalScreen> {
                               controller: pinPoint1stController,
                               textCapitalization: TextCapitalization.words,
                               textInputAction: TextInputAction.done,
-                              // onChanged: (value) {
-                              //   _setMarker(LatLng(
-                              //     double.parse(pinPoint1stController.text),
-                              //     double.parse(pinPoint2ndController.text),
-                              //   ));
-                              // },
                               decoration: InputDecoration(
                                 label: Text(
-                                  'Search your Destination...',
+                                  widget.goal30PinController.isEmpty
+                                      ? 'Search your Destination...'
+                                      : widget.goal30PinController,
                                   style: GoogleFonts.inter(
                                     color: const Color(0x3ff454545),
                                     fontSize: 13,
@@ -888,28 +767,6 @@ class _PedalScreenState extends State<PedalScreen> {
               ),
           ],
         ),
-        // floatingActionButton: FloatingActionButton.extended(
-        //   onPressed: _goToTheLake,
-        //   label: const Text('To the lake!'),
-        //   icon: const Icon(Icons.directions_boat),
-        // ),
-
-        // floatingActionButton: Column(
-        //   children: [
-        //     if (selectPoint == false)
-        //       Padding(
-        //         padding: EdgeInsets.fromLTRB(0, 700, 0, 0),
-        //         child: FloatingActionButton.extended(
-        //           onPressed: () async {
-        //             getLocationUpdates();
-        //           },
-        //           label: Text('Current location'),
-        //           icon: Icon(Icons.location_history),
-        //           backgroundColor: Colors.white,
-        //         ),
-        //       ),
-        //   ],
-        // ),
       ),
     );
   }
@@ -981,13 +838,6 @@ class _PedalScreenState extends State<PedalScreen> {
 
             DateTime currentTime = DateTime.now();
 
-            // if (_previousLocation != null && _previousTime != null) {
-            //   double speed = calculateSpeed(_previousLocation!, _previousTime!,
-            //       currentLocation, currentTime);
-            //   _speeds.add(speed);
-            //   _totalSpeed += speed;
-            // }
-
             _previousLocation = currentLocation;
             _previousTime = currentTime;
           });
@@ -1034,13 +884,6 @@ class _PedalScreenState extends State<PedalScreen> {
         .reduce((value, element) => value > element ? value : element);
   }
 
-  // double calculateAverageSpeed() {
-  //   if (_speeds.isEmpty) {
-  //     return 0;
-  //   }
-  //   return _totalSpeed / _speeds.length;
-  // }
-
   Future<void> _goToPlace(Map<String, dynamic> place) async {
     final double lat = place['geometry']['location']['lat'];
     final double lng = place['geometry']['location']['lng'];
@@ -1058,8 +901,6 @@ class _PedalScreenState extends State<PedalScreen> {
     Map<String, dynamic> boundsNe,
     Map<String, dynamic> boundsSw,
   ) async {
-    // final double lat = place['geometry']['location']['lat'];
-    // final double lng = place['geometry']['location']['lng'];
     final GoogleMapController controller = await _controller.future;
     await controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 15.5),
@@ -1074,125 +915,3 @@ class _PedalScreenState extends State<PedalScreen> {
     _setMarker(LatLng(lat, lng));
   }
 }
-
-
-// Padding(
-//                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-//                   child: Row(
-//                     children: [
-//                       IconButton(
-//                         onPressed: selectBack2,
-//                         icon: Icon(Icons.arrow_back),
-//                       ),
-//                       IconButton(
-//                           onPressed: () async {
-//                             var direction = await LocationService()
-//                                 .getDirections(pinPoint1stController.text,
-//                                     pinPoint2ndController.text);
-
-//                             _setPlace(
-//                               direction!['start_location']['lat'],
-//                               direction['start_location']['lng'],
-//                               direction['bounds_ne'],
-//                               direction['bounds_sw'],
-//                             );
-
-//                             _setPolyline(direction['polyline_decoded']);
-//                           },
-//                           icon: Icon(Icons.arrow_circle_up_sharp)),
-//                       Text(
-//                         '2nd Pin point',
-//                         style:
-//                             Theme.of(context).textTheme.bodyLarge!.copyWith(
-//                                   color: const Color(0x3ff454545),
-//                                   fontWeight: FontWeight.bold,
-//                                   fontSize: 13,
-//                                 ),
-//                       ),
-//                       SizedBox(
-//                         width: 180,
-//                       ),
-//                       // Container(
-//                       //   height: 30,
-//                       //   width: 80,
-//                       //   decoration: BoxDecoration(
-//                       //     color: const Color(0x3ffff0000),
-//                       //     borderRadius: BorderRadius.circular(50),
-//                       //   ),
-//                       //   child: TextButton(
-//                       //     onPressed: () {},
-//                       //     child: Text(
-//                       //       'Done',
-//                       //       style:
-//                       //           Theme.of(context).textTheme.bodyLarge!.copyWith(
-//                       //                 color: Colors.white,
-//                       //                 fontWeight: FontWeight.bold,
-//                       //                 fontSize: 13,
-//                       //               ),
-//                       //     ),
-//                       //   ),
-//                       // )
-//                     ],
-//                   ),
-//                 ),
-//                 Padding(
-//                   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-//                   child: Container(
-//                     margin: EdgeInsets.all(10),
-//                     child: Card(
-//                       color: Color.fromARGB(255, 255, 255, 255),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(20),
-//                       ),
-//                       clipBehavior: Clip.hardEdge,
-//                       elevation: 10,
-//                       child: InkWell(
-//                         onTap: () {},
-//                         child: Container(
-//                           margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-//                           child: TextFormField(
-//                             style: Theme.of(context)
-//                                 .textTheme
-//                                 .bodyMedium!
-//                                 .copyWith(
-//                                   color: Colors.black,
-//                                   fontWeight: FontWeight.bold,
-//                                 ),
-//                             // onChanged: (value) {
-//                             //   _setMarker(LatLng(
-//                             //     double.parse(pinPoint2ndController.text),
-//                             //     double.parse(pinPoint1stController.text),
-//                             //   ));
-//                             // },
-//                             cursorColor: Colors.white,
-//                             controller: pinPoint2ndController,
-//                             textInputAction: TextInputAction.done,
-//                             decoration: InputDecoration(
-//                               label: Text(
-//                                 'Input your 2nd Pin point...',
-//                                 style: GoogleFonts.inter(
-//                                   color: const Color(0x3ff454545),
-//                                   fontSize: 12,
-//                                 ),
-//                               ),
-//                               suffix: IconButton(
-//                                 onPressed: () async {
-//                                   var place = await LocationService()
-//                                       .getPlace(pinPoint2ndController.text);
-//                                   _goToPlace(place);
-//                                   print(place);
-//                                 },
-//                                 // () async {
-//                                 //   var place = await LocationService()
-//                                 //       .getPlace(pinPoint2ndController.text);
-//                                 //   _goToPlace(place);
-//                                 // },
-//                                 icon: Icon(Icons.search),
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),

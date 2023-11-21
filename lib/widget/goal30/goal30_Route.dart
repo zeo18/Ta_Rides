@@ -5,8 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'dart:async';
 
-class SetRoute extends StatefulWidget {
-  SetRoute({
+class Goal30Route extends StatefulWidget {
+  Goal30Route({
     super.key,
     required this.selectPinPoint,
     required this.selectPinPoint2,
@@ -20,7 +20,10 @@ class SetRoute extends StatefulWidget {
     required this.startOrStop,
     required this.distance,
     required this.getLocationUpdate,
+    required this.goal30PinController,
   });
+  final String goal30PinController;
+
   final Function() selectPinPoint2;
 
   final Function() selectPinPoint;
@@ -40,10 +43,10 @@ class SetRoute extends StatefulWidget {
   final Future<void> Function() getLocationUpdate;
   final void Function(double distance) distance;
   @override
-  State<SetRoute> createState() => _SetRouteState();
+  State<Goal30Route> createState() => _Goal30RouteState();
 }
 
-class _SetRouteState extends State<SetRoute> {
+class _Goal30RouteState extends State<Goal30Route> {
   bool selectPoint = true;
 
   @override
@@ -88,9 +91,9 @@ class _SetRouteState extends State<SetRoute> {
                         width: 10,
                       ),
                       Text(
-                        widget.pinPoint1st.isEmpty
+                        widget.goal30PinController.isEmpty
                             ? 'Final Destination'
-                            : widget.pinPoint1st,
+                            : widget.goal30PinController,
                         style: GoogleFonts.inter(
                           color: Color(0x3FF989898),
                           fontSize: 12,
@@ -102,70 +105,6 @@ class _SetRouteState extends State<SetRoute> {
                 ),
               ),
             ),
-            // Card(
-            //   color: Color.fromARGB(255, 255, 255, 255),
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(20),
-            //   ),
-            //   clipBehavior: Clip.hardEdge,
-            //   elevation: 10,
-            //   child: InkWell(
-            //     onTap: () {
-            //       widget.selectPinPoint2();
-            //     },
-            //     child: Container(
-            //       margin: const EdgeInsets.all(15),
-            //       child: Row(
-            //         children: [
-            //           Image.asset('assets/images/pedal/icon1.png'),
-            //           const SizedBox(
-            //             width: 10,
-            //           ),
-            //           Text(
-            //             widget.pinPoint2nd.isEmpty
-            //                 ? '2nd Pinpoint'
-            //                 : widget.pinPoint2nd,
-            //             style: GoogleFonts.inter(
-            //               color: Color(0x3FF989898),
-            //               fontSize: 12,
-            //               fontWeight: FontWeight.w500,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Card(
-            //   color: Color.fromARGB(255, 255, 255, 255),
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(20),
-            //   ),
-            //   clipBehavior: Clip.hardEdge,
-            //   elevation: 10,
-            //   child: InkWell(
-            //     onTap: () {},
-            //     child: Container(
-            //       margin: const EdgeInsets.all(15),
-            //       child: Row(
-            //         children: [
-            //           Image.asset('assets/images/pedal/icon2.png'),
-            //           const SizedBox(
-            //             width: 10,
-            //           ),
-            //           Text(
-            //             '3rd Pinpoint',
-            //             style: GoogleFonts.inter(
-            //               color: Color(0x3FF989898),
-            //               fontSize: 12,
-            //               fontWeight: FontWeight.w500,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
             const SizedBox(
               height: 10,
             ),

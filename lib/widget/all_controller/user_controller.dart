@@ -8,6 +8,7 @@ class UserController extends ChangeNotifier {
   late final String email;
 
   late Users user;
+  late List<Users> users = <Users>[];
   late Achievements achievement;
   bool isLoading = false;
 
@@ -34,35 +35,6 @@ class UserController extends ChangeNotifier {
     user = Users.fromDocument(documentSnapshot);
     isLoading = false;
     notifyListeners();
-
-    /////////////////////////
-    // final communityQuerySnapshot = await FirebaseFirestore.instance
-    //     .collection('community')
-    //     .where('id', isEqualTo: user.communityId)
-    //     .get();
-
-    // if (communityQuerySnapshot.docs.isEmpty) {
-    //   isLoading = false;
-    //   notifyListeners();
-    //   throw Exception('Community not found');
-    // }
-
-    // final communityDocumentSnapshot = communityQuerySnapshot.docs.first;
-    // community = Community.fromDocument(communityDocumentSnapshot);
-
-    // final postQuerySnapshot = await FirebaseFirestore.instance
-    //     .collection('post')
-    //     .where('communityId', isEqualTo: user.communityId)
-    //     .get();
-
-    // if (postQuerySnapshot.docs.isEmpty) {
-    //   isLoading = false;
-    //   notifyListeners();
-    //   throw Exception('Post not found');
-    // }
-
-    // final postDocumentSnapshot = postQuerySnapshot.docs.first;
-    // post = Post.fromDocument(postDocumentSnapshot);
   }
 
   void getAchievement(String email) async {
@@ -109,4 +81,71 @@ class UserController extends ChangeNotifier {
     // }
     print('hello3');
   }
+
+  void getAllUsers() async {
+    isLoading = true;
+    notifyListeners();
+
+    final querySnapshot =
+        await FirebaseFirestore.instance.collection('users').get();
+
+    if (querySnapshot.docs.isEmpty) {
+      isLoading = false;
+      notifyListeners();
+      throw Exception('Users not found');
+    }
+
+    users = querySnapshot.docs.map((snapshot) {
+      return Users.fromDocument(snapshot);
+    }).toList();
+
+    isLoading = false;
+    notifyListeners();
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   /////////////////////////
+    // final communityQuerySnapshot = await FirebaseFirestore.instance
+    //     .collection('community')
+    //     .where('id', isEqualTo: user.communityId)
+    //     .get();
+
+    // if (communityQuerySnapshot.docs.isEmpty) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('Community not found');
+    // }
+
+    // final communityDocumentSnapshot = communityQuerySnapshot.docs.first;
+    // community = Community.fromDocument(communityDocumentSnapshot);
+
+    // final postQuerySnapshot = await FirebaseFirestore.instance
+    //     .collection('post')
+    //     .where('communityId', isEqualTo: user.communityId)
+    //     .get();
+
+    // if (postQuerySnapshot.docs.isEmpty) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('Post not found');
+    // }
+
+    // final postDocumentSnapshot = postQuerySnapshot.docs.first;
+    // post = Post.fromDocument(postDocumentSnapshot);

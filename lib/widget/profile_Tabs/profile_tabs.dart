@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
+import 'package:intl/intl.dart';
 
 class ProfileTabs extends StatelessWidget {
   const ProfileTabs({super.key, required this.user});
@@ -92,7 +93,7 @@ class ProfileTabs extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Birthdate:   ',
+                          'Birthdate: ',
                           style:
                               Theme.of(context).textTheme.bodyLarge!.copyWith(
                                     color: const Color(0x3ffE8AA0A),
@@ -101,7 +102,8 @@ class ProfileTabs extends StatelessWidget {
                                   ),
                         ),
                         Text(
-                          user.user.birthdate.toString(),
+                          DateFormat('MMMM dd, yyyy')
+                              .format(user.user.birthdate),
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: Colors.white,

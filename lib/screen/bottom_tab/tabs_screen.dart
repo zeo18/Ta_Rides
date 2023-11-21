@@ -7,6 +7,10 @@ import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
 import 'package:ta_rides/screen/bottom_tab/rides_screen.dart';
+import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
+import 'package:ta_rides/widget/all_controller/rides_controller.dart';
+import 'package:ta_rides/widget/all_controller/user_controller.dart';
+import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 
 import 'community_screen.dart';
 import 'goal30_screen.dart';
@@ -48,12 +52,18 @@ class _TabsScreenState extends State<TabsScreen> {
   Location location = new Location();
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;
+  UserController userController = UserController();
+  RidesController ridesController = RidesController();
+  Goal30Controller goal30Controller = Goal30Controller();
 
   @override
   void initState() {
     super.initState();
     initializeLocation();
     _selectedPageIndex = widget.tabsScreen;
+    userController.getUser(widget.email);
+
+    userController.getAllUsers();
   }
 
   void initializeLocation() async {
@@ -103,43 +113,25 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final List<Community> communities = CommunityInformation;
-
-    // late var communityUser = widget.community;
-
-    // setState(() {
-    //   if (widget.community != null) {
-    //     print('hello');
-    //     for (var community in communities) {
-    //       print('hello2');
-    //       if (widget.user.communityId == community.id) {
-    //         communityUser = community;
-    //         print(['correct2', communityUser!.title]);
-    //         break; // Break the loop after finding a match for the current user
-    //       }
-    //     }
-    //   }
-    // });
-
     Widget activePage = CommunityScreen(
       email: widget.email,
       communityTab: widget.communityTabs,
     );
-    // CommunityScreen(
-    //   // selectTab: widget.selectTab,
-    //   // community: communityUser,
-    //   // communityPosted: widget.communityPosted,
-    //   // userPosted: widget.userPosted,
-    //   // userUse: widget.user,
-    //   // achievements: widget.achievements,
-    // );
-
-    //var activePageTitle = 'Community';
 
     if (_selectedPageIndex == 1) {
-      activePage = RidesScreen(
-        email: widget.email,
-      );
+      activePage = AnimatedBuilder(
+          animation: userController,
+          builder: (context, snapshot) {
+            if (userController.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return RidesScreen(
+              email: widget.email,
+              user: userController.user,
+            );
+          });
       //    activePageTitle = 'Rides';
     }
     if (_selectedPageIndex == 2) {
@@ -147,7 +139,20 @@ class _TabsScreenState extends State<TabsScreen> {
       //   activePageTitle = 'Pedal';
     }
     if (_selectedPageIndex == 3) {
-      activePage = const Goal30Screen();
+      activePage = AnimatedBuilder(
+          animation: userController,
+          builder: (context, snapshot) {
+            if (userController.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Goal30Screen(
+              email: widget.email,
+              user: userController.user,
+            );
+          });
+
       //   activePageTitle = 'Goal30';
     }
     if (_selectedPageIndex == 4) {

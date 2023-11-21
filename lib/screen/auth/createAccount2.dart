@@ -337,6 +337,7 @@ class _CreateAccount2State extends State<CreateAccount2> {
                       keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.done,
                       maxLines: 1,
+                      maxLength: 11,
                       decoration: InputDecoration(
                         focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
