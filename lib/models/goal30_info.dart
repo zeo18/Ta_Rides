@@ -7,6 +7,7 @@ class Goal30 {
     required this.goal30Id,
     required this.userData,
     required this.goalLenght,
+    required this.bmiCategory,
     required this.category,
     required this.day1,
     required this.day2,
@@ -102,6 +103,7 @@ class Goal30 {
   final String userName;
   final String category;
   final Timestamp timestamp;
+  final String bmiCategory;
   final int goalLenght;
   final String goal30Id;
   final bool userData;
@@ -203,6 +205,7 @@ class Goal30 {
       userName: data['userName'] as String,
       timestamp: data['timestamp'] as Timestamp,
       goal30Id: data['goal30Id'] as String,
+      bmiCategory: data['bmiCategory'] as String,
       goalLenght: data['goalLenght'] as int,
       userData: data['userData'] as bool,
       category: data['category'] as String,

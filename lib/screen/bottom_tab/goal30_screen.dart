@@ -53,6 +53,7 @@ class _Goal30ScreenState extends State<Goal30Screen> {
           }
           return Scaffold(
             backgroundColor: const Color(0x3fff0C0D11),
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(

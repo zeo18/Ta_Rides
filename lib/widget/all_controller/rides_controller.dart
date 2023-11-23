@@ -5,6 +5,7 @@ import 'package:ta_rides/models/rides_info.dart';
 class RidesController extends ChangeNotifier {
   late List<Rides> rides = <Rides>[];
   late List<Rides> rider = <Rides>[];
+  late List<Rides> allRides = <Rides>[];
   late Rides ride;
   bool isLoading = false;
 
@@ -69,6 +70,29 @@ class RidesController extends ChangeNotifier {
     }
 
     rider = rideQuerySnapshot.docs.map((snapshot) {
+      return Rides.fromDocument(snapshot);
+    }).toList();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void getAllRides() async {
+    isLoading = true;
+    notifyListeners();
+
+    final ridesQuerySnapshot = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('isEnemy', isEqualTo: true)
+        .get();
+
+    if (ridesQuerySnapshot.docs.isEmpty) {
+      isLoading = false;
+      notifyListeners();
+      throw Exception('No rides found');
+    }
+
+    allRides = ridesQuerySnapshot.docs.map((snapshot) {
       return Rides.fromDocument(snapshot);
     }).toList();
 

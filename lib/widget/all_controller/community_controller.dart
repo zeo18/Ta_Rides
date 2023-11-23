@@ -76,8 +76,8 @@ class CommunityController extends ChangeNotifier {
     //   communityInformation.add(community);
     // }
 
-    isLoading = true;
-    notifyListeners();
+    // isLoading = true;
+    // notifyListeners();
 
     final postQuerySnapshot = await FirebaseFirestore.instance
         .collection('post')

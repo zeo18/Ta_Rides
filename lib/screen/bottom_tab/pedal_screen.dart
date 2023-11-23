@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -11,14 +12,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/location_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
+import 'package:ta_rides/widget/all_controller/location_controller.dart';
 import 'package:ta_rides/widget/pedal/route.dart';
 import 'package:ta_rides/widget/pedal/saved_route.dart';
+import 'package:location/location.dart';
 
 class PedalScreen extends StatefulWidget {
-  const PedalScreen({Key? key, this.locationData}) : super(key: key);
+  const PedalScreen({
+    Key? key,
+    required this.locationData,
+    required this.user,
+    required this.pedalId,
+  }) : super(key: key);
 
   final LocationData? locationData;
+  final Users user;
+  final String pedalId;
   @override
   State<PedalScreen> createState() => _PedalScreenState();
 }
@@ -26,6 +37,7 @@ class PedalScreen extends StatefulWidget {
 class _PedalScreenState extends State<PedalScreen> {
   TextEditingController pinPoint1stController = TextEditingController();
   TextEditingController pinPoint2ndController = TextEditingController();
+  LocationServicer locationService1 = LocationServicer();
 
   bool startNavigation = false;
   late Timer _timer;
@@ -33,11 +45,13 @@ class _PedalScreenState extends State<PedalScreen> {
   Stopwatch _stopwatch = Stopwatch();
   bool focusCameraCurrenLocation = false;
   bool _isRunning = false;
-
+  late LocationData currentLocation;
+  LocationData? startLocation;
   List<double> _speeds = [];
   double _totalSpeed = 0;
 
   LocationData? previousLocation;
+  double originToUser = 0.0;
   double distance = 0.0;
   double avgSpeed = 0.0;
   double elevationGain = 0.0;
@@ -93,6 +107,12 @@ class _PedalScreenState extends State<PedalScreen> {
     });
   }
 
+  void setOriginToUserDistance(double orginToUserDistance) {
+    setState(() {
+      this.originToUser = orginToUserDistance;
+    });
+  }
+
   double calculateSpeed(double distance) {
     final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
     final elapsedHours = elapsedMinutes / 60;
@@ -103,10 +123,17 @@ class _PedalScreenState extends State<PedalScreen> {
     return doubleDistance.toDouble() / elapsedHours.toDouble();
   }
 
+  void updateStartLocation() async {
+    Location location = Location();
+    LocationData currentLocationData = await location.getLocation();
+    setState(() {
+      startLocation = currentLocationData;
+    });
+  }
+
   void updateUserMovement(double distance) {
     setState(() {
       avgSpeed = calculateSpeed(distance);
-      print(['avgSpeed', avgSpeed]);
 
       // final speed = calculateSpeed(distance);
       // if (speed > maxSpeed) {
@@ -116,70 +143,33 @@ class _PedalScreenState extends State<PedalScreen> {
     });
   }
 
-  // void onLocationChanged(LocationData currentLocation) {
-  //   setState(() {
-  //     if (previousLocation != null) {
-  //       distance += calculateDistance(previousLocation!, currentLocation);
-  //       if (mounted) {
-  //         totalDistance += distance;
-  //       }
-  //       avgSpeed = distance / DateTime.now().difference(startTime).inHours;
-  //       // elevationGain +=
-  //       //     calculateElevationGain(previousLocation!, currentLocation);
-  //       maxSpeed =
-  //           max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
-  //     }
-
-  //     previousLocation = currentLocation;
-  //   });
-  // }
-
-  // double calculateDistance(LocationData location1, LocationData location2) {
-  //   var p = 0.017453292519943295;
-  //   var c = cos;
-  //   var a = 0.5 -
-  //       c((location2.latitude! - location1.latitude!) * p) / 2 +
-  //       c(location1.latitude! * p) *
-  //           c(location2.latitude! * p) *
-  //           (1 - c((location2.longitude! - location1.longitude!) * p)) /
-  //           2;
-  //   return 12742 * asin(sqrt(a));
-  // }
-
-  // // double calculateElevationGain(
-  // //     LocationData location1, LocationData location2) {
-  // //   // replace with your actual calculation
-  // //   //    double elevationGain = endElevation - startElevation;
-  // //   // return elevationGain > 0 ? elevationGain : 0;
-  // // }
-
-  // double calculateSpeed(LocationData location1, LocationData location2) {
-  //   double distance = calculateDistance(location1, location2); // in kilometers
-  //   double time = _duration.inHours.toDouble(); // in hours
-
-  //   if (time == 0) {
-  //     return 0;
-  //   }
-
-  //   return distance / time;
-  // }
-  // // static const CameraPosition _kGooglePlex = CameraPosition(
-  // //   target: LatLng(37.42796133580664, -122.085749655962),
-  // //   zoom: 14.4746,
-  // // );
-
+  LocationService locationService = LocationService();
   @override
   void initState() {
+    initialize();
+
     super.initState();
+
+    locationService1.initLocation();
+    locationService.initLocation();
+    currentLocation = widget.locationData!;
+    startLocation = currentLocation;
+
     _currentLocation.add(
       Marker(
-        markerId: MarkerId('initial_position'),
-        position: LatLng(widget.locationData?.latitude ?? 10.2899758,
-            widget.locationData?.longitude ?? 123.861891),
+        markerId: MarkerId('currentLocation'),
+        position: LatLng(currentLocation.latitude ?? 10.2899758,
+            currentLocation.longitude ?? 123.861891),
       ),
     );
 
     _startTimer();
+  }
+
+  void initialize() {
+    setState(() {
+      currentLocation = widget.locationData!;
+    });
   }
 
   void _startTimer() {
@@ -197,6 +187,7 @@ class _PedalScreenState extends State<PedalScreen> {
   @override
   void dispose() {
     _timer.cancel();
+    locationService.dispose();
     super.dispose();
   }
 
@@ -219,31 +210,6 @@ class _PedalScreenState extends State<PedalScreen> {
       });
     }
   }
-
-  // double calculateSpeed(LocationData previousLocation, DateTime previousTime,
-  //     LocationData currentLocation, DateTime currentTime) {
-  //   double earthRadius = 6371; // radius of the earth in km
-  //   double latDistance =
-  //       toRadians(currentLocation.latitude! - previousLocation.latitude!);
-  //   double lonDistance =
-  //       toRadians(currentLocation.longitude! - previousLocation.longitude!);
-  //   double a = sin(latDistance / 2) * sin(latDistance / 2) +
-  //       cos(toRadians(previousLocation.latitude!)) *
-  //           cos(toRadians(currentLocation.latitude!)) *
-  //           sin(lonDistance / 2) *
-  //           sin(lonDistance / 2);
-  //   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-  //   double distance = earthRadius * c; // distance in km
-
-  //   double timeDifference = currentTime.difference(_previousTime!).inSeconds /
-  //       3600; // time difference in hours
-
-  //   if (timeDifference == 0) {
-  //     return 0;
-  //   }
-
-  //   return distance / timeDifference; // speed in km/h
-  // }
 
   double toRadians(double degree) {
     return degree * pi / 180;
@@ -362,8 +328,8 @@ class _PedalScreenState extends State<PedalScreen> {
                   });
                 },
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(widget.locationData?.latitude ?? 10.2899758,
-                      widget.locationData?.longitude ?? 123.861891),
+                  target: LatLng(widget.locationData!.latitude ?? 10.2899758,
+                      widget.locationData!.longitude ?? 123.861891),
                   zoom: 14.4746,
                 ),
                 onMapCreated: (GoogleMapController controller) {
@@ -380,6 +346,10 @@ class _PedalScreenState extends State<PedalScreen> {
                     onPressed: () async {
                       focusCameraCurrenLocation = true;
                       setState(() {});
+                      getLocationUpdates();
+                      LocationData currentLocation =
+                          await locationService.getLocation();
+                      locationService.updateStartLocation(currentLocation);
                       getLocationUpdates();
                     },
                     label: Text('Current location'),
@@ -441,10 +411,10 @@ class _PedalScreenState extends State<PedalScreen> {
                                     Row(
                                       children: [
                                         SizedBox(
-                                          width: 70,
+                                          width: 80,
                                         ),
                                         Text(
-                                          'Time',
+                                          'TIME',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -455,10 +425,10 @@ class _PedalScreenState extends State<PedalScreen> {
                                               ),
                                         ),
                                         SizedBox(
-                                          width: 140,
+                                          width: 120,
                                         ),
                                         Text(
-                                          'DISTANCE(km)',
+                                          'TOTAL DISTANCE',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -473,7 +443,7 @@ class _PedalScreenState extends State<PedalScreen> {
                                     Row(
                                       children: [
                                         SizedBox(
-                                          width: 50,
+                                          width: 60,
                                         ),
                                         Text(
                                           _formatDuration(_stopwatch.elapsed),
@@ -487,10 +457,10 @@ class _PedalScreenState extends State<PedalScreen> {
                                               ),
                                         ),
                                         SizedBox(
-                                          width: 130,
+                                          width: 110,
                                         ),
                                         Text(
-                                          '${distance.toStringAsFixed(2)}',
+                                          '${distance.toStringAsFixed(2)} km',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -525,7 +495,7 @@ class _PedalScreenState extends State<PedalScreen> {
                                       child: Row(
                                         children: [
                                           SizedBox(
-                                            width: 130,
+                                            width: 35,
                                           ),
                                           Text(
                                             'AVG SPEED(km/h)',
@@ -540,32 +510,32 @@ class _PedalScreenState extends State<PedalScreen> {
                                                 ),
                                           ),
                                           SizedBox(
-                                            width: 85,
+                                            width: 100,
                                           ),
-                                          // Text(
-                                          //   'MAX SPEED',
-                                          //   style: Theme.of(context)
-                                          //       .textTheme
-                                          //       .bodyLarge!
-                                          //       .copyWith(
-                                          //         color:
-                                          //             const Color(0x3ffE8AA0A),
-                                          //         fontWeight: FontWeight.w900,
-                                          //         fontSize: 12,
-                                          //       ),
-                                          // ),
+                                          Text(
+                                            'DISTANCE',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
                                         ],
                                       ),
                                     ),
                                     Row(
                                       children: [
                                         SizedBox(
-                                          width: 140,
+                                          width: 55,
                                         ),
                                         Text(
                                           avgSpeed == double.infinity
                                               ? 'Calculating...'
-                                              : '${avgSpeed.toStringAsFixed(2)}',
+                                              : '${avgSpeed.toStringAsFixed(2)} km',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -575,20 +545,20 @@ class _PedalScreenState extends State<PedalScreen> {
                                                 fontSize: 20,
                                               ),
                                         ),
-                                        // SizedBox(
-                                        //   width: 120,
-                                        // ),
-                                        // Text(
-                                        //   '${maxSpeed.toStringAsFixed(2)}',
-                                        //   style: Theme.of(context)
-                                        //       .textTheme
-                                        //       .bodyLarge!
-                                        //       .copyWith(
-                                        //         color: Colors.white,
-                                        //         fontWeight: FontWeight.w900,
-                                        //         fontSize: 20,
-                                        //       ),
-                                        // ),
+                                        SizedBox(
+                                          width: 110,
+                                        ),
+                                        Text(
+                                          ' ${locationService.distance}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 20,
+                                              ),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -640,7 +610,24 @@ class _PedalScreenState extends State<PedalScreen> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      final pedalDoc = await FirebaseFirestore
+                                          .instance
+                                          .collection('pedal')
+                                          .where('username',
+                                              isEqualTo: widget.user.username)
+                                          .where('pedalId',
+                                              isEqualTo: widget.pedalId)
+                                          .get();
+
+                                      pedalDoc.docs.first.reference.update({
+                                        'distance': locationService.distance,
+                                        'avgSpeed': avgSpeed,
+                                        'totalTime':
+                                            _formatDuration(_stopwatch.elapsed),
+                                        'totalDistance': distance,
+                                      });
+
                                       // Stop the timer
                                       _timer.cancel();
 
@@ -745,6 +732,11 @@ class _PedalScreenState extends State<PedalScreen> {
                                         startOrStop: startOrStop,
                                         distance: setDistance,
                                         getLocationUpdate: getLocationUpdates,
+                                        orginToUser: setOriginToUserDistance,
+                                        currentLocation: currentLocation,
+                                        startLocation: startLocation!,
+                                        user: widget.user,
+                                        pedalId: widget.pedalId,
                                       ),
                                       SavedRoute(),
                                     ],
@@ -924,6 +916,7 @@ class _PedalScreenState extends State<PedalScreen> {
     // if (!mounted) {
     //   return;
     // }
+
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
 
@@ -940,9 +933,9 @@ class _PedalScreenState extends State<PedalScreen> {
         return;
       }
     }
+
     _shouldUpdateCamera = true;
-    _locationController.onLocationChanged
-        .listen((LocationData currentLocation) {
+    _locationController.onLocationChanged.listen((currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         if (_shouldUpdateCamera) {
@@ -1196,3 +1189,58 @@ class _PedalScreenState extends State<PedalScreen> {
 //                     ),
 //                   ),
 //                 ),
+
+
+
+
+  // void onLocationChanged(LocationData currentLocation) {
+  //   setState(() {
+  //     if (previousLocation != null) {
+  //       distance += calculateDistance(previousLocation!, currentLocation);
+  //       if (mounted) {
+  //         totalDistance += distance;
+  //       }
+  //       avgSpeed = distance / DateTime.now().difference(startTime).inHours;
+  //       // elevationGain +=
+  //       //     calculateElevationGain(previousLocation!, currentLocation);
+  //       maxSpeed =
+  //           max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
+  //     }
+
+  //     previousLocation = currentLocation;
+  //   });
+  // }
+
+  // double calculateDistance(LocationData location1, LocationData location2) {
+  //   var p = 0.017453292519943295;
+  //   var c = cos;
+  //   var a = 0.5 -
+  //       c((location2.latitude! - location1.latitude!) * p) / 2 +
+  //       c(location1.latitude! * p) *
+  //           c(location2.latitude! * p) *
+  //           (1 - c((location2.longitude! - location1.longitude!) * p)) /
+  //           2;
+  //   return 12742 * asin(sqrt(a));
+  // }
+
+  // // double calculateElevationGain(
+  // //     LocationData location1, LocationData location2) {
+  // //   // replace with your actual calculation
+  // //   //    double elevationGain = endElevation - startElevation;
+  // //   // return elevationGain > 0 ? elevationGain : 0;
+  // // }
+
+  // double calculateSpeed(LocationData location1, LocationData location2) {
+  //   double distance = calculateDistance(location1, location2); // in kilometers
+  //   double time = _duration.inHours.toDouble(); // in hours
+
+  //   if (time == 0) {
+  //     return 0;
+  //   }
+
+  //   return distance / time;
+  // }
+  // // static const CameraPosition _kGooglePlex = CameraPosition(
+  // //   target: LatLng(37.42796133580664, -122.085749655962),
+  // //   zoom: 14.4746,
+  // // );
