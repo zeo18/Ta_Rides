@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/goal30/goal30_Category.dart';
 
 class Goal30BmiScreen extends StatefulWidget {
@@ -9,10 +12,12 @@ class Goal30BmiScreen extends StatefulWidget {
     super.key,
     required this.user,
     required this.email,
+    required this.check,
   });
 
   final Users user;
   final String email;
+  final bool check;
 
   @override
   State<Goal30BmiScreen> createState() => _Goal30BmiScreenState();
@@ -35,7 +40,7 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
     // Rest of your code to start the goal...
   }
 
-  void _calculateBMI() {
+  void _calculateBMI() async {
     double height = double.tryParse(_heightController.text) ?? 0.0;
     double weight = double.tryParse(_weightController.text) ?? 0.0;
 
@@ -52,6 +57,15 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
         } else if (bmi >= 30) {
           bmicategory = 'Obesity';
         }
+      });
+
+      final goalBmi = await FirebaseFirestore.instance
+          .collection('goal30')
+          .where('userName', isEqualTo: widget.user.username)
+          .get();
+
+      await goalBmi.docs.first.reference.update({
+        'bmiCategory': bmicategory!,
       });
     } else {
       setState(() {
@@ -103,6 +117,27 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Column(
+          children: [
+            IconButton(
+                onPressed: () {
+                  if (widget.check) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TabsScreen(
+                                email: widget.user.email,
+                                tabsScreen: 3,
+                                communityTabs: 0,
+                              )),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.arrow_back))
+          ],
+        ),
         backgroundColor: Color(0x3FFF0C0D11),
         title: Text(
           'Check your BMI',
@@ -356,26 +391,27 @@ class _Goal30BmiScreenState extends State<Goal30BmiScreen> {
                   SizedBox(
                     height: 25,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size.fromHeight(60),
-                      maximumSize: const Size.fromWidth(350),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        side: BorderSide.none,
+                  if (widget.check)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size.fromHeight(60),
+                        maximumSize: const Size.fromWidth(350),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide.none,
+                        ),
+                        backgroundColor: const Color(0x3FFF0C0D11),
                       ),
-                      backgroundColor: const Color(0x3FFF0C0D11),
-                    ),
-                    onPressed: _bmiChecker,
-                    child: Text(
-                      'Proceed',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                      onPressed: _bmiChecker,
+                      child: Text(
+                        'Proceed',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               )
             ],

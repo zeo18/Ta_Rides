@@ -31,7 +31,7 @@ class _Goal30StartState extends State<Goal30Start> {
 
   bool startNavigation = false;
   late Timer _timer;
-  Duration _duration = Duration();
+  Duration _duration = const Duration();
   Stopwatch _stopwatch = Stopwatch();
   bool focusCameraCurrenLocation = false;
   bool _isRunning = false;
@@ -123,7 +123,7 @@ class _Goal30StartState extends State<Goal30Start> {
     super.initState();
     _currentLocation.add(
       Marker(
-        markerId: MarkerId('initial_position'),
+        markerId: const MarkerId('initial_position'),
         position: LatLng(widget.locationData?.latitude ?? 10.2899758,
             widget.locationData?.longitude ?? 123.861891),
       ),
@@ -134,9 +134,9 @@ class _Goal30StartState extends State<Goal30Start> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        _duration += Duration(seconds: 1);
+        _duration += const Duration(seconds: 1);
       });
     });
   }
@@ -154,7 +154,7 @@ class _Goal30StartState extends State<Goal30Start> {
   void _setMarker(LatLng point) {
     if (pinPoint1stController.text.isNotEmpty) {
       Marker firstPoint = Marker(
-        markerId: MarkerId('1st pin point'),
+        markerId: const MarkerId('1st pin point'),
         position: point,
       );
       setState(() {
@@ -162,7 +162,7 @@ class _Goal30StartState extends State<Goal30Start> {
       });
     } else {
       Marker secondPoint = Marker(
-        markerId: MarkerId('1st pin point'),
+        markerId: const MarkerId('1st pin point'),
         position: point,
       );
       setState(() {
@@ -259,7 +259,7 @@ class _Goal30StartState extends State<Goal30Start> {
         body: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: GoogleMap(
@@ -290,34 +290,35 @@ class _Goal30StartState extends State<Goal30Start> {
             if (startNavigation == false)
               if (selectPoint)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(220, 430, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(220, 430, 0, 0),
                   child: FloatingActionButton.extended(
                     onPressed: () async {
                       focusCameraCurrenLocation = true;
                       setState(() {});
                       getLocationUpdates();
                     },
-                    label: Text('Current location'),
-                    icon: Icon(Icons.location_history),
+                    label: const Text('Current location'),
+                    icon: const Icon(Icons.location_history),
                     backgroundColor: Colors.white,
                   ),
                 ),
             if (startNavigation)
               if (selectPoint)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(220, 468, 5, 0),
+                  padding: const EdgeInsets.fromLTRB(220, 468, 5, 0),
                   child: FloatingActionButton.extended(
                     onPressed: () async {
                       focusCameraCurrenLocation = false;
                       setState(() {});
                       getLocationUpdates();
                     },
-                    label: Text(
+                    label: const Text(
                       'Focus Your Location',
                       style: TextStyle(color: Colors.white),
                     ),
-                    icon: Icon(Icons.location_history, color: Colors.white),
-                    backgroundColor: Color(0x3FF0C0D11),
+                    icon:
+                        const Icon(Icons.location_history, color: Colors.white),
+                    backgroundColor: const Color(0x3FF0C0D11),
                   ),
                 ),
             if (startNavigation)
@@ -330,7 +331,7 @@ class _Goal30StartState extends State<Goal30Start> {
                         height: 200,
                         width: 500,
                         decoration: BoxDecoration(
-                          color: Color(0x3FF0C0D11),
+                          color: const Color(0x3FF0C0D11),
                           borderRadius: BorderRadius.circular(
                               20.0), // Adjust the radius as needed
                         ),
@@ -339,9 +340,9 @@ class _Goal30StartState extends State<Goal30Start> {
                             Container(
                               height: 65,
                               width: 500,
-                              margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                              margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                               child: Card(
-                                color: Color(0x3ff181A20),
+                                color: const Color(0x3ff181A20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -350,12 +351,12 @@ class _Goal30StartState extends State<Goal30Start> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 70,
                                         ),
                                         Text(
@@ -369,7 +370,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                                 fontSize: 12,
                                               ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 140,
                                         ),
                                         Text(
@@ -387,7 +388,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 50,
                                         ),
                                         Text(
@@ -401,7 +402,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                                 fontSize: 20,
                                               ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 130,
                                         ),
                                         Text(
@@ -424,9 +425,9 @@ class _Goal30StartState extends State<Goal30Start> {
                             Container(
                               height: 65,
                               width: 500,
-                              margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                              margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: Card(
-                                color: Color(0x3ff181A20),
+                                color: const Color(0x3ff181A20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -436,10 +437,11 @@ class _Goal30StartState extends State<Goal30Start> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                                      margin:
+                                          const EdgeInsets.fromLTRB(5, 5, 5, 0),
                                       child: Row(
                                         children: [
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 130,
                                           ),
                                           Text(
@@ -454,7 +456,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                                   fontSize: 12,
                                                 ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 85,
                                           ),
                                           // Text(
@@ -474,7 +476,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 140,
                                         ),
                                         Text(
@@ -497,17 +499,17 @@ class _Goal30StartState extends State<Goal30Start> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                              margin: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                               child: Row(
                                 children: [
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0x3FF0C0D11),
+                                      backgroundColor: const Color(0x3FF0C0D11),
                                       minimumSize: const Size(178, 35),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        side: BorderSide(
+                                        side: const BorderSide(
                                           color: Colors.white,
                                           width: 1,
                                         ),
@@ -526,12 +528,12 @@ class _Goal30StartState extends State<Goal30Start> {
                                           ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 20,
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0x3ffFF0000),
+                                      backgroundColor: const Color(0x3ffFF0000),
                                       minimumSize: const Size(
                                         178,
                                         35,
@@ -553,7 +555,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                         _stopwatch.stop();
                                         _stopwatch.reset();
                                         _polylines.clear();
-                                        pinPoint1stController.clear();
+
                                         distance = 0;
                                         startNavigation = false;
                                       });
@@ -598,7 +600,7 @@ class _Goal30StartState extends State<Goal30Start> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DefaultTabController(
-                          length: 2,
+                          length: 1,
                           child: Column(
                             children: [
                               TabBar(
@@ -619,9 +621,6 @@ class _Goal30StartState extends State<Goal30Start> {
                                 tabs: const [
                                   Tab(
                                     text: 'Routes',
-                                  ),
-                                  Tab(
-                                    text: "Save Route",
                                   ),
                                 ],
                               ),
@@ -649,7 +648,6 @@ class _Goal30StartState extends State<Goal30Start> {
                                         distance: setDistance,
                                         getLocationUpdate: getLocationUpdates,
                                       ),
-                                      SavedRoute(),
                                     ],
                                   ),
                                 )
@@ -666,7 +664,7 @@ class _Goal30StartState extends State<Goal30Start> {
                   Container(
                     height: 145,
                     width: 500,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                           bottom: Radius.circular(
@@ -679,7 +677,7 @@ class _Goal30StartState extends State<Goal30Start> {
                       children: [
                         IconButton(
                           onPressed: selectBack,
-                          icon: Icon(Icons.arrow_back),
+                          icon: const Icon(Icons.arrow_back),
                         ),
                         Text(
                           'Destination',
@@ -690,7 +688,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                     fontSize: 13,
                                   ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 180,
                         ),
                       ],
@@ -699,9 +697,9 @@ class _Goal30StartState extends State<Goal30Start> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     child: Container(
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       child: Card(
-                        color: Color.fromARGB(255, 255, 255, 255),
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -739,7 +737,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                         .getPlace(pinPoint1stController.text);
                                     _goToPlace(place);
                                   },
-                                  icon: Icon(Icons.search),
+                                  icon: const Icon(Icons.search),
                                 ),
                               ),
                             ),
@@ -756,7 +754,7 @@ class _Goal30StartState extends State<Goal30Start> {
                   Container(
                     height: 145,
                     width: 500,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                           bottom: Radius.circular(
@@ -777,7 +775,7 @@ class _Goal30StartState extends State<Goal30Start> {
 
   Future<void> getLocationUpdates() async {
     LocationData? _previousLocation;
-    LatLng _finalDestination = LatLng(0, 0);
+    LatLng _finalDestination = const LatLng(0, 0);
     // if (!mounted) {
     //   return;
     // }
@@ -803,7 +801,7 @@ class _Goal30StartState extends State<Goal30Start> {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         if (_shouldUpdateCamera) {
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 1), () {
             _googleController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
@@ -820,12 +818,12 @@ class _Goal30StartState extends State<Goal30Start> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Arrived at Destination'),
-                    content:
-                        Text('You have arrived at your final destination.'),
+                    title: const Text('Arrived at Destination'),
+                    content: const Text(
+                        'You have arrived at your final destination.'),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('OK'),
+                        child: const Text('OK'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -844,7 +842,7 @@ class _Goal30StartState extends State<Goal30Start> {
         }
 
         _currentLocation.add(Marker(
-            markerId: MarkerId('currentLocation'),
+            markerId: const MarkerId('currentLocation'),
             position:
                 LatLng(currentLocation.latitude!, currentLocation.longitude!)));
         if (focusCameraCurrenLocation) {

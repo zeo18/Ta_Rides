@@ -13,22 +13,9 @@ class CommunityScreen extends StatefulWidget {
     super.key,
     required this.email,
     required this.communityTab,
-
-    // required this.selectTab,
-    // required this.userUse,
-    // required this.communityPosted,
-    // required this.userPosted,
-    // required this.community,
-    // required this.achievements,
   });
   final String email;
   final int communityTab;
-  // final int selectTab;
-  // final Users userUse;
-  // final List<Users> userPosted;
-  // final List<Post> communityPosted;
-  // final Community? community;
-  // final Achievements? achievements;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -36,21 +23,8 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> {
   int selectedTab = 0;
-  // UserController userController = UserController();
-  CommunityController communityController = CommunityController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   selectedTab = widget.selectTab;
-  // }
-  // @override
-  // void initState() {
-  //   userController.setEmail(widget.email);
-  //   userController.getUser(widget.email);
-  //   communityController.setEmail(widget.email);
-  //   communityController.getCommunityAndUser(widget.email);
-  // }
+  CommunityController communityController = CommunityController();
 
   @override
   void initState() {
@@ -61,9 +35,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.community != null) {
-    //   print(['community', widget.community!.title]);
-    // }
     return DefaultTabController(
       length: 3,
       initialIndex: widget.communityTab,
@@ -194,26 +165,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         );
                       }
-                      // ignore: unnecessary_null_comparison
-                      // if (communityController.community == null) {
-                      //   return const Center(
-                      //     child: Text('No community found.'),
-                      //   );
-                      // }
-                      // if(communityController.community.isEmpty){
-                      //   return const Center(
-                      //     child: Text('No Community'),
-                      //   );
-                      // }
+
                       return ForYouTabs(
                         email: widget.email,
                         community: communityController.community,
-                        // user: userController,
-                        // community: communityController,
-                        // communityPosted: widget.communityPosted,
-                        // userPosted: widget.userPosted,
-                        // userUse: widget.userUse,
-                        // community: widget.community,
                       );
                     },
                   ),

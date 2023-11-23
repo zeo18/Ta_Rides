@@ -75,10 +75,6 @@ class UserController extends ChangeNotifier {
     print('Achievement: ${achievement.userName}');
     print('Achievement: ${achievement.legendary}');
 
-    // if (achievement.userName == user.username) {
-    //   achievementsInformation.add(achievement);
-    //   notifyListeners();
-    // }
     print('hello3');
   }
 

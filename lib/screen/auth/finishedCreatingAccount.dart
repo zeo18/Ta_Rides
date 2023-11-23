@@ -111,6 +111,7 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
       await FirebaseFirestore.instance.collection('goal30').add({
         'userName': widget.usernameValue,
         'timestamp': DateTime.now(),
+        'bmiCategory': '',
         'category': '',
         'goalLenght': 0,
         'goal30Id': id,

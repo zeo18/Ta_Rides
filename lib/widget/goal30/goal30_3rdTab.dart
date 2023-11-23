@@ -127,6 +127,7 @@ class Goal30_3rdTab extends StatelessWidget {
                     builder: (context) => Goal30BmiScreen(
                       email: email,
                       user: user,
+                      check: true,
                     ),
                   ),
                 );

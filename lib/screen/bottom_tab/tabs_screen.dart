@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/data/community_data.dart';
@@ -84,6 +85,10 @@ class _TabsScreenState extends State<TabsScreen> {
     }
 
     _locationData = await location.getLocation();
+
+    setState(() {
+      _locationData = _locationData;
+    });
   }
 
   void selectedPage(int index) {
@@ -134,10 +139,30 @@ class _TabsScreenState extends State<TabsScreen> {
           });
       //    activePageTitle = 'Rides';
     }
+
     if (_selectedPageIndex == 2) {
-      activePage = PedalScreen(locationData: _locationData);
-      //   activePageTitle = 'Pedal';
+      activePage = _locationData != null
+          ? AnimatedBuilder(
+              animation: userController,
+              builder: (context, snapshot) {
+                if (userController.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                final pedalId =
+                    FirebaseFirestore.instance.collection('pedal').doc().id;
+                return PedalScreen(
+                  locationData: _locationData!,
+                  user: userController.user,
+                  pedalId: pedalId,
+                );
+              })
+          : const Center(
+              child:
+                  CircularProgressIndicator()); // Replace this with your placeholder widget
     }
+
     if (_selectedPageIndex == 3) {
       activePage = AnimatedBuilder(
           animation: userController,

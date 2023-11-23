@@ -7,6 +7,7 @@ import 'package:ta_rides/data/goal30_data.dart';
 import 'package:ta_rides/models/goal30_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
+import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 import 'package:ta_rides/widget/goal30/goal30_Start.dart';
 
 class Goal30TrackGoal extends StatefulWidget {
@@ -29,6 +30,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
   int dateDay = DateTime.now().day;
   int day = 0;
   late DateTime startDate;
+  bool click = false;
 
   @override
   void initState() {
@@ -99,43 +101,34 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                   itemScrollController: itemScrollController,
                   itemCount: goal30Controller.goal30.goalLenght,
                   itemBuilder: (context, index) {
-                    final itemKey = keys[index];
+                    final itemKey = GlobalKey();
                     if (goal30Controller.goal30.goalLenght == 30) {
-                      final itemKey = keys[index];
+                      final itemKey = GlobalKey();
                       final item = goal30[index];
-                      return Row(
-                        children: [
-                          buildCard(item, dateDay, itemKey),
-                          const SizedBox(width: 10)
-                        ],
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: buildCard(item, dateDay, itemKey),
                       );
                     }
                     if (goal30Controller.goal30.goalLenght == 60) {
-                      final itemKey = keys[index];
+                      final itemKey = GlobalKey();
                       final item = goal60[index];
-                      return Row(
-                        children: [
-                          buildCard(item, dateDay, itemKey),
-                          const SizedBox(width: 10)
-                        ],
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: buildCard(item, dateDay, itemKey),
                       );
                     }
                     if (goal30Controller.goal30.goalLenght == 90) {
-                      final itemKey = keys[index];
+                      final itemKey = GlobalKey();
                       final item = goal90[index];
-                      return Row(
-                        children: [
-                          buildCard(item, dateDay, itemKey),
-                          const SizedBox(width: 10)
-                        ],
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: buildCard(item, dateDay, itemKey),
                       );
                     }
-                    return Row(
-                      children: [
-                        buildCard(goal30[index], dateDay, keys[index]),
-                        const SizedBox(
-                            width: 10), // add a SizedBox after each item
-                      ],
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: buildCard(goal30[index], dateDay, keys[index]),
                     );
                   },
                   scrollDirection: Axis.horizontal,
@@ -144,6 +137,18 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
               const SizedBox(
                 height: 20,
               ),
+              if (click == false)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                  child: Text(
+                    'click on the day to see your goal',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
+                  ),
+                ),
               for (var i = 0; i < goal30.length; i++)
                 if (goal30[i].yourCategory == goal30Controller.goal30.category)
                   if (goal30[i].day == day.toString())
@@ -214,6 +219,70 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                         ),
                                   ),
                                 ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Your BMI: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                              Text(
+                                goal30Controller.goal30.bmiCategory,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: const Color(0x3FFFE8AA0A),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: Color(0x3ffFF0000)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (ctx) => Goal30BmiScreen(
+                                      user: widget.user,
+                                      email: widget.user.email,
+                                      check: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Check your BMI again',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -293,6 +362,70 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Your BMI: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                              Text(
+                                goal30Controller.goal30.bmiCategory,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: const Color(0x3FFFE8AA0A),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: Color(0x3ffFF0000)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (ctx) => Goal30BmiScreen(
+                                      user: widget.user,
+                                      email: widget.user.email,
+                                      check: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Check your BMI again',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -369,11 +502,75 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Your BMI: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                              Text(
+                                goal30Controller.goal30.bmiCategory,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: const Color(0x3FFFE8AA0A),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: Color(0x3ffFF0000)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (ctx) => Goal30BmiScreen(
+                                      user: widget.user,
+                                      email: widget.user.email,
+                                      check: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Check your BMI again',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
               Container(
-                margin: const EdgeInsets.all(15),
+                margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
@@ -442,40 +639,138 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
               const SizedBox(
                 height: 10,
               ),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size.fromHeight(60),
-                    maximumSize: const Size.fromWidth(380),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      side: BorderSide.none,
-                    ),
-                    backgroundColor: const Color(0x3ffFF0000),
-                  ),
-                  onPressed: () {
-                    print(goalDay);
-                    loadGoalDay();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Goal30Start(
-                          goal30PinController: goal30PinController.text,
-                          locationData: null,
+              for (var i = 0; i < goal30.length; i++)
+                if (goal30Controller.goal30.goalLenght == goal30.length)
+                  if (goal30[i].day == day.toString())
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size.fromHeight(60),
+                          maximumSize: const Size.fromWidth(380),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide.none,
+                          ),
+                          backgroundColor:
+                              goal30[i].kmGoal.toString() != 'REST DAY'
+                                  ? Color(0x3ffFF0000)
+                                  : Color(0x3ff797979),
+                        ),
+                        onPressed: () {
+                          if (goal30[i].kmGoal.toString() == 'REST DAY') {
+                            return null;
+                          } else {
+                            print(goalDay);
+                            loadGoalDay();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Goal30Start(
+                                  goal30PinController: goal30PinController.text,
+                                  locationData: null,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Proceed',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    'Proceed',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
-                ),
-              ),
+              for (var i = 0; i < goal60.length; i++)
+                if (goal30Controller.goal30.goalLenght == goal60.length)
+                  if (goal60[i].day == day.toString())
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size.fromHeight(60),
+                          maximumSize: const Size.fromWidth(380),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide.none,
+                          ),
+                          backgroundColor:
+                              goal60[i].kmGoal.toString() != 'REST DAY'
+                                  ? Color(0x3ffFF0000)
+                                  : Color(0x3ff797979),
+                        ),
+                        onPressed: () {
+                          if (goal60[i].kmGoal.toString() == 'REST DAY') {
+                            return null;
+                          } else {
+                            print(goalDay);
+                            loadGoalDay();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Goal30Start(
+                                  goal30PinController: goal30PinController.text,
+                                  locationData: null,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Proceed',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+              for (var i = 0; i < goal90.length; i++)
+                if (goal30Controller.goal30.goalLenght == goal90.length)
+                  if (goal90[i].day == day.toString())
+                    Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size.fromHeight(60),
+                          maximumSize: const Size.fromWidth(380),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide.none,
+                          ),
+                          backgroundColor:
+                              goal90[i].kmGoal.toString() != 'REST DAY'
+                                  ? Color(0x3ffFF0000)
+                                  : Color(0x3ff797979),
+                        ),
+                        onPressed: () {
+                          if (goal90[i].kmGoal.toString() == 'REST DAY') {
+                            return null;
+                          } else {
+                            print(goalDay);
+                            loadGoalDay();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Goal30Start(
+                                  goal30PinController: goal30PinController.text,
+                                  locationData: null,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Proceed',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
             ],
           );
         });
@@ -488,6 +783,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
           onTap: () {
             setState(() {
               day = int.parse(item.day);
+              click = true;
             });
           },
           child: Column(
