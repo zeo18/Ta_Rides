@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
+import 'package:ta_rides/widget/all_controller/pedal_controller.dart';
 import 'package:ta_rides/widget/profile_Tabs/achievements_tabs.dart';
 import 'package:ta_rides/widget/profile_Tabs/edit_profile.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
@@ -36,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int selectTab = 0;
   int selectButtomTab = 0;
   UserController userController = UserController();
+  PedalController pedalController = PedalController();
 
   void selectedPage(int index) {
     setState(() {
@@ -50,7 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     userController.setEmail(widget.email);
     userController.getUser(widget.email);
     userController.getAchievement(widget.email);
-   
+    pedalController.getPedal(widget.email);
+
     super.initState();
   }
 
@@ -231,7 +234,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       AchievementsTabs(
                         email: widget.email,
                       ),
-                      ProgressTabs(user: userController),
+                      AnimatedBuilder(
+                          animation: pedalController,
+                          builder: (context, snapshot) {
+                            if (pedalController.isLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child: Text(
+                                    'History',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                      itemCount: pedalController.pedal.length,
+                                      itemBuilder: (context, index) =>
+                                          ProgressTabs(
+                                            user: userController,
+                                            pedal: pedalController.pedal[index],
+                                          )),
+                                ),
+                              ],
+                            );
+
+                            // ;
+                          }),
                     ],
                   ),
                 ),

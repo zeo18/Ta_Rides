@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ta_rides/data/goal30_data.dart';
@@ -20,6 +21,10 @@ class Goal30TrackGoal extends StatefulWidget {
 }
 
 class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
+  LocationData? _locationData;
+  Location location = new Location();
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
   final goal30PinController = TextEditingController();
   Goal30Controller goal30Controller = Goal30Controller();
   ScrollController scrollController = ScrollController();
@@ -36,6 +41,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
   void initState() {
     super.initState();
     initializeGoalDay();
+    initializeLocation();
   }
 
   @override
@@ -47,6 +53,30 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
   void initializeGoalDay() async {
     await goal30Controller.getUserGoal30(widget.user.username);
     loadGoalDay();
+  }
+
+  void initializeLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    setState(() {
+      _locationData = _locationData;
+    });
   }
 
   void loadGoalDay() {
@@ -665,10 +695,14 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Goal30Start(
-                                  goal30PinController: goal30PinController.text,
-                                  locationData: null,
-                                ),
+                                builder: (context) => _locationData != null
+                                    ? Goal30Start(
+                                        locationData: _locationData!,
+                                        user: widget.user,
+                                      )
+                                    : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
                               ),
                             );
                           }
@@ -709,10 +743,14 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Goal30Start(
-                                  goal30PinController: goal30PinController.text,
-                                  locationData: null,
-                                ),
+                                builder: (context) => _locationData != null
+                                    ? Goal30Start(
+                                        locationData: _locationData!,
+                                        user: widget.user,
+                                      )
+                                    : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
                               ),
                             );
                           }
@@ -753,10 +791,14 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Goal30Start(
-                                  goal30PinController: goal30PinController.text,
-                                  locationData: null,
-                                ),
+                                builder: (context) => _locationData != null
+                                    ? Goal30Start(
+                                        locationData: _locationData!,
+                                        user: widget.user,
+                                      )
+                                    : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
                               ),
                             );
                           }

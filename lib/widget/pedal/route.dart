@@ -135,16 +135,6 @@ class _SetRouteState extends State<SetRoute> {
                 ),
               ),
               onPressed: () async {
-                FirebaseFirestore.instance.collection('pedal').add({
-                  'pedalId': widget.pedalId,
-                  'username': widget.user.username,
-                  'time': DateTime.now(),
-                  'stopwatch:': 0,
-                  'totalDistance:': null,
-                  'avgSpeed': null,
-                  'distance': '',
-                });
-
                 widget.polylines.clear();
                 locationServicer.initLocation();
                 setState(() {});
@@ -183,6 +173,16 @@ class _SetRouteState extends State<SetRoute> {
                     timer.cancel();
                   }
                   setState(() {});
+                });
+
+                FirebaseFirestore.instance.collection('pedal').add({
+                  'pedalId': widget.pedalId,
+                  'username': widget.user.username,
+                  'time': DateTime.now(),
+                  'stopwatch': 0,
+                  'totalDistance': null,
+                  'avgSpeed': null,
+                  'distance': '',
                 });
               },
               child: Text(

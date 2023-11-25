@@ -172,23 +172,24 @@ class _SearchTabsState extends State<SearchTabs> {
 
                 return Expanded(
                   child: ListView.builder(
-                      itemCount: communityController.communities.length,
-                      itemBuilder: (context, index) => CommunityListSearch(
-                            community: communityController.communities[index],
-                            email: widget.email,
-                            searchController: searchController,
+                    itemCount: communityController.communities.length,
+                    itemBuilder: (context, index) => CommunityListSearch(
+                      community: communityController.communities[index],
+                      email: widget.email,
+                      searchController: searchController,
 
-                            // orderRecentSearch: (community) {
-                            //   orderRecentSearchCommunity(context, community);
-                            // },
-                            // community: community[index],
-                            // onSelectedCommunity: (community, user, post) {
-                            //   selectCommunity(context, community, user, post);
-                            // },
-                            // onRecentSearch: _recentSearchCommunity,
-                            // user: UserInformation,
-                            // post: PostCommunity,
-                          )),
+                      // orderRecentSearch: (community) {
+                      //   orderRecentSearchCommunity(context, community);
+                      // },
+                      // community: community[index],
+                      // onSelectedCommunity: (community, user, post) {
+                      //   selectCommunity(context, community, user, post);
+                      // },
+                      // onRecentSearch: _recentSearchCommunity,
+                      // user: UserInformation,
+                      // post: PostCommunity,
+                    ),
+                  ),
                 );
               }),
         if (isChecked == false)
