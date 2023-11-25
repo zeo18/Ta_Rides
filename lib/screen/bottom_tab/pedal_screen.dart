@@ -14,6 +14,7 @@ import 'package:location/location.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/all_controller/location_controller.dart';
 import 'package:ta_rides/widget/pedal/route.dart';
 import 'package:ta_rides/widget/pedal/saved_route.dart';
@@ -38,7 +39,7 @@ class _PedalScreenState extends State<PedalScreen> {
   TextEditingController pinPoint1stController = TextEditingController();
   TextEditingController pinPoint2ndController = TextEditingController();
   LocationServicer locationService1 = LocationServicer();
-
+  String pedalId = '123456789123456';
   bool startNavigation = false;
   late Timer _timer;
   Duration _duration = Duration();
@@ -116,7 +117,7 @@ class _PedalScreenState extends State<PedalScreen> {
   double calculateSpeed(double distance) {
     final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
     final elapsedHours = elapsedMinutes / 60;
-    double doubleDistance = distance;
+    double doubleDistance = locationService.distance1!;
 
     print(['second', elapsedHours.toDouble().toStringAsFixed(10)]);
     print(['distance', doubleDistance]);
@@ -545,9 +546,14 @@ class _PedalScreenState extends State<PedalScreen> {
                                                 fontSize: 20,
                                               ),
                                         ),
-                                        SizedBox(
-                                          width: 110,
-                                        ),
+                                        if (avgSpeed == double.infinity)
+                                          SizedBox(
+                                            width: 70,
+                                          )
+                                        else
+                                          SizedBox(
+                                            width: 110,
+                                          ),
                                         Text(
                                           ' ${locationService.distance}',
                                           style: Theme.of(context)
@@ -611,37 +617,63 @@ class _PedalScreenState extends State<PedalScreen> {
                                       ),
                                     ),
                                     onPressed: () async {
+                                      // Stop the timer
+                                      _timer.cancel();
+
+                                      // Clear the polylines
+
+                                      final FirebaseFirestore _firestore =
+                                          FirebaseFirestore.instance;
+                                      final String id = _firestore
+                                          .collection('pedal')
+                                          .doc()
+                                          .id;
+
                                       final pedalDoc = await FirebaseFirestore
                                           .instance
                                           .collection('pedal')
                                           .where('username',
                                               isEqualTo: widget.user.username)
-                                          .where('pedalId',
-                                              isEqualTo: widget.pedalId)
+                                          .where('pedalId', isEqualTo: pedalId)
                                           .get();
 
+                                      if (pedalDoc.docs.isEmpty) {
+                                        print('not empty');
+
+                                        print(id);
+                                      }
+
                                       pedalDoc.docs.first.reference.update({
+                                        'pedalId': id,
                                         'distance': locationService.distance,
                                         'avgSpeed': avgSpeed,
-                                        'totalTime':
+                                        'stopwatch':
                                             _formatDuration(_stopwatch.elapsed),
+                                        'totalTime': DateTime.now(),
                                         'totalDistance': distance,
-                                      });
-
-                                      // Stop the timer
-                                      _timer.cancel();
-
-                                      // Clear the polylines
-                                      setState(() {
-                                        focusCameraCurrenLocation = true;
-                                        _markers.clear();
-                                        _timer.cancel();
-                                        _stopwatch.stop();
-                                        _stopwatch.reset();
-                                        _polylines.clear();
-                                        pinPoint1stController.clear();
-                                        distance = 0;
-                                        startNavigation = false;
+                                      }).then((value) {
+                                        setState(() {
+                                          locationService.initLocation();
+                                          focusCameraCurrenLocation = true;
+                                          _markers.clear();
+                                          _timer.cancel();
+                                          _stopwatch.stop();
+                                          _stopwatch.reset();
+                                          _polylines.clear();
+                                          pinPoint1stController.clear();
+                                          distance = 0;
+                                          startNavigation = false;
+                                        });
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => TabsScreen(
+                                        //       email: widget.user.email,
+                                        //       tabsScreen: 2,
+                                        //       communityTabs: 0,
+                                        //     ),
+                                        //   ),
+                                        // );
                                       });
                                     },
                                     child: Text(
@@ -736,7 +768,7 @@ class _PedalScreenState extends State<PedalScreen> {
                                         currentLocation: currentLocation,
                                         startLocation: startLocation!,
                                         user: widget.user,
-                                        pedalId: widget.pedalId,
+                                        pedalId: pedalId,
                                       ),
                                       SavedRoute(),
                                     ],

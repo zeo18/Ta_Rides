@@ -16,6 +16,7 @@ class LocationService {
   LocationData? startLocation;
   StreamSubscription<LocationData>? locationSubscription;
   String? distance;
+  double? distance1;
 
   LocationService() {
     initLocation();
@@ -31,6 +32,12 @@ class LocationService {
         startLocation!.latitude!,
         startLocation!.longitude!,
       );
+      if (result?['distance'] != null && result!['distance'] is String) {
+        String distanceString = result['distance'].replaceAll('km', '');
+        print('Parsing: $distanceString');
+        distance1 = double.tryParse(distanceString) ?? 0.0;
+      }
+
       distance = result?['distance'];
 
       print('Distance from starting location: $distance');

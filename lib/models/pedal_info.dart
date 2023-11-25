@@ -9,12 +9,14 @@ class Pedal {
     required this.totalDistance,
     required this.avgSpeed,
     required this.distance,
+    required this.totalTime,
   });
 
   final String pedalId;
   final String username;
+  final Timestamp totalTime;
   final Timestamp time;
-  final Stopwatch stopwatch;
+  final String stopwatch;
   final double totalDistance;
   final double avgSpeed;
   final String distance;
@@ -24,8 +26,9 @@ class Pedal {
     return Pedal(
       pedalId: data['pedalId'] as String,
       username: data['username'] as String,
+      totalTime: data['totalTime'] as Timestamp,
       time: data['time'] as Timestamp,
-      stopwatch: data['stopwatch'] as Stopwatch,
+      stopwatch: data['stopwatch'] as String,
       totalDistance: data['totalDistance'] as double,
       avgSpeed: data['avgSpeed'] as double,
       distance: data['distance'] as String,

@@ -90,7 +90,9 @@ class _Goal30HomeState extends State<Goal30Home> {
                   ),
                 );
               }),
-          Goal30TrackGoal(user: widget.user),
+          Goal30TrackGoal(
+            user: widget.user,
+          ),
         ],
       ),
     );

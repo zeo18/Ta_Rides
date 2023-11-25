@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -9,18 +12,25 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/location_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
+import 'package:ta_rides/widget/all_controller/location_controller.dart';
 import 'package:ta_rides/widget/goal30/goal30_Route.dart';
 import 'package:ta_rides/widget/pedal/route.dart';
 import 'package:ta_rides/widget/pedal/saved_route.dart';
+import 'package:location/location.dart';
 
 class Goal30Start extends StatefulWidget {
-  const Goal30Start(
-      {Key? key, this.locationData, required this.goal30PinController})
-      : super(key: key);
+  const Goal30Start({
+    Key? key,
+    required this.locationData,
+    required this.user,
+  }) : super(key: key);
 
   final LocationData? locationData;
-  final String goal30PinController;
+  final Users user;
+
   @override
   State<Goal30Start> createState() => _Goal30StartState();
 }
@@ -28,18 +38,21 @@ class Goal30Start extends StatefulWidget {
 class _Goal30StartState extends State<Goal30Start> {
   TextEditingController pinPoint1stController = TextEditingController();
   TextEditingController pinPoint2ndController = TextEditingController();
+  LocationServicer locationService1 = LocationServicer();
 
   bool startNavigation = false;
   late Timer _timer;
-  Duration _duration = const Duration();
+  Duration _duration = Duration();
   Stopwatch _stopwatch = Stopwatch();
   bool focusCameraCurrenLocation = false;
   bool _isRunning = false;
-
+  late LocationData currentLocation;
+  late LocationData startLocation;
   List<double> _speeds = [];
   double _totalSpeed = 0;
 
   LocationData? previousLocation;
+  double originToUser = 0.0;
   double distance = 0.0;
   double avgSpeed = 0.0;
   double elevationGain = 0.0;
@@ -95,20 +108,33 @@ class _Goal30StartState extends State<Goal30Start> {
     });
   }
 
+  void setOriginToUserDistance(double orginToUserDistance) {
+    setState(() {
+      this.originToUser = orginToUserDistance;
+    });
+  }
+
   double calculateSpeed(double distance) {
     final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
     final elapsedHours = elapsedMinutes / 60;
-    double doubleDistance = distance;
+    double doubleDistance = locationService.distance1!;
 
     print(['second', elapsedHours.toDouble().toStringAsFixed(10)]);
     print(['distance', doubleDistance]);
     return doubleDistance.toDouble() / elapsedHours.toDouble();
   }
 
+  void updateStartLocation() async {
+    Location location = Location();
+    LocationData currentLocationData = await location.getLocation();
+    setState(() {
+      startLocation = currentLocationData;
+    });
+  }
+
   void updateUserMovement(double distance) {
     setState(() {
       avgSpeed = calculateSpeed(distance);
-      print(['avgSpeed', avgSpeed]);
 
       // final speed = calculateSpeed(distance);
       // if (speed > maxSpeed) {
@@ -118,25 +144,41 @@ class _Goal30StartState extends State<Goal30Start> {
     });
   }
 
+  LocationService locationService = LocationService();
   @override
   void initState() {
+    initialize();
+
     super.initState();
+
+    locationService1.initLocation();
+    locationService.initLocation();
+    currentLocation = widget.locationData!;
+    startLocation = currentLocation;
+
     _currentLocation.add(
       Marker(
-        markerId: const MarkerId('initial_position'),
-        position: LatLng(widget.locationData?.latitude ?? 10.2899758,
-            widget.locationData?.longitude ?? 123.861891),
+        markerId: MarkerId('currentLocation'),
+        position: LatLng(currentLocation.latitude ?? 10.2899758,
+            currentLocation.longitude ?? 123.861891),
       ),
     );
 
     _startTimer();
-    pinPoint1stController.text = widget.goal30PinController;
+  }
+
+  void initialize() {
+    setState(() {
+      if (widget.locationData != null) {
+        currentLocation = widget.locationData!;
+      }
+    });
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        _duration += const Duration(seconds: 1);
+        _duration += Duration(seconds: 1);
       });
     });
   }
@@ -148,13 +190,14 @@ class _Goal30StartState extends State<Goal30Start> {
   @override
   void dispose() {
     _timer.cancel();
+    locationService.dispose();
     super.dispose();
   }
 
   void _setMarker(LatLng point) {
     if (pinPoint1stController.text.isNotEmpty) {
       Marker firstPoint = Marker(
-        markerId: const MarkerId('1st pin point'),
+        markerId: MarkerId('1st pin point'),
         position: point,
       );
       setState(() {
@@ -162,7 +205,7 @@ class _Goal30StartState extends State<Goal30Start> {
       });
     } else {
       Marker secondPoint = Marker(
-        markerId: const MarkerId('1st pin point'),
+        markerId: MarkerId('1st pin point'),
         position: point,
       );
       setState(() {
@@ -245,10 +288,11 @@ class _Goal30StartState extends State<Goal30Start> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(
-            'GOAL 30',
+            'Goal30',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -259,7 +303,7 @@ class _Goal30StartState extends State<Goal30Start> {
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: GoogleMap(
@@ -270,6 +314,16 @@ class _Goal30StartState extends State<Goal30Start> {
                 },
                 polygons: _polygons,
                 polylines: _polylines,
+                // markers: {
+                //   _kGooglePlexMarker,
+                //   // _kLakeMarker,
+                // },
+                // // polylines: {
+                // //   _kPolyline,
+                // // },
+                // // polygons: {
+                // //   _kPolygon,
+                // // },
                 onTap: (point) {
                   setState(() {
                     polygonLatLngs.add(point);
@@ -277,8 +331,8 @@ class _Goal30StartState extends State<Goal30Start> {
                   });
                 },
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(widget.locationData?.latitude ?? 10.2899758,
-                      widget.locationData?.longitude ?? 123.861891),
+                  target: LatLng(widget.locationData!.latitude ?? 10.2899758,
+                      widget.locationData!.longitude ?? 123.861891),
                   zoom: 14.4746,
                 ),
                 onMapCreated: (GoogleMapController controller) {
@@ -290,40 +344,43 @@ class _Goal30StartState extends State<Goal30Start> {
             if (startNavigation == false)
               if (selectPoint)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(220, 430, 0, 0),
+                  padding: EdgeInsets.fromLTRB(220, 490, 0, 0),
                   child: FloatingActionButton.extended(
                     onPressed: () async {
                       focusCameraCurrenLocation = true;
                       setState(() {});
                       getLocationUpdates();
+                      LocationData currentLocation =
+                          await locationService.getLocation();
+                      locationService.updateStartLocation(currentLocation);
+                      getLocationUpdates();
                     },
-                    label: const Text('Current location'),
-                    icon: const Icon(Icons.location_history),
+                    label: Text('Current location'),
+                    icon: Icon(Icons.location_history),
                     backgroundColor: Colors.white,
                   ),
                 ),
             if (startNavigation)
               if (selectPoint)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(220, 468, 5, 0),
+                  padding: EdgeInsets.fromLTRB(220, 535, 5, 0),
                   child: FloatingActionButton.extended(
                     onPressed: () async {
                       focusCameraCurrenLocation = false;
                       setState(() {});
                       getLocationUpdates();
                     },
-                    label: const Text(
+                    label: Text(
                       'Focus Your Location',
                       style: TextStyle(color: Colors.white),
                     ),
-                    icon:
-                        const Icon(Icons.location_history, color: Colors.white),
-                    backgroundColor: const Color(0x3FF0C0D11),
+                    icon: Icon(Icons.location_history, color: Colors.white),
+                    backgroundColor: Color(0x3FF0C0D11),
                   ),
                 ),
             if (startNavigation)
               Padding(
-                padding: const EdgeInsets.fromLTRB(5, 528, 5, 5),
+                padding: const EdgeInsets.fromLTRB(5, 595, 5, 5),
                 child: Column(
                   children: [
                     Expanded(
@@ -331,7 +388,7 @@ class _Goal30StartState extends State<Goal30Start> {
                         height: 200,
                         width: 500,
                         decoration: BoxDecoration(
-                          color: const Color(0x3FF0C0D11),
+                          color: Color(0x3FF0C0D11),
                           borderRadius: BorderRadius.circular(
                               20.0), // Adjust the radius as needed
                         ),
@@ -340,9 +397,9 @@ class _Goal30StartState extends State<Goal30Start> {
                             Container(
                               height: 65,
                               width: 500,
-                              margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                              margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                               child: Card(
-                                color: const Color(0x3ff181A20),
+                                color: Color(0x3ff181A20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -351,16 +408,16 @@ class _Goal30StartState extends State<Goal30Start> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const SizedBox(
+                                    SizedBox(
                                       height: 5,
                                     ),
                                     Row(
                                       children: [
-                                        const SizedBox(
-                                          width: 70,
+                                        SizedBox(
+                                          width: 80,
                                         ),
                                         Text(
-                                          'Time',
+                                          'TIME',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -370,11 +427,11 @@ class _Goal30StartState extends State<Goal30Start> {
                                                 fontSize: 12,
                                               ),
                                         ),
-                                        const SizedBox(
-                                          width: 140,
+                                        SizedBox(
+                                          width: 120,
                                         ),
                                         Text(
-                                          'DISTANCE(km)',
+                                          'TOTAL DISTANCE',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -388,8 +445,8 @@ class _Goal30StartState extends State<Goal30Start> {
                                     ),
                                     Row(
                                       children: [
-                                        const SizedBox(
-                                          width: 50,
+                                        SizedBox(
+                                          width: 60,
                                         ),
                                         Text(
                                           _formatDuration(_stopwatch.elapsed),
@@ -402,11 +459,11 @@ class _Goal30StartState extends State<Goal30Start> {
                                                 fontSize: 20,
                                               ),
                                         ),
-                                        const SizedBox(
-                                          width: 130,
+                                        SizedBox(
+                                          width: 110,
                                         ),
                                         Text(
-                                          '${distance.toStringAsFixed(2)}',
+                                          '${distance.toStringAsFixed(2)} km',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -425,9 +482,9 @@ class _Goal30StartState extends State<Goal30Start> {
                             Container(
                               height: 65,
                               width: 500,
-                              margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                              margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
                               child: Card(
-                                color: const Color(0x3ff181A20),
+                                color: Color(0x3ff181A20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -437,12 +494,11 @@ class _Goal30StartState extends State<Goal30Start> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      margin:
-                                          const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                                      margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                                       child: Row(
                                         children: [
-                                          const SizedBox(
-                                            width: 130,
+                                          SizedBox(
+                                            width: 35,
                                           ),
                                           Text(
                                             'AVG SPEED(km/h)',
@@ -456,33 +512,52 @@ class _Goal30StartState extends State<Goal30Start> {
                                                   fontSize: 12,
                                                 ),
                                           ),
-                                          const SizedBox(
-                                            width: 85,
+                                          SizedBox(
+                                            width: 100,
                                           ),
-                                          // Text(
-                                          //   'MAX SPEED',
-                                          //   style: Theme.of(context)
-                                          //       .textTheme
-                                          //       .bodyLarge!
-                                          //       .copyWith(
-                                          //         color:
-                                          //             const Color(0x3ffE8AA0A),
-                                          //         fontWeight: FontWeight.w900,
-                                          //         fontSize: 12,
-                                          //       ),
-                                          // ),
+                                          Text(
+                                            'DISTANCE',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                  color:
+                                                      const Color(0x3ffE8AA0A),
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                ),
+                                          ),
                                         ],
                                       ),
                                     ),
                                     Row(
                                       children: [
-                                        const SizedBox(
-                                          width: 140,
+                                        SizedBox(
+                                          width: 55,
                                         ),
                                         Text(
                                           avgSpeed == double.infinity
                                               ? 'Calculating...'
-                                              : '${avgSpeed.toStringAsFixed(2)}',
+                                              : '${avgSpeed.toStringAsFixed(2)} km',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 20,
+                                              ),
+                                        ),
+                                        if (avgSpeed == double.infinity)
+                                          SizedBox(
+                                            width: 70,
+                                          )
+                                        else
+                                          SizedBox(
+                                            width: 110,
+                                          ),
+                                        Text(
+                                          ' ${locationService.distance}',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyLarge!
@@ -499,17 +574,17 @@ class _Goal30StartState extends State<Goal30Start> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                              margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
                               child: Row(
                                 children: [
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0x3FF0C0D11),
+                                      backgroundColor: Color(0x3FF0C0D11),
                                       minimumSize: const Size(178, 35),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        side: const BorderSide(
+                                        side: BorderSide(
                                           color: Colors.white,
                                           width: 1,
                                         ),
@@ -528,12 +603,12 @@ class _Goal30StartState extends State<Goal30Start> {
                                           ),
                                     ),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 20,
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0x3ffFF0000),
+                                      backgroundColor: Color(0x3ffFF0000),
                                       minimumSize: const Size(
                                         178,
                                         35,
@@ -543,7 +618,24 @@ class _Goal30StartState extends State<Goal30Start> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      // final pedalDoc = await FirebaseFirestore
+                                      //     .instance
+                                      //     .collection('pedal')
+                                      //     .where('username',
+                                      //         isEqualTo: widget.user.username)
+                                      //     .where('pedalId',
+                                      //         isEqualTo: widget.pedalId)
+                                      //     .get();
+
+                                      // pedalDoc.docs.first.reference.update({
+                                      //   'distance': locationService.distance,
+                                      //   'avgSpeed': avgSpeed,
+                                      //   'totalTime':
+                                      //       _formatDuration(_stopwatch.elapsed),
+                                      //   'totalDistance': distance,
+                                      // });
+
                                       // Stop the timer
                                       _timer.cancel();
 
@@ -555,7 +647,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                         _stopwatch.stop();
                                         _stopwatch.reset();
                                         _polylines.clear();
-
+                                        pinPoint1stController.clear();
                                         distance = 0;
                                         startNavigation = false;
                                       });
@@ -585,7 +677,7 @@ class _Goal30StartState extends State<Goal30Start> {
             if (startNavigation == false)
               if (selectPoint)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 490, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 555, 10, 10),
                   child: Stack(
                     children: [
                       Container(
@@ -629,8 +721,6 @@ class _Goal30StartState extends State<Goal30Start> {
                                   child: TabBarView(
                                     children: [
                                       Goal30Route(
-                                        goal30PinController:
-                                            widget.goal30PinController,
                                         pinPoint1st: pinPoint1stController.text,
                                         pinPoint2nd: pinPoint2ndController.text,
                                         selectPinPoint: selectPinPoint,
@@ -647,6 +737,10 @@ class _Goal30StartState extends State<Goal30Start> {
                                         startOrStop: startOrStop,
                                         distance: setDistance,
                                         getLocationUpdate: getLocationUpdates,
+                                        orginToUser: setOriginToUserDistance,
+                                        currentLocation: currentLocation,
+                                        startLocation: startLocation,
+                                        user: widget.user,
                                       ),
                                     ],
                                   ),
@@ -664,7 +758,7 @@ class _Goal30StartState extends State<Goal30Start> {
                   Container(
                     height: 145,
                     width: 500,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                           bottom: Radius.circular(
@@ -677,7 +771,7 @@ class _Goal30StartState extends State<Goal30Start> {
                       children: [
                         IconButton(
                           onPressed: selectBack,
-                          icon: const Icon(Icons.arrow_back),
+                          icon: Icon(Icons.arrow_back),
                         ),
                         Text(
                           'Destination',
@@ -688,18 +782,38 @@ class _Goal30StartState extends State<Goal30Start> {
                                     fontSize: 13,
                                   ),
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 180,
                         ),
+                        // Container(
+                        //   height: 30,
+                        //   width: 80,
+                        //   decoration: BoxDecoration(
+                        //     color: const Color(0x3ffff0000),
+                        //     borderRadius: BorderRadius.circular(50),
+                        //   ),
+                        //   child: TextButton(
+                        //     onPressed: () {},
+                        //     child: Text(
+                        //       'Done',
+                        //       style:
+                        //           Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        //                 color: Colors.white,
+                        //                 fontWeight: FontWeight.bold,
+                        //                 fontSize: 13,
+                        //               ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                     child: Container(
-                      margin: const EdgeInsets.all(10),
+                      margin: EdgeInsets.all(10),
                       child: Card(
-                        color: const Color.fromARGB(255, 255, 255, 255),
+                        color: Color.fromARGB(255, 255, 255, 255),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -721,11 +835,15 @@ class _Goal30StartState extends State<Goal30Start> {
                               controller: pinPoint1stController,
                               textCapitalization: TextCapitalization.words,
                               textInputAction: TextInputAction.done,
+                              // onChanged: (value) {
+                              //   _setMarker(LatLng(
+                              //     double.parse(pinPoint1stController.text),
+                              //     double.parse(pinPoint2ndController.text),
+                              //   ));
+                              // },
                               decoration: InputDecoration(
                                 label: Text(
-                                  widget.goal30PinController.isEmpty
-                                      ? 'Search your Destination...'
-                                      : widget.goal30PinController,
+                                  'Search your Destination...',
                                   style: GoogleFonts.inter(
                                     color: const Color(0x3ff454545),
                                     fontSize: 13,
@@ -737,7 +855,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                         .getPlace(pinPoint1stController.text);
                                     _goToPlace(place);
                                   },
-                                  icon: const Icon(Icons.search),
+                                  icon: Icon(Icons.search),
                                 ),
                               ),
                             ),
@@ -754,7 +872,7 @@ class _Goal30StartState extends State<Goal30Start> {
                   Container(
                     height: 145,
                     width: 500,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                           bottom: Radius.circular(
@@ -765,6 +883,28 @@ class _Goal30StartState extends State<Goal30Start> {
               ),
           ],
         ),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: _goToTheLake,
+        //   label: const Text('To the lake!'),
+        //   icon: const Icon(Icons.directions_boat),
+        // ),
+
+        // floatingActionButton: Column(
+        //   children: [
+        //     if (selectPoint == false)
+        //       Padding(
+        //         padding: EdgeInsets.fromLTRB(0, 700, 0, 0),
+        //         child: FloatingActionButton.extended(
+        //           onPressed: () async {
+        //             getLocationUpdates();
+        //           },
+        //           label: Text('Current location'),
+        //           icon: Icon(Icons.location_history),
+        //           backgroundColor: Colors.white,
+        //         ),
+        //       ),
+        //   ],
+        // ),
       ),
     );
   }
@@ -775,10 +915,11 @@ class _Goal30StartState extends State<Goal30Start> {
 
   Future<void> getLocationUpdates() async {
     LocationData? _previousLocation;
-    LatLng _finalDestination = const LatLng(0, 0);
+    LatLng _finalDestination = LatLng(0, 0);
     // if (!mounted) {
     //   return;
     // }
+
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
 
@@ -795,13 +936,13 @@ class _Goal30StartState extends State<Goal30Start> {
         return;
       }
     }
+
     _shouldUpdateCamera = true;
-    _locationController.onLocationChanged
-        .listen((LocationData currentLocation) {
+    _locationController.onLocationChanged.listen((currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         if (_shouldUpdateCamera) {
-          Future.delayed(const Duration(seconds: 1), () {
+          Future.delayed(Duration(seconds: 1), () {
             _googleController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
@@ -818,15 +959,13 @@ class _Goal30StartState extends State<Goal30Start> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Arrived at Destination'),
-                    content: const Text(
-                        'You have arrived at your final destination.'),
+                    title: Text('Arrived at Destination'),
+                    content:
+                        Text('You have arrived at your final destination.'),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('OK'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        child: Text('OK'),
+                        onPressed: () {},
                       ),
                     ],
                   );
@@ -836,13 +975,48 @@ class _Goal30StartState extends State<Goal30Start> {
 
             DateTime currentTime = DateTime.now();
 
+            // if (_previousLocation != null && _previousTime != null) {
+            //   double speed = calculateSpeed(_previousLocation!, _previousTime!,
+            //       currentLocation, currentTime);
+            //   _speeds.add(speed);
+            //   _totalSpeed += speed;
+            // }
+            if (distance == locationService.distance1 && distance > 0.0) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Congratulations!'),
+                    content: Text('You reached your goal today!'),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          distance = 0.0;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TabsScreen(
+                                email: widget.user.email,
+                                tabsScreen: 3,
+                                communityTabs: 0,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
             _previousLocation = currentLocation;
             _previousTime = currentTime;
           });
         }
 
         _currentLocation.add(Marker(
-            markerId: const MarkerId('currentLocation'),
+            markerId: MarkerId('currentLocation'),
             position:
                 LatLng(currentLocation.latitude!, currentLocation.longitude!)));
         if (focusCameraCurrenLocation) {
@@ -882,6 +1056,13 @@ class _Goal30StartState extends State<Goal30Start> {
         .reduce((value, element) => value > element ? value : element);
   }
 
+  // double calculateAverageSpeed() {
+  //   if (_speeds.isEmpty) {
+  //     return 0;
+  //   }
+  //   return _totalSpeed / _speeds.length;
+  // }
+
   Future<void> _goToPlace(Map<String, dynamic> place) async {
     final double lat = place['geometry']['location']['lat'];
     final double lng = place['geometry']['location']['lng'];
@@ -899,6 +1080,8 @@ class _Goal30StartState extends State<Goal30Start> {
     Map<String, dynamic> boundsNe,
     Map<String, dynamic> boundsSw,
   ) async {
+    // final double lat = place['geometry']['location']['lat'];
+    // final double lng = place['geometry']['location']['lng'];
     final GoogleMapController controller = await _controller.future;
     await controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 15.5),
@@ -913,3 +1096,146 @@ class _Goal30StartState extends State<Goal30Start> {
     _setMarker(LatLng(lat, lng));
   }
 }
+
+
+// Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                   child: Row(
+//                     children: [
+//                       IconButton(
+//                         onPressed: selectBack2,
+//                         icon: Icon(Icons.arrow_back),
+//                       ),
+//                       IconButton(
+//                           onPressed: () async {
+//                             var direction = await LocationService()
+//                                 .getDirections(pinPoint1stController.text,
+//                                     pinPoint2ndController.text);
+
+//                             _setPlace(
+//                               direction!['start_location']['lat'],
+//                               direction['start_location']['lng'],
+//                               direction['bounds_ne'],
+//                               direction['bounds_sw'],
+//                             );
+
+//                             _setPolyline(direction['polyline_decoded']);
+//                           },
+//                           icon: Icon(Icons.arrow_circle_up_sharp)),
+//                       Text(
+//                         '2nd Pin point',
+//                         style:
+//                             Theme.of(context).textTheme.bodyLarge!.copyWith(
+//                                   color: const Color(0x3ff454545),
+//                                   fontWeight: FontWeight.bold,
+//                                   fontSize: 13,
+//                                 ),
+//                       ),
+//                       SizedBox(
+//                         width: 180,
+//                       ),
+//                       // Container(
+//                       //   height: 30,
+//                       //   width: 80,
+//                       //   decoration: BoxDecoration(
+//                       //     color: const Color(0x3ffff0000),
+//                       //     borderRadius: BorderRadius.circular(50),
+//                       //   ),
+//                       //   child: TextButton(
+//                       //     onPressed: () {},
+//                       //     child: Text(
+//                       //       'Done',
+//                       //       style:
+//                       //           Theme.of(context).textTheme.bodyLarge!.copyWith(
+//                       //                 color: Colors.white,
+//                       //                 fontWeight: FontWeight.bold,
+//                       //                 fontSize: 13,
+//                       //               ),
+//                       //     ),
+//                       //   ),
+//                       // )
+//                     ],
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+//                   child: Container(
+//                     margin: EdgeInsets.all(10),
+//                     child: Card(
+//                       color: Color.fromARGB(255, 255, 255, 255),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       clipBehavior: Clip.hardEdge,
+//                       elevation: 10,
+//                       child: InkWell(
+//                         onTap: () {},
+//                         child: Container(
+//                           margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+//                           child: TextFormField(
+//                             style: Theme.of(context)
+//                                 .textTheme
+//                                 .bodyMedium!
+//                                 .copyWith(
+//                                   color: Colors.black,
+//                                   fontWeight: FontWeight.bold,
+//                                 ),
+//                             // onChanged: (value) {
+//                             //   _setMarker(LatLng(
+//                             //     double.parse(pinPoint2ndController.text),
+//                             //     double.parse(pinPoint1stController.text),
+//                             //   ));
+//                             // },
+//                             cursorColor: Colors.white,
+//                             controller: pinPoint2ndController,
+//                             textInputAction: TextInputAction.done,
+//                             decoration: InputDecoration(
+//                               label: Text(
+//                                 'Input your 2nd Pin point...',
+//                                 style: GoogleFonts.inter(
+//                                   color: const Color(0x3ff454545),
+//                                   fontSize: 12,
+//                                 ),
+//                               ),
+//                               suffix: IconButton(
+//                                 onPressed: () async {
+//                                   var place = await LocationService()
+//                                       .getPlace(pinPoint2ndController.text);
+//                                   _goToPlace(place);
+//                                   print(place);
+//                                 },
+//                                 // () async {
+//                                 //   var place = await LocationService()
+//                                 //       .getPlace(pinPoint2ndController.text);
+//                                 //   _goToPlace(place);
+//                                 // },
+//                                 icon: Icon(Icons.search),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+
+
+
+
+  // void onLocationChanged(LocationData currentLocation) {
+  //   setState(() {
+  //     if (previousLocation != null) {
+  //       distance += calculateDistance(previousLocation!, currentLocation);
+  //       if (mounted) {
+  //         totalDistance += distance;
+  //       }
+  //       avgSpeed = distance / DateTime.now().difference(startTime).inHours;
+  //       // elevationGain +=
+  //       //     calculateElevationGain(previousLocation!, currentLocation);
+  //       maxSpeed =
+  //           max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
+  //     }
+
+  //     previousLocation = currentLocation;
+  //   });
+  // }
