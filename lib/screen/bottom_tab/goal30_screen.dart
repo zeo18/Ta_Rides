@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:ta_rides/models/goal30_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
@@ -32,6 +33,7 @@ final _goal30PageController = PageController();
 class _Goal30ScreenState extends State<Goal30Screen> {
   Goal30Controller goal30Controller = Goal30Controller();
   bool check = false;
+  late Goal30 goals30;
 
   @override
   void initState() {
@@ -88,20 +90,25 @@ class _Goal30ScreenState extends State<Goal30Screen> {
                                   isEqualTo: widget.user.username)
                               .get();
 
-                          await goal.docs.first.reference.update({
-                            'userData': false,
-                          }).then((value) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TabsScreen(
-                                  email: widget.email,
-                                  tabsScreen: 3,
-                                  communityTabs: 0,
-                                ),
+                          goals30 = Goal30.fromDocument(goal.docs.first);
+
+                          for (var i = 0; i < goals30.goalLenght; i++) {
+                            await goal.docs.first.reference.update({
+                              'userData': false,
+                              'day${i + 1}': false,
+                            });
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TabsScreen(
+                                email: widget.email,
+                                tabsScreen: 3,
+                                communityTabs: 0,
                               ),
-                            );
-                          });
+                            ),
+                          );
                         },
                         child: Container(
                             margin: const EdgeInsets.only(right: 10),
@@ -123,6 +130,7 @@ class _Goal30ScreenState extends State<Goal30Screen> {
                       ),
                       Goal30TrackGoal(
                         user: widget.user,
+                        goal30: goal30Controller.goal30,
                       ),
                     ],
                   ),

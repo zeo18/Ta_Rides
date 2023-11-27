@@ -304,9 +304,9 @@ class Goal30 {
 }
 
 class BMI {
-  final String day;
+  final int day;
   final String yourCategory;
-  final String kmGoal;
+  final double kmGoal;
 
   BMI({
     required this.day,

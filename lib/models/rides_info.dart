@@ -25,9 +25,12 @@ class Rides {
     required this.enemyCommunityId,
     required this.enemyCommunityTitle,
     required this.enemyCommunityImage,
+    required this.distance,
+    required this.start,
   });
   final String ridesID;
   final String caption;
+  final double distance;
   final String userCommunityId;
   final String communityId;
   final String communityImage;
@@ -50,6 +53,8 @@ class Rides {
   final String enemyCommunityTitle;
   final String enemyCommunityImage;
 
+  final bool start;
+
   // final Location enemyCurrent;
   // final Location userCurrent;
 
@@ -62,6 +67,8 @@ class Rides {
     return Rides(
       ridesID: data['ridesID'] as String,
       caption: data['caption'] as String,
+      start: data['start'] as bool,
+      distance: data['distance'] as double,
       userCommunityId: data['userCommunityId'] as String,
       communityId: data['communityId'] as String,
       communityImage: data['communityImage'] as String,
