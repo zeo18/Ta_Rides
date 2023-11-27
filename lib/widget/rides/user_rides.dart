@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
+import 'package:location/location.dart' as loc;
+import 'package:ta_rides/widget/rides/user_googlemaps.dart';
 
 class UserRides extends StatefulWidget {
   const UserRides({
@@ -16,6 +19,43 @@ class UserRides extends StatefulWidget {
 }
 
 class _UserRidesState extends State<UserRides> {
+  LocationData? _locationData;
+  late bool _serviceEnabled;
+  loc.Location location = new loc.Location();
+  late PermissionStatus _permissionGranted;
+
+  @override
+  void initState() {
+    initializeLocation();
+    super.initState();
+  }
+
+  void initializeLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    if (mounted) {
+      setState(() {
+        _locationData = _locationData;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,7 +312,20 @@ class _UserRidesState extends State<UserRides> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _locationData != null
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UserGoogleMaps(
+                                locationData: _locationData,
+                              ),
+                            ),
+                          )
+                        : const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                  },
                   child: Text(
                     'Start',
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(

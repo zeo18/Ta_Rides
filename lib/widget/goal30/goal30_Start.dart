@@ -11,6 +11,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:ta_rides/data/goal30_data.dart';
+import 'package:ta_rides/models/goal30_info.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
@@ -26,11 +28,16 @@ class Goal30Start extends StatefulWidget {
     Key? key,
     required this.locationData,
     required this.user,
+    required this.goalDay,
+    required this.goal30,
+    required this.day,
   }) : super(key: key);
 
   final LocationData? locationData;
   final Users user;
-
+  final int goalDay;
+  final Goal30 goal30;
+  final int day;
   @override
   State<Goal30Start> createState() => _Goal30StartState();
 }
@@ -344,7 +351,7 @@ class _Goal30StartState extends State<Goal30Start> {
             if (startNavigation == false)
               if (selectPoint)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(220, 490, 0, 0),
+                  padding: EdgeInsets.fromLTRB(220, 440, 0, 0),
                   child: FloatingActionButton.extended(
                     onPressed: () async {
                       focusCameraCurrenLocation = true;
@@ -677,7 +684,7 @@ class _Goal30StartState extends State<Goal30Start> {
             if (startNavigation == false)
               if (selectPoint)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 555, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 505, 10, 10),
                   child: Stack(
                     children: [
                       Container(
@@ -741,6 +748,9 @@ class _Goal30StartState extends State<Goal30Start> {
                                         currentLocation: currentLocation,
                                         startLocation: startLocation,
                                         user: widget.user,
+                                        goal30: widget.goal30,
+                                        day: widget.day,
+                                        distanceGoal: distance,
                                       ),
                                     ],
                                   ),
@@ -854,6 +864,14 @@ class _Goal30StartState extends State<Goal30Start> {
                                     var place = await LocationService()
                                         .getPlace(pinPoint1stController.text);
                                     _goToPlace(place);
+
+                                    final direction = await LocationService()
+                                        .getDirections(
+                                            pinPoint1stController.text,
+                                            pinPoint2ndController.text);
+
+                                    setDistance(double.parse(
+                                        direction!['distance'].split(' ')[0]));
                                   },
                                   icon: Icon(Icons.search),
                                 ),
@@ -909,6 +927,7 @@ class _Goal30StartState extends State<Goal30Start> {
     );
   }
 
+  double yourGoal = 0.0;
   late bool _shouldUpdateCamera;
   DateTime? _previousTime;
   double _threshold = 0.1;
@@ -916,9 +935,28 @@ class _Goal30StartState extends State<Goal30Start> {
   Future<void> getLocationUpdates() async {
     LocationData? _previousLocation;
     LatLng _finalDestination = LatLng(0, 0);
-    // if (!mounted) {
-    //   return;
-    // }
+
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal30.length) {
+        if (widget.day == goal30[i].day) {
+          yourGoal = goal30[i].kmGoal;
+        }
+      }
+    }
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal60.length) {
+        if (widget.day == goal60[i].day) {
+          yourGoal = goal60[i].kmGoal;
+        }
+      }
+    }
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal90.length) {
+        if (widget.day == goal90[i].day) {
+          yourGoal = goal90[i].kmGoal;
+        }
+      }
+    }
 
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -981,7 +1019,7 @@ class _Goal30StartState extends State<Goal30Start> {
             //   _speeds.add(speed);
             //   _totalSpeed += speed;
             // }
-            if (distance == locationService.distance1 && distance > 0.0) {
+            if (yourGoal == locationService.distance1) {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -991,8 +1029,22 @@ class _Goal30StartState extends State<Goal30Start> {
                     actions: <Widget>[
                       ElevatedButton(
                         child: Text('OK'),
-                        onPressed: () {
+                        onPressed: () async {
                           distance = 0.0;
+
+                          for (var i = 0; i < goal30.length; i++) {
+                            if (widget.goalDay == i) {
+                              final goalDone = await FirebaseFirestore.instance
+                                  .collection('goal30')
+                                  .where('day$i', isEqualTo: false)
+                                  .get();
+
+                              goalDone.docs.first.reference.update({
+                                'day$i': true,
+                              });
+                            }
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(

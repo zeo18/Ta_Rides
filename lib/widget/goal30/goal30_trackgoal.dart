@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,9 +13,14 @@ import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 import 'package:ta_rides/widget/goal30/goal30_Start.dart';
 
 class Goal30TrackGoal extends StatefulWidget {
-  const Goal30TrackGoal({super.key, required this.user});
+  const Goal30TrackGoal({
+    super.key,
+    required this.user,
+    required this.goal30,
+  });
 
   final Users user;
+  final Goal30 goal30;
 
   @override
   State<Goal30TrackGoal> createState() => _Goal30TrackGoalState();
@@ -31,17 +37,38 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final keys = List<GlobalKey>.generate(90, (index) => GlobalKey());
   int goalDay = 1;
-  // late int dateDay;
+
   int dateDay = DateTime.now().day;
+  List<bool> dayDone = [];
   int day = 0;
   late DateTime startDate;
   bool click = false;
+  late Goal30 goals30;
+
+  List<int> goalsssDone = [];
+
+  void daySet() async {
+    for (var i = 1; i < 90; i++) {
+      final days = await FirebaseFirestore.instance
+          .collection('goal30')
+          .where('userName', isEqualTo: widget.user.username)
+          .where('day$i', isEqualTo: false)
+          .get();
+
+      if (days.docs.isEmpty) {
+        print('no day found');
+        goalsssDone.add(i);
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    daySet();
     initializeGoalDay();
     initializeLocation();
+    goal30Controller.getUserGoal30(widget.user.username);
   }
 
   @override
@@ -74,17 +101,31 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
 
     _locationData = await location.getLocation();
 
-    setState(() {
-      _locationData = _locationData;
-    });
+    if (mounted) {
+      setState(() {
+        _locationData = _locationData;
+      });
+    }
   }
 
-  void loadGoalDay() {
+  void loadGoalDay() async {
+    final goal30QuerySnapshot = await FirebaseFirestore.instance
+        .collection('goal30')
+        .where('userName', isEqualTo: widget.user.username)
+        .get();
+
+    if (goal30QuerySnapshot.docs.isEmpty) {
+      throw Exception('No goal30 found');
+    }
+
+    final goal30DocumentSnapshot = goal30QuerySnapshot.docs.first;
+    goals30 = Goal30.fromDocument(goal30DocumentSnapshot);
+
     SharedPreferences.getInstance().then((prefs) {
       startDate = DateTime.parse(
           prefs.getString('startDate') ?? DateTime.now().toIso8601String());
 
-      DateTime goalDate = goal30Controller.goal30.timestamp.toDate();
+      DateTime goalDate = goals30.timestamp.toDate();
 
       // Set the time of both dates to midnight
       startDate = DateTime(startDate.year, startDate.month, startDate.day);
@@ -105,13 +146,115 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
             );
           });
         }
+
+        // if(goalDay )
       });
     });
+    for (var i = 0; i < goal30.length; i++) {
+      if (goalDay - 1 > i && goal30[i].kmGoal.toString() == '0.0') {
+        await goal30QuerySnapshot.docs.first.reference.update({
+          'day${i + 1}': true,
+        });
+      }
+    }
+    for (var i = 0; i < goal30.length; i++) {
+      if (goalDay - 1 > i && goal60[i].kmGoal.toString() == '0.0') {
+        await goal30QuerySnapshot.docs.first.reference.update({
+          'day${i + 1}': true,
+        });
+      }
+    }
+    for (var i = 0; i < goal30.length; i++) {
+      if (goalDay - 1 > i && goal90[i].kmGoal.toString() == '0.0') {
+        await goal30QuerySnapshot.docs.first.reference.update({
+          'day${i + 1}': true,
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     print(goalDay);
+
+    // for (var goal in goalDone) {
+    //   goal.days.forEach((day, value) {
+    //     if (value == true) {
+    //       print('Day $day is done');
+    //     }
+    //   });
+    // }
+    print(["goalDoneee", goalsssDone.length]);
+    for (var i = 0; i < goalsssDone.length; i++) {
+      print(['goalsssDone', goalsssDone[i]]);
+    }
+
+    Widget buildCard(BMI item, int dateDay, GlobalKey key) => ClipRRect(
+          key: key,
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                day = item.day;
+                click = true;
+              });
+            },
+            child: AnimatedBuilder(
+                animation: goal30Controller,
+                builder: (context, snapshot) {
+                  if (goal30Controller.isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 100,
+                          color: day == item.day
+                              ? const Color.fromARGB(255, 55, 60, 71)
+                              : goalsssDone.contains(item.day)
+                                  ? Colors.red
+                                  : const Color(0xFF181A20),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  'Day',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  item.day.toString(),
+                                  style: GoogleFonts.montserrat(
+                                    color: goalsssDone.contains(item.day) &&
+                                            goalDay == item.day
+                                        ? Color.fromARGB(255, 15, 16, 65)
+                                        : goalDay == item.day
+                                            ? Colors.red
+                                            : Colors.white,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+          ),
+        );
+
     return AnimatedBuilder(
         animation: goal30Controller,
         builder: (context, snapshot) {
@@ -181,7 +324,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                 ),
               for (var i = 0; i < goal30.length; i++)
                 if (goal30[i].yourCategory == goal30Controller.goal30.category)
-                  if (goal30[i].day == day.toString())
+                  if (goal30[i].day == day)
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: Column(
@@ -238,7 +381,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                         ),
                                   ),
                                   TextSpan(
-                                    text: goal30[i].kmGoal.toString(),
+                                    text: goal30[i].kmGoal.toString() == '0.0'
+                                        ? 'REST DAY'
+                                        : goal30[i].kmGoal.toString() + ' km',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
@@ -321,7 +466,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                     ),
               for (var i = 0; i < goal60.length; i++)
                 if (goal60[i].yourCategory == goal30Controller.goal30.category)
-                  if (goal60[i].day == day.toString())
+                  if (goal60[i].day == day)
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: Column(
@@ -378,7 +523,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                         ),
                                   ),
                                   TextSpan(
-                                    text: goal60[i].kmGoal.toString(),
+                                    text: goal60[i].kmGoal.toString() == '0.0'
+                                        ? 'REST DAY'
+                                        : goal60[i].kmGoal.toString() + ' km',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
@@ -461,7 +608,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                     ),
               for (var i = 0; i < goal90.length; i++)
                 if (goal90[i].yourCategory == goal30Controller.goal30.category)
-                  if (goal90[i].day == day.toString())
+                  if (goal90[i].day == day)
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: Column(
@@ -518,7 +665,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                         ),
                                   ),
                                   TextSpan(
-                                    text: goal90[i].kmGoal.toString(),
+                                    text: goal90[i].kmGoal.toString() == '0.0'
+                                        ? 'REST DAY'
+                                        : goal90[i].kmGoal.toString() + ' km',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
@@ -671,7 +820,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
               ),
               for (var i = 0; i < goal30.length; i++)
                 if (goal30Controller.goal30.goalLenght == goal30.length)
-                  if (goal30[i].day == day.toString())
+                  if (goal30[i].day == day)
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -681,15 +830,16 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             borderRadius: BorderRadius.circular(10.0),
                             side: BorderSide.none,
                           ),
-                          backgroundColor:
-                              goal30[i].kmGoal.toString() != 'REST DAY'
-                                  ? Color(0x3ffFF0000)
-                                  : Color(0x3ff797979),
+                          backgroundColor: goalsssDone.contains(goal30[i].day)
+                              ? Color(0x3ff797979)
+                              : goal30[i].kmGoal.toString() == '0.0'
+                                  ? Color(0x3ff797979)
+                                  : Colors.red,
                         ),
                         onPressed: () {
-                          if (goal30[i].kmGoal.toString() == 'REST DAY') {
+                          if (goalsssDone.contains(goal30[i].day)) {
                             return null;
-                          } else {
+                          } else if (goal30[i].kmGoal.toString() != '0.0') {
                             print(goalDay);
                             loadGoalDay();
                             Navigator.push(
@@ -699,6 +849,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                     ? Goal30Start(
                                         locationData: _locationData!,
                                         user: widget.user,
+                                        goalDay: goalDay,
+                                        goal30: goal30Controller.goal30,
+                                        day: day,
                                       )
                                     : const Center(
                                         child: CircularProgressIndicator(),
@@ -729,15 +882,16 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             borderRadius: BorderRadius.circular(10.0),
                             side: BorderSide.none,
                           ),
-                          backgroundColor:
-                              goal60[i].kmGoal.toString() != 'REST DAY'
-                                  ? Color(0x3ffFF0000)
-                                  : Color(0x3ff797979),
+                          backgroundColor: goalsssDone.contains(goal60[i].day)
+                              ? Color(0x3ff797979)
+                              : goal60[i].kmGoal.toString() == '0.0'
+                                  ? Color(0x3ff797979)
+                                  : Colors.red,
                         ),
                         onPressed: () {
-                          if (goal60[i].kmGoal.toString() == 'REST DAY') {
+                          if (goalsssDone.contains(goal60[i].day)) {
                             return null;
-                          } else {
+                          } else if (goal60[i].kmGoal.toString() != '0.0') {
                             print(goalDay);
                             loadGoalDay();
                             Navigator.push(
@@ -747,6 +901,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                     ? Goal30Start(
                                         locationData: _locationData!,
                                         user: widget.user,
+                                        goalDay: goalDay,
+                                        goal30: goal30Controller.goal30,
+                                        day: day,
                                       )
                                     : const Center(
                                         child: CircularProgressIndicator(),
@@ -767,7 +924,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                     ),
               for (var i = 0; i < goal90.length; i++)
                 if (goal30Controller.goal30.goalLenght == goal90.length)
-                  if (goal90[i].day == day.toString())
+                  if (goal90[i].day == day)
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -777,15 +934,16 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                             borderRadius: BorderRadius.circular(10.0),
                             side: BorderSide.none,
                           ),
-                          backgroundColor:
-                              goal90[i].kmGoal.toString() != 'REST DAY'
-                                  ? Color(0x3ffFF0000)
-                                  : Color(0x3ff797979),
+                          backgroundColor: goalsssDone.contains(goal90[i].day)
+                              ? Color(0x3ff797979)
+                              : goal90[i].kmGoal.toString() == '0.0'
+                                  ? Color(0x3ff797979)
+                                  : Colors.red,
                         ),
                         onPressed: () {
-                          if (goal90[i].kmGoal.toString() == 'REST DAY') {
+                          if (goalsssDone.contains(goal90[i].day)) {
                             return null;
-                          } else {
+                          } else if (goal90[i].kmGoal.toString() != '0.0') {
                             print(goalDay);
                             loadGoalDay();
                             Navigator.push(
@@ -795,6 +953,9 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                     ? Goal30Start(
                                         locationData: _locationData!,
                                         user: widget.user,
+                                        goalDay: goalDay,
+                                        goal30: goal30Controller.goal30,
+                                        day: day,
                                       )
                                     : const Center(
                                         child: CircularProgressIndicator(),
@@ -817,54 +978,4 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
           );
         });
   }
-
-  Widget buildCard(BMI item, int dateDay, GlobalKey key) => ClipRRect(
-        key: key,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              day = int.parse(item.day);
-              click = true;
-            });
-          },
-          child: Column(
-            children: [
-              Container(
-                width: 80,
-                height: 100,
-                color: day == int.parse(item.day)
-                    ? const Color.fromARGB(255, 55, 60, 71)
-                    : const Color(0xFF181A20),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Day',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        item.day,
-                        style: GoogleFonts.montserrat(
-                          color: goalDay.toString() == item.day
-                              ? Colors.red
-                              : Colors.white,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
 }
