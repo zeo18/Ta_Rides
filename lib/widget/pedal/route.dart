@@ -31,6 +31,7 @@ class SetRoute extends StatefulWidget {
     required this.startLocation,
     required this.user,
     required this.pedalId,
+    required this.reloadDistance,
   });
   final Function() selectPinPoint2;
 
@@ -55,6 +56,7 @@ class SetRoute extends StatefulWidget {
   final void Function(double orginToUserDistance) orginToUser;
   final Users user;
   final String pedalId;
+  final void Function() reloadDistance;
   @override
   State<SetRoute> createState() => _SetRouteState();
 }
@@ -163,6 +165,7 @@ class _SetRouteState extends State<SetRoute> {
                 widget.orginToUser(
                   double.parse(originToUser!['distance'].split(' ')[0]),
                 );
+                widget.reloadDistance();
                 widget.startNavigation();
                 widget.getLocationUpdate();
                 widget.stopwatch.start();

@@ -406,7 +406,6 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                       children: [
                         for (var i = 0; i < postController.posts.length; i++)
                           PublicScreen(
-                            email: widget.email,
                             post: postController.posts[i],
                             user: postController.users[i],
                           ),

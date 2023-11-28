@@ -89,6 +89,13 @@ class _PedalScreenState extends State<PedalScreen> {
     });
   }
 
+  void reloadDistance() {
+    setState(() {
+      locationService.initLocation();
+      locationService.distance1;
+    });
+  }
+
   void startNavigate() {
     setState(() {
       startNavigation = true;
@@ -769,6 +776,7 @@ class _PedalScreenState extends State<PedalScreen> {
                                         startLocation: startLocation!,
                                         user: widget.user,
                                         pedalId: pedalId,
+                                        reloadDistance: reloadDistance,
                                       ),
                                       SavedRoute(),
                                     ],
@@ -1012,6 +1020,39 @@ class _PedalScreenState extends State<PedalScreen> {
             //   _speeds.add(speed);
             //   _totalSpeed += speed;
             // }
+
+            if (distance == locationService.distance1 && distance > 0.0) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Congratulations!'),
+                    content: Text('You reached your destination!'),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          setState(() {
+                            distance = 10000.0;
+                          });
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TabsScreen(
+                                email: widget.user.email,
+                                tabsScreen: 2,
+                                communityTabs: 0,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
 
             _previousLocation = currentLocation;
             _previousTime = currentTime;

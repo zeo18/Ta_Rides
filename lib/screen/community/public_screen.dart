@@ -11,11 +11,10 @@ class PublicScreen extends StatefulWidget {
     // required this.email,
     required this.post,
     required this.user,
-    required this.email,
   });
   final Post post;
   final Users user;
-  final String email;
+
   // final Post community;
   // final Users user;
   // final String email;

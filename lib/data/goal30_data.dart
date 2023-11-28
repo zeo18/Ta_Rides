@@ -1,7 +1,7 @@
 import 'package:ta_rides/models/goal30_info.dart';
 
 final goal30 = [
-  BMI(day: 1, yourCategory: 'Goal30', kmGoal: 8.0),
+  BMI(day: 1, yourCategory: 'Goal30', kmGoal: 3.0),
   BMI(day: 2, yourCategory: 'Goal30', kmGoal: 0.0),
   BMI(day: 3, yourCategory: 'Goal30', kmGoal: 0.0),
   BMI(day: 4, yourCategory: 'Goal30', kmGoal: 8.0),

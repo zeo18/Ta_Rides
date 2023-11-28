@@ -28,6 +28,8 @@ class RidesController extends ChangeNotifier {
       return Rides.fromDocument(snapshot);
     }).toList();
 
+    rides.sort((a, b) => a.timePost.compareTo(b.timePost));
+
     isLoading = false;
     notifyListeners();
   }

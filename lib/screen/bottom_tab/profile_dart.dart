@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/auth/logInPage.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 import 'package:ta_rides/widget/all_controller/pedal_controller.dart';
 import 'package:ta_rides/widget/profile_Tabs/achievements_tabs.dart';
@@ -64,6 +66,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //       .get();
   // }
 
+  void signOutUser() async {
+    await FirebaseAuth.instance.signOut().then(
+          (value) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -89,6 +102,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.bold,
                     ),
               ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    signOutUser();
+                  },
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
               backgroundColor: const Color(0x3ff0c0d11),
             ),
             body: Column(
