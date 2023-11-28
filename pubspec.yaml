@@ -55,6 +55,8 @@ dependencies:
   shared_preferences: ^2.0.8
   intl: ^0.18.0
   scrollable_positioned_list: ^0.2.0-nullsafety.0
+  contained_tab_bar_view_with_custom_page_navigator: ^0.1.3
+  
   
 
 dev_dependencies:
@@ -91,6 +93,10 @@ flutter:
     - assets/images/createGroup.png
     - assets/images/joinGroup.png
     - assets/images/joinedGroup.png
+    - assets/images/admin_images/search-icon.png
+    - assets/images/admin_images/delete-btn.png
+    - assets/images/admin_images/logout.png
+    - assets/images/admin_images/notif-icon.png
     - assets/images/create_group_community/iconSelect1.png
     - assets/images/create_group_community/iconSelect2.png
     - assets/images/create_group_community/iconSelect3.png

@@ -17,7 +17,7 @@ class EventRides extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 235,
+      height: 260,
       width: 500,
       margin: const EdgeInsets.all(10),
       child: InkWell(
@@ -126,6 +126,38 @@ class EventRides extends StatelessWidget {
                           const SizedBox(
                             height: 10,
                           ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Distance:  ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Color(0x3ff989898),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14,
+                                    ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                '${rides.distance} km',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14,
+                                    ),
+                              ),
+                            ],
+                          ),
                           Text(
                             rides.caption,
                             style: Theme.of(context)
@@ -161,7 +193,7 @@ class EventRides extends StatelessWidget {
             ),
             Positioned(
               top: 50,
-              right: 40,
+              right: 25,
               child: ClipRRect(
                 borderRadius:
                     BorderRadius.circular(15), // Adjust the value as needed

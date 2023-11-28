@@ -182,6 +182,13 @@ class _Goal30StartState extends State<Goal30Start> {
     });
   }
 
+  void reloadDistance() {
+    setState(() {
+      locationService.initLocation();
+      locationService.distance1;
+    });
+  }
+
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
@@ -751,6 +758,7 @@ class _Goal30StartState extends State<Goal30Start> {
                                         goal30: widget.goal30,
                                         day: widget.day,
                                         distanceGoal: distance,
+                                        reloadDistance: reloadDistance,
                                       ),
                                     ],
                                   ),
@@ -1019,6 +1027,8 @@ class _Goal30StartState extends State<Goal30Start> {
             //   _speeds.add(speed);
             //   _totalSpeed += speed;
             // }
+            print(['distance', locationService.distance1]);
+            print(['Goal', yourGoal]);
             if (yourGoal == locationService.distance1) {
               showDialog(
                 context: context,
@@ -1030,10 +1040,17 @@ class _Goal30StartState extends State<Goal30Start> {
                       ElevatedButton(
                         child: Text('OK'),
                         onPressed: () async {
-                          distance = 0.0;
+                          setState(() {});
 
                           for (var i = 0; i < goal30.length; i++) {
                             if (widget.goalDay == i) {
+                              // if(widget.goalDay == i{
+                              //   return;
+                              // })
+                              setState(() {
+                                yourGoal = 0;
+                              });
+
                               final goalDone = await FirebaseFirestore.instance
                                   .collection('goal30')
                                   .where('day$i', isEqualTo: false)
@@ -1041,20 +1058,20 @@ class _Goal30StartState extends State<Goal30Start> {
 
                               goalDone.docs.first.reference.update({
                                 'day$i': true,
+                              }).then((value) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TabsScreen(
+                                      email: widget.user.email,
+                                      tabsScreen: 3,
+                                      communityTabs: 0,
+                                    ),
+                                  ),
+                                );
                               });
                             }
                           }
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TabsScreen(
-                                email: widget.user.email,
-                                tabsScreen: 3,
-                                communityTabs: 0,
-                              ),
-                            ),
-                          );
                         },
                       ),
                     ],

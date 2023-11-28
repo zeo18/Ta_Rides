@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +9,7 @@ import 'package:ta_rides/data/community_data.dart';
 import 'package:ta_rides/data/user_data.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/admin/admin_user.dart';
 
 import 'package:ta_rides/screen/auth/createAccount.dart';
 import 'package:ta_rides/screen/auth/forgotPassword.dart';
@@ -25,9 +28,18 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
   bool _obscureText = true;
-  var _email = '';
-  var password = '';
+  // var _email = '';
+  // var password = '';
+
+  @override
+  void initState() {
+    emailController.text = 'martin@gmail.com';
+    passController.text = '123456789';
+    super.initState();
+  }
 
   void submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -38,39 +50,48 @@ class _LoginPageState extends State<LoginPage> {
 
     if (isValid) {
       _formKey.currentState!.save();
-      print('email: $_email');
-      print('password: $password');
-
-      //   final user = FirebaseAuth.instance.currentUser!;
-      //   final userData = await FirebaseFirestore.instance
-      //       .collection('users')
-      //       .doc(user.uid)
-      //       .get();
-      // final userObject = Users.fromDocument(
-      //         userData);
-      // Convert DocumentSnapshot to Users object
-      FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: password)
-          .then((value) {
+      if (emailController.text == 'super.admin@tarides.com' &&
+          passController.text == '123456789') {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => TabsScreen(
-                    email: _email,
-                    communityTabs: 0,
-                    tabsScreen: 0,
-                  )),
+          MaterialPageRoute(builder: (context) => const SuperAdminScreen()),
         );
-      }).onError((error, stackTrace) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Invalid username or password.',
+      } else {
+        // print('email: $_email');
+        // print('password: $password');
+
+        //   final user = FirebaseAuth.instance.currentUser!;
+        //   final userData = await FirebaseFirestore.instance
+        //       .collection('users')
+        //       .doc(user.uid)
+        //       .get();
+        // final userObject = Users.fromDocument(
+        //         userData);
+        // Convert DocumentSnapshot to Users object
+        FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: emailController.text, password: passController.text)
+            .then((value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TabsScreen(
+                      email: emailController.text,
+                      communityTabs: 0,
+                      tabsScreen: 0,
+                    )),
+          );
+        }).onError((error, stackTrace) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Invalid username or password.',
+              ),
             ),
-          ),
-        );
-      });
+          );
+        });
+      }
     }
   }
 
@@ -130,11 +151,12 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                         onSaved: (value) {
-                          _email = value!;
+                          emailController.text = value!;
                         },
                         style: GoogleFonts.inter(
                           color: Colors.white,
                         ),
+                        controller: emailController,
                         decoration: InputDecoration(
                           focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
@@ -173,12 +195,13 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                         onSaved: (value) {
-                          password = value!;
+                          passController.text = value!;
                         },
                         obscureText: _obscureText,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                         ),
+                        controller: passController,
                         decoration: InputDecoration(
                           focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(

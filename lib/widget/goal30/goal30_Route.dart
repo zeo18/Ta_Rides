@@ -35,6 +35,7 @@ class Goal30Route extends StatefulWidget {
     required this.goal30,
     required this.day,
     required this.distanceGoal,
+    required this.reloadDistance,
   });
   final Function() selectPinPoint2;
 
@@ -61,6 +62,7 @@ class Goal30Route extends StatefulWidget {
   final Goal30 goal30;
   final int day;
   final double distanceGoal;
+  final void Function() reloadDistance;
 
   @override
   State<Goal30Route> createState() => _Goal30RouteState();
@@ -277,6 +279,7 @@ class _Goal30RouteState extends State<Goal30Route> {
                   widget.orginToUser(
                     double.parse(originToUser!['distance'].split(' ')[0]),
                   );
+                  widget.reloadDistance();
                   widget.startNavigation();
                   widget.getLocationUpdate();
                   widget.stopwatch.start();

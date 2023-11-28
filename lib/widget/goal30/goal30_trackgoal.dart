@@ -47,6 +47,13 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
 
   List<int> goalsssDone = [];
 
+  void refreshData() {
+    setState(() {
+      goalsssDone = goalsssDone;
+      goalDay = goalDay;
+    });
+  }
+
   void daySet() async {
     for (var i = 1; i < 90; i++) {
       final days = await FirebaseFirestore.instance
@@ -150,27 +157,47 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
         // if(goalDay )
       });
     });
-    for (var i = 0; i < goal30.length; i++) {
-      if (goalDay - 1 > i && goal30[i].kmGoal.toString() == '0.0') {
-        await goal30QuerySnapshot.docs.first.reference.update({
-          'day${i + 1}': true,
-        });
+    for (var i = 0; i < goals30.goalLenght; i++) {
+      if (goals30.goalLenght == goal30.length) {
+        if (goalDay - 1 > i && goal30[i].kmGoal.toString() == '0.0') {
+          await goal30QuerySnapshot.docs.first.reference.update({
+            'day${i + 1}': true,
+          });
+        }
       }
     }
-    for (var i = 0; i < goal30.length; i++) {
-      if (goalDay - 1 > i && goal60[i].kmGoal.toString() == '0.0') {
-        await goal30QuerySnapshot.docs.first.reference.update({
-          'day${i + 1}': true,
-        });
+    for (var i = 0; i < goals30.goalLenght; i++) {
+      if (goals30.goalLenght == goal60.length) {
+        if (goalDay - 1 > i && goal60[i].kmGoal.toString() == '0.0') {
+          await goal30QuerySnapshot.docs.first.reference.update({
+            'day${i + 1}': true,
+          });
+        }
       }
     }
-    for (var i = 0; i < goal30.length; i++) {
-      if (goalDay - 1 > i && goal90[i].kmGoal.toString() == '0.0') {
-        await goal30QuerySnapshot.docs.first.reference.update({
-          'day${i + 1}': true,
-        });
+    for (var i = 0; i < goals30.goalLenght; i++) {
+      if (goals30.goalLenght == goal90.length) {
+        if (goalDay - 1 > i && goal90[i].kmGoal.toString() == '0.0') {
+          await goal30QuerySnapshot.docs.first.reference.update({
+            'day${i + 1}': true,
+          });
+        }
       }
     }
+    // for (var i = 0; i < goal30.length; i++) {
+    //   if (goalDay > i && goal60[i].kmGoal.toString() == '0.0') {
+    //     await goal30QuerySnapshot.docs.first.reference.update({
+    //       'day${i + 1}': true,
+    //     });
+    //   }
+    // }
+    // for (var i = 0; i < goal30.length; i++) {
+    //   if (goalDay > i && goal90[i].kmGoal.toString() == '0.0') {
+    //     await goal30QuerySnapshot.docs.first.reference.update({
+    //       'day${i + 1}': true,
+    //     });
+    //   }
+    // }
   }
 
   @override
@@ -194,6 +221,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
           borderRadius: BorderRadius.circular(20),
           child: InkWell(
             onTap: () {
+              refreshData();
               setState(() {
                 day = item.day;
                 click = true;
@@ -872,7 +900,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                     ),
               for (var i = 0; i < goal60.length; i++)
                 if (goal30Controller.goal30.goalLenght == goal60.length)
-                  if (goal60[i].day == day.toString())
+                  if (goal60[i].day == day)
                     Center(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(

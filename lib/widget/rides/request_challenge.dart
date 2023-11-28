@@ -48,7 +48,7 @@ class _RequestChallengeState extends State<RequestChallenge> {
       print(_captionPostController.text);
       DocumentReference docRef =
           FirebaseFirestore.instance.collection('rides').doc();
-
+      double distance = double.parse(_distancePostController.text);
       await FirebaseFirestore.instance.collection('rides').add({
         'ridesID': docRef.id,
         'communityId': widget.community.id,
@@ -62,7 +62,7 @@ class _RequestChallengeState extends State<RequestChallenge> {
         'userImage': userController.user.userImage,
         'userUsername': userController.user.username,
         'userWinner': false,
-        'distance': _distancePostController.text,
+        'distance': distance,
         'start': false,
         'isEnemy': false,
         'enemyFirstname': '',

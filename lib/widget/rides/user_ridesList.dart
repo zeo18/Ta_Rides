@@ -55,6 +55,14 @@ class _UserRideListState extends State<UserRideList> {
                 ),
                 const SizedBox(height: 10),
                 Text(
+                  'Distance: ${widget.ride.distance} km',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 5),
+                Text(
                   widget.ride.enemyCommunityTitle,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
