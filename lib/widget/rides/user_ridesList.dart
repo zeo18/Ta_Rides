@@ -1,11 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ta_rides/models/rides_info.dart';
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/rides/user_rides.dart';
 
 class UserRideList extends StatefulWidget {
-  const UserRideList({super.key, required this.ride});
+  const UserRideList({
+    super.key,
+    required this.ride,
+    required this.user,
+  });
 
   final Rides ride;
+  final Users user;
 
   @override
   State<UserRideList> createState() => _UserRideListState();
@@ -23,12 +31,22 @@ class _UserRideListState extends State<UserRideList> {
         clipBehavior: Clip.hardEdge,
         elevation: 10,
         child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserRides(
-                  rides: widget.ride,
+          onTap: () async {
+            final join = await FirebaseFirestore.instance
+                .collection('rides')
+                .where('ridesID', isEqualTo: widget.ride.ridesID)
+                .get();
+
+            await join.docs.first.reference.update({
+              'isUser': true,
+            }).then(
+              (value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserRides(
+                    rides: widget.ride,
+                    user: widget.user,
+                  ),
                 ),
               ),
             );

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/widget/all_controller/rides_controller.dart';
@@ -41,13 +42,34 @@ class _EventsTabState extends State<EventsTab> {
               );
             }
             return ListView.builder(
-                itemCount: ridesController.rides.length,
-                itemBuilder: (context, index) => EventRides(
-                      rides: ridesController.rides[index],
-                      email: widget.email,
-                    ));
+              itemCount: ridesController.rides.length,
+              itemBuilder: (context, index) {
+                final ride = ridesController.rides[index];
+                final duration =
+                    DateTime.now().difference(ride.timePost.toDate());
+                if (duration.inHours >= 5 && !ride.isEnemy) {
+                  // Delete the ride from Firebase
+                  FirebaseFirestore.instance
+                      .collection('rides')
+                      .doc(ride.ridesID)
+                      .delete();
+                  // Remove the ride from the list
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    setState(() {
+                      ridesController.rides.removeAt(index);
+                    });
+                  });
+                }
+                return EventRides(
+                  rides: ride,
+                  email: widget.email,
+                );
+              },
+            );
           },
-        )
+        ));
+  }
+}
         // Container(
         //   height: 200,
         //   width: 500,
@@ -77,7 +99,3 @@ class _EventsTabState extends State<EventsTab> {
         //     ),
         //   ),
         // )
-
-        );
-  }
-}

@@ -4,15 +4,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
 import 'package:location/location.dart' as loc;
+import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/rides/user_googlemaps.dart';
 
 class UserRides extends StatefulWidget {
   const UserRides({
     super.key,
     required this.rides,
+    required this.user,
   });
 
   final Rides rides;
+  final Users user;
 
   @override
   State<UserRides> createState() => _UserRidesState();
@@ -89,6 +92,17 @@ class _UserRidesState extends State<UserRides> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'DISTANCE: ${widget.rides.distance} km',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                ),
                 const SizedBox(
                   height: 50,
                 ),
@@ -319,6 +333,8 @@ class _UserRidesState extends State<UserRides> {
                             MaterialPageRoute(
                               builder: (context) => UserGoogleMaps(
                                 locationData: _locationData,
+                                user: widget.user,
+                                rides: widget.rides,
                               ),
                             ),
                           )

@@ -83,7 +83,10 @@ class _CreateGroup2State extends State<CreateGroup2> {
 
       // final idCommunity =
       //     FirebaseFirestore.instance.collection('community').doc().id;
-      final storageRef = FirebaseStorage.instance.ref().child('user_image');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('community_image')
+          .child('${widget.idCommunity}.jpg');
       final coverImageRef = await storageRef.putFile(widget.coverImage!);
       final coverImageUrl = await coverImageRef.ref.getDownloadURL();
       // if (_postImage != null) {
@@ -108,7 +111,11 @@ class _CreateGroup2State extends State<CreateGroup2> {
       });
 
       if (_postImage != null) {
-        final storageRef = FirebaseStorage.instance.ref().child('post_image');
+        final idpost = FirebaseFirestore.instance.collection('post').doc().id;
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('post_image')
+            .child('${idpost}.jpg');
         final postImageRef = await storageRef.putFile(_postImage!);
         final postImageUrl = await postImageRef.ref.getDownloadURL();
 
