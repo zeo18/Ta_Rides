@@ -112,74 +112,105 @@ class _JoinedEventState extends State<JoinedEvent> {
                           child: Container(
                             margin: const EdgeInsets.all(25),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  ridesController.ride.enemyCommunityTitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
+                                if (ridesController.ride.isUser)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        ridesController
+                                            .ride.enemyCommunityTitle,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    ClipOval(
-                                      child: Image.network(
-                                        ridesController.ride.userImage,
-                                        height: 45,
-                                        width: 45,
-                                        fit: BoxFit.cover,
+                                      const SizedBox(
+                                        height: 10,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "${ridesController.ride.userFirstname.replaceRange(0, 1, ridesController.ride.userFirstname[0].toUpperCase())} ${ridesController.ride.userLastname.replaceRange(0, 1, ridesController.ride.userLastname[0].toUpperCase())}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium!
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w900,
-                                                    fontSize: 14,
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          ClipOval(
+                                            child: Image.network(
+                                              ridesController.ride.userImage,
+                                              height: 45,
+                                              width: 45,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "${ridesController.ride.userFirstname.replaceRange(0, 1, ridesController.ride.userFirstname[0].toUpperCase())} ${ridesController.ride.userLastname.replaceRange(0, 1, ridesController.ride.userLastname[0].toUpperCase())}",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium!
+                                                        .copyWith(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 14,
+                                                        ),
                                                   ),
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            const Icon(Icons.verified,
-                                                color: Colors.green, size: 15)
-                                          ],
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Icon(Icons.verified,
+                                                      color: Colors.green,
+                                                      size: 15)
+                                                ],
+                                              ),
+                                              Text(
+                                                '@${ridesController.ride.userUsername}',
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 15,
+                                                  color: Color(0x3ff797979),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                else
+                                  Center(
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 40,
                                         ),
                                         Text(
-                                          '@${ridesController.ride.userUsername}',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 15,
-                                            color: Color(0x3ff797979),
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                          'Host hast not joined yet',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 14,
+                                              ),
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
                               ],
                             ),
                           ),
@@ -310,7 +341,9 @@ class _JoinedEventState extends State<JoinedEvent> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0x3ffFF0000),
+                          backgroundColor: ridesController.ride.isUser
+                              ? Color(0x3ffFF0000)
+                              : Color(0x3ff797979),
                           minimumSize: const Size(
                             375,
                             45,
@@ -323,6 +356,36 @@ class _JoinedEventState extends State<JoinedEvent> {
                         onPressed: () {},
                         child: Text(
                           'Start',
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 14,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0x3ffFF0000),
+                          minimumSize: const Size(
+                            375,
+                            45,
+                          ),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            ridesController.getUserRide(widget.rides.ridesID);
+                          });
+                        },
+                        child: Text(
+                          'Refresh',
                           style:
                               Theme.of(context).textTheme.titleMedium!.copyWith(
                                     color: Colors.white,

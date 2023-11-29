@@ -44,7 +44,7 @@ class _CreateGroupState extends State<CreateGroup> {
   void initState() {
     super.initState();
     onSelectPrivacy = widget.onSelectedPrivacy;
-    selectedPrivacy = true;
+    selectedPrivacy = false;
   }
 
   @override

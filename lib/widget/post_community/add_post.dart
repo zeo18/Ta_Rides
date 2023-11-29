@@ -54,7 +54,10 @@ class _AddPostCommunityState extends State<AddPostCommunity> {
       final postId = postRef.id;
 
       if (_postImage != null) {
-        final storageRef = FirebaseStorage.instance.ref().child('post_image');
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('post_image')
+            .child('$postRef.jpg');
         final postImageRef = await storageRef.putFile(_postImage!);
         final postImageUrl = await postImageRef.ref.getDownloadURL();
 
