@@ -6,17 +6,21 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class Rides {
   Rides({
     required this.ridesID,
+    required this.caption,
+    required this.distance,
+    required this.userCommunityId,
     required this.communityId,
     required this.communityImage,
     required this.communitytitle,
-    required this.timePost,
     required this.userFirstname,
     required this.userLastname,
     required this.userImage,
     required this.userUsername,
-    required this.caption,
-    required this.userCommunityId,
+    required this.isUser,
+    required this.timePost,
     required this.userWinner,
+    required this.enemyWinner,
+    required this.enemyJoined,
     required this.isEnemy,
     required this.enemyFirstname,
     required this.enemyLastname,
@@ -25,22 +29,20 @@ class Rides {
     required this.enemyCommunityId,
     required this.enemyCommunityTitle,
     required this.enemyCommunityImage,
-    required this.distance,
-    required this.userStopwatch,
-    required this.userDistanceString,
-    required this.userStartTime,
-    required this.userEndTime,
-    required this.enemyWinner,
-    required this.enemyStopwatch,
-    required this.enemyDistanceString,
-    required this.enemyStartTime,
-    required this.enemyEndTime,
     required this.userStart,
     required this.userFinished,
     required this.enemyStart,
     required this.enemyFinished,
-    required this.isUser,
-    required this.enemyJoined,
+    required this.userLat,
+    required this.userLng,
+    required this.enemyLat,
+    required this.enemyLng,
+    required this.startLat,
+    required this.startLng,
+    required this.midLat,
+    required this.midLng,
+    required this.endLat,
+    required this.endLng,
   });
   final String ridesID;
   final String caption;
@@ -54,11 +56,6 @@ class Rides {
   final String userLastname;
   final String userImage;
   final String userUsername;
-
-  final String userStopwatch;
-  final String userDistanceString;
-  final Timestamp userStartTime;
-  final Timestamp userEndTime;
 
   final bool isUser;
   final Timestamp timePost;
@@ -75,15 +72,22 @@ class Rides {
   final String enemyCommunityTitle;
   final String enemyCommunityImage;
 
-  final String enemyStopwatch;
-  final String enemyDistanceString;
-  final Timestamp enemyStartTime;
-  final Timestamp enemyEndTime;
-
   final bool userStart;
   final bool userFinished;
   final bool enemyStart;
   final bool enemyFinished;
+
+  final double userLat;
+  final double userLng;
+  final double enemyLat;
+  final double enemyLng;
+
+  final double startLat;
+  final double startLng;
+  final double midLat;
+  final double midLng;
+  final double endLat;
+  final double endLng;
 
   factory Rides.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data() as Map<String, dynamic>;
@@ -110,20 +114,22 @@ class Rides {
       enemyCommunityId: data['enemyCommunityId'] as String,
       enemyCommunityTitle: data['enemyCommunityTitle'] as String,
       enemyCommunityImage: data['enemyCommunityImage'] as String,
-      userStopwatch: data['userStopwatch'] as String,
-      userDistanceString: data['userDistanceString'] as String,
-      userStartTime: data['userStartTime'] as Timestamp,
-      userEndTime: data['userEndTime'] as Timestamp,
       enemyWinner: data['enemyWinner'] as bool,
-      enemyStopwatch: data['enemyStopwatch'] as String,
-      enemyDistanceString: data['enemyDistanceString'] as String,
-      enemyStartTime: data['enemyStartTime'] as Timestamp,
-      enemyEndTime: data['enemyEndTime'] as Timestamp,
       enemyJoined: data['enemyJoined'] as Timestamp,
       userStart: data['userStart'] as bool,
       userFinished: data['userFinished'] as bool,
       enemyStart: data['enemyStart'] as bool,
       enemyFinished: data['enemyFinished'] as bool,
+      userLat: data['userLat'] as double,
+      userLng: data['userLng'] as double,
+      enemyLat: data['enemyLat'] as double,
+      enemyLng: data['enemyLng'] as double,
+      startLat: data['startLat'] as double,
+      startLng: data['startLng'] as double,
+      midLat: data['midLat'] as double,
+      midLng: data['midLng'] as double,
+      endLat: data['endLat'] as double,
+      endLng: data['endLng'] as double,
     );
   }
 }

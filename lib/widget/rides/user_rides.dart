@@ -5,6 +5,7 @@ import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
 import 'package:location/location.dart' as loc;
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/widget/rides/google_maps.dart';
 import 'package:ta_rides/widget/rides/user_googlemaps.dart';
 
 class UserRides extends StatefulWidget {
@@ -57,6 +58,25 @@ class _UserRidesState extends State<UserRides> {
         _locationData = _locationData;
       });
     }
+
+    double? latitude = _locationData?.latitude;
+    double? longitude = _locationData?.longitude;
+    FirebaseFirestore.instance
+        .collection('rides')
+        .where('ridesID', isEqualTo: widget.rides.ridesID)
+        .get()
+        .then(
+      (value) {
+        value.docs.forEach(
+          (element) {
+            element.reference.update({
+              'userLat': latitude,
+              'userLng': longitude,
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -331,10 +351,10 @@ class _UserRidesState extends State<UserRides> {
                         ? Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => UserGoogleMaps(
+                              builder: (context) => GoogleMaps(
                                 locationData: _locationData,
-                                user: widget.user,
-                                rides: widget.rides,
+                                ride: widget.rides,
+                                isUser: true,
                               ),
                             ),
                           )
