@@ -349,6 +349,7 @@ class _RidesScreenState extends State<RidesScreen> {
                                 itemCount: ridesController.rider.length,
                                 itemBuilder: (context, index) => UserRideList(
                                   ride: ridesController.rider[index],
+                                  user: widget.user,
                                 ),
                               ),
                             )

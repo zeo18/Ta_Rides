@@ -26,7 +26,21 @@ class Rides {
     required this.enemyCommunityTitle,
     required this.enemyCommunityImage,
     required this.distance,
-    required this.start,
+    required this.userStopwatch,
+    required this.userDistanceString,
+    required this.userStartTime,
+    required this.userEndTime,
+    required this.enemyWinner,
+    required this.enemyStopwatch,
+    required this.enemyDistanceString,
+    required this.enemyStartTime,
+    required this.enemyEndTime,
+    required this.userStart,
+    required this.userFinished,
+    required this.enemyStart,
+    required this.enemyFinished,
+    required this.isUser,
+    required this.enemyJoined,
   });
   final String ridesID;
   final String caption;
@@ -35,40 +49,49 @@ class Rides {
   final String communityId;
   final String communityImage;
   final String communitytitle;
-  final Timestamp timePost;
+
   final String userFirstname;
   final String userLastname;
   final String userImage;
   final String userUsername;
 
-  final bool userWinner;
+  final String userStopwatch;
+  final String userDistanceString;
+  final Timestamp userStartTime;
+  final Timestamp userEndTime;
 
+  final bool isUser;
+  final Timestamp timePost;
+  final bool userWinner;
+  final bool enemyWinner;
+
+  final Timestamp enemyJoined;
   final bool isEnemy;
   final String enemyFirstname;
   final String enemyLastname;
-
   final String enemyImage;
   final String enemyUsername;
   final String enemyCommunityId;
   final String enemyCommunityTitle;
   final String enemyCommunityImage;
 
-  final bool start;
+  final String enemyStopwatch;
+  final String enemyDistanceString;
+  final Timestamp enemyStartTime;
+  final Timestamp enemyEndTime;
 
-  // final Location enemyCurrent;
-  // final Location userCurrent;
-
-  // final Location enemyStart;
-  // final Location userStart;
-  // final Location finalEnd;
+  final bool userStart;
+  final bool userFinished;
+  final bool enemyStart;
+  final bool enemyFinished;
 
   factory Rides.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data() as Map<String, dynamic>;
     return Rides(
       ridesID: data['ridesID'] as String,
       caption: data['caption'] as String,
-      start: data['start'] as bool,
       distance: data['distance'] as double,
+      isUser: data['isUser'] as bool,
       userCommunityId: data['userCommunityId'] as String,
       communityId: data['communityId'] as String,
       communityImage: data['communityImage'] as String,
@@ -87,15 +110,20 @@ class Rides {
       enemyCommunityId: data['enemyCommunityId'] as String,
       enemyCommunityTitle: data['enemyCommunityTitle'] as String,
       enemyCommunityImage: data['enemyCommunityImage'] as String,
+      userStopwatch: data['userStopwatch'] as String,
+      userDistanceString: data['userDistanceString'] as String,
+      userStartTime: data['userStartTime'] as Timestamp,
+      userEndTime: data['userEndTime'] as Timestamp,
+      enemyWinner: data['enemyWinner'] as bool,
+      enemyStopwatch: data['enemyStopwatch'] as String,
+      enemyDistanceString: data['enemyDistanceString'] as String,
+      enemyStartTime: data['enemyStartTime'] as Timestamp,
+      enemyEndTime: data['enemyEndTime'] as Timestamp,
+      enemyJoined: data['enemyJoined'] as Timestamp,
+      userStart: data['userStart'] as bool,
+      userFinished: data['userFinished'] as bool,
+      enemyStart: data['enemyStart'] as bool,
+      enemyFinished: data['enemyFinished'] as bool,
     );
   }
-}
-
-class Location {
-  Location({
-    required this.lat,
-    required this.lng,
-  });
-  final double lat;
-  final double lng;
 }
