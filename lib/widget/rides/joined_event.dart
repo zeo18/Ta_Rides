@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
 import 'package:ta_rides/widget/all_controller/rides_controller.dart';
+import 'package:location/location.dart' as loc;
+import 'package:ta_rides/widget/rides/google_maps.dart';
 
 class JoinedEvent extends StatefulWidget {
   const JoinedEvent({
@@ -20,11 +23,61 @@ class JoinedEvent extends StatefulWidget {
 
 class _JoinedEventState extends State<JoinedEvent> {
   RidesController ridesController = RidesController();
+  LocationData? _locationData;
+  late bool _serviceEnabled;
+  loc.Location location = new loc.Location();
+  late PermissionStatus _permissionGranted;
 
   @override
   void initState() {
     ridesController.getUserRide(widget.rides.ridesID);
+    initializeLocation();
     super.initState();
+  }
+
+  void initializeLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    if (mounted) {
+      setState(() {
+        _locationData = _locationData;
+      });
+    }
+
+    double? latitude = _locationData?.latitude;
+    double? longitude = _locationData?.longitude;
+    FirebaseFirestore.instance
+        .collection('rides')
+        .where('ridesID', isEqualTo: widget.rides.ridesID)
+        .get()
+        .then(
+      (value) {
+        value.docs.forEach(
+          (element) {
+            element.reference.update({
+              'enemyLat': latitude,
+              'enemyLng': longitude,
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -353,7 +406,22 @@ class _JoinedEventState extends State<JoinedEvent> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          _locationData != null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => GoogleMaps(
+                                      locationData: _locationData,
+                                      ride: widget.rides,
+                                      isUser: false,
+                                    ),
+                                  ),
+                                )
+                              : const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                        },
                         child: Text(
                           'Start',
                           style:
