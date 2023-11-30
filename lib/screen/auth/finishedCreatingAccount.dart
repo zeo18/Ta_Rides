@@ -207,6 +207,15 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
         'day89': false,
         'day90': false,
       });
+      await FirebaseFirestore.instance.collection('achievement').add({
+        'userName': widget.usernameValue,
+        'legendary': false,
+        'newbie': true,
+        'noSweat': false,
+        'challenger': false,
+        'calvesGoBrrr': false,
+        'roadMaster': false,
+      });
 
       await FirebaseFirestore.instance.collection('users').doc(userId).set({
         'username': widget.usernameValue,

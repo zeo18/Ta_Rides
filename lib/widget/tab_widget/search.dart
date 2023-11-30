@@ -26,14 +26,14 @@ class _SearchTabsState extends State<SearchTabs> {
   CommunityController communityController = CommunityController();
   var isChecked = false;
   String searchQuery = '';
-  late SearchController searchController;
+  late SearchControllers searchController;
 
   @override
   void initState() {
     userController.getUser(widget.email);
     communityController.getCommunityAndUser(widget.email);
     communityController.getAllCommunity();
-    searchController = SearchController();
+    searchController = SearchControllers();
     super.initState();
   }
 

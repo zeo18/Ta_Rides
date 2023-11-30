@@ -131,14 +131,6 @@ class _PedalScreenState extends State<PedalScreen> {
     return doubleDistance.toDouble() / elapsedHours.toDouble();
   }
 
-  void updateStartLocation() async {
-    Location location = Location();
-    LocationData currentLocationData = await location.getLocation();
-    setState(() {
-      startLocation = currentLocationData;
-    });
-  }
-
   void updateUserMovement(double distance) {
     setState(() {
       avgSpeed = calculateSpeed(distance);
@@ -635,6 +627,16 @@ class _PedalScreenState extends State<PedalScreen> {
                                           .collection('pedal')
                                           .doc()
                                           .id;
+                                      final achieve = await FirebaseFirestore
+                                          .instance
+                                          .collection('achievement')
+                                          .where('username',
+                                              isEqualTo: widget.user.username)
+                                          .get();
+
+                                      achieve.docs.first.reference.update({
+                                        'calvesGoBrrr': true,
+                                      });
 
                                       final pedalDoc = await FirebaseFirestore
                                           .instance
@@ -1127,6 +1129,7 @@ class _PedalScreenState extends State<PedalScreen> {
     // final double lat = place['geometry']['location']['lat'];
     // final double lng = place['geometry']['location']['lng'];
     final GoogleMapController controller = await _controller.future;
+
     await controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 15.5),
     ));

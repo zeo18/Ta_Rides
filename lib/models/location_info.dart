@@ -17,6 +17,8 @@ class LocationService {
   StreamSubscription<LocationData>? locationSubscription;
   String? distance;
   double? distance1;
+  String? endDistance;
+  double? endDistance1;
 
   LocationService() {
     initLocation();
@@ -41,6 +43,27 @@ class LocationService {
       distance = result?['distance'];
 
       print('Distance from starting location: $distance');
+    });
+  }
+
+  void initEndPoint(double endPointLat, double endPointLng) async {
+    locationSubscription =
+        location.onLocationChanged.listen((LocationData currentLocation) async {
+      Map<String, dynamic>? result = await getEndToStartDistance(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+        endPointLat,
+        endPointLng,
+      );
+      if (result?['distance'] != null && result!['distance'] is String) {
+        String distanceString = result['distance'].replaceAll('km', '');
+        print('Parsing: $distanceString');
+        endDistance1 = double.tryParse(distanceString) ?? 0.0;
+      }
+
+      endDistance = result?['distance'];
+
+      print('Distance from endpoint: $endDistance');
     });
   }
 
@@ -219,5 +242,161 @@ class LocationService {
 
   void dispose() {
     locationSubscription?.cancel();
+  }
+
+  Future<Map<String, dynamic>?> getStartToMid(
+      String startingPoint, String midPoint) async {
+    Location location = new Location();
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startingPoint&destination=$midPoint&mode=walking&alternatives=true&key=$key';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
+
+    // Calculate distance between origin and current user location
+
+    Map<String, dynamic> results = {
+      'bounds_ne': json['routes'][0]['bounds']['northeast'],
+      'bounds_sw': json['routes'][0]['bounds']['southwest'],
+      'start_location': json['routes'][0]['legs'][0]['start_location'],
+      'end_location': json['routes'][0]['legs'][0]['end_location'],
+      'polyline': json['routes'][0]['overview_polyline']['points'],
+      'polyline_decoded': PolylinePoints()
+          .decodePolyline(json['routes'][0]['overview_polyline']['points']),
+      'distance': distance,
+    };
+    print(results);
+
+    return results;
+  }
+
+  Future<Map<String, dynamic>?> getMidToFinish(
+      String midPoint, endPoint) async {
+    Location location = new Location();
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$midPoint&destination=$endPoint&mode=walking&alternatives=true&key=$key';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
+
+    // Calculate distance between origin and current user location
+
+    Map<String, dynamic> results = {
+      'bounds_ne': json['routes'][0]['bounds']['northeast'],
+      'bounds_sw': json['routes'][0]['bounds']['southwest'],
+      'start_location': json['routes'][0]['legs'][0]['start_location'],
+      'end_location': json['routes'][0]['legs'][0]['end_location'],
+      'polyline': json['routes'][0]['overview_polyline']['points'],
+      'polyline_decoded': PolylinePoints()
+          .decodePolyline(json['routes'][0]['overview_polyline']['points']),
+      'distance': distance,
+    };
+    print(results);
+
+    return results;
+  }
+
+  Future<Map<String, dynamic>?> getStartingToEnd(
+      String startingPoint, String endPoint) async {
+    Location location = new Location();
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startingPoint&destination=$endPoint&mode=walking&alternatives=true&key=$key';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
+
+    // Calculate distance between origin and current user location
+
+    Map<String, dynamic> results = {
+      'bounds_ne': json['routes'][0]['bounds']['northeast'],
+      'bounds_sw': json['routes'][0]['bounds']['southwest'],
+      'start_location': json['routes'][0]['legs'][0]['start_location'],
+      'end_location': json['routes'][0]['legs'][0]['end_location'],
+      'polyline': json['routes'][0]['overview_polyline']['points'],
+      'polyline_decoded': PolylinePoints()
+          .decodePolyline(json['routes'][0]['overview_polyline']['points']),
+      'distance': distance,
+    };
+    print(results);
+
+    return results;
+  }
+
+  Future<Map<String, dynamic>?> getEndToStartDistance(double latCurrentLocation,
+      double lngCurrentLocation, double latEndPoint, double lngEndPoint) async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return null;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return null;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    String origin = '${_locationData.latitude},${_locationData.longitude}';
+    print('Starting point location: $origin');
+
+    // Get current location
+    String endLoc = '${latEndPoint},${lngEndPoint}';
+    String currentLoc = '${latCurrentLocation},${lngCurrentLocation}';
+    print('Current location: $currentLoc');
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$currentLoc&destination=$endLoc&mode=walking&alternatives=true&key=$key';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
+
+    print('Extracted distance: $distance');
+    Map<String, dynamic> results = {
+      'distance': distance,
+    };
+
+    return results;
   }
 }

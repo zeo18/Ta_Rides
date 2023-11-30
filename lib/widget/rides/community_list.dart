@@ -21,7 +21,7 @@ class RidesCommunityList extends StatelessWidget {
 
   final Community community;
   final String email;
-  final SearchController searchController;
+  final SearchControllers searchController;
   // final void Function(Community community) orderRecentSearch;
   // final List<Community> onRecentSearch;
   // final Community community;
