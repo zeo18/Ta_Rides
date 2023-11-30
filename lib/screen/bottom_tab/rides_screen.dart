@@ -28,7 +28,7 @@ class _RidesScreenState extends State<RidesScreen> {
   final _searchController = TextEditingController();
   var isChecked = false;
   String searchQuery = '';
-  late SearchController searchController;
+  late SearchControllers searchController;
   RidesController ridesController = RidesController();
 
   @override
@@ -36,7 +36,7 @@ class _RidesScreenState extends State<RidesScreen> {
     userController.getUser(widget.email);
     communityController.getCommunityAndUser(widget.email);
     communityController.getAllCommunity();
-    searchController = SearchController();
+    searchController = SearchControllers();
     ridesController.getUserChallenge(widget.user.username);
 
     super.initState();

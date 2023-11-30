@@ -415,6 +415,7 @@ class _JoinedEventState extends State<JoinedEvent> {
                                       locationData: _locationData,
                                       ride: widget.rides,
                                       isUser: false,
+                                      email: widget.email,
                                     ),
                                   ),
                                 )

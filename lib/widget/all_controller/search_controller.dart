@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:ta_rides/models/community_info.dart';
 
-class SearchController extends ChangeNotifier {
+class SearchControllers extends ChangeNotifier {
   late List<Community> _recentSearches = [];
 
   void recentSearch(Community community) {

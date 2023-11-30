@@ -355,6 +355,7 @@ class _UserRidesState extends State<UserRides> {
                                 locationData: _locationData,
                                 ride: widget.rides,
                                 isUser: true,
+                                email: widget.user.email,
                               ),
                             ),
                           )
