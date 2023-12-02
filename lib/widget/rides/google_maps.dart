@@ -36,6 +36,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
   TextEditingController startingPoint = TextEditingController();
   TextEditingController midPoint = TextEditingController();
   TextEditingController endPoint = TextEditingController();
+
   bool isNavigating = false;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -50,22 +51,33 @@ class _GoogleMapsState extends State<GoogleMaps> {
   int _polygonIdCounter = 1;
   int _polylineIdCounter = 1;
   Set<Polyline> _polylines = Set<Polyline>();
-  bool focusCameraCurrenLocation = false;
 
-  double calculateSpeed(double distance) {
-    final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
-    final elapsedHours = elapsedMinutes / 60;
-    double doubleDistance = locationService.distance1!;
+  // double calculateSpeed(double distance) {
+  //   final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
+  //   final elapsedHours = elapsedMinutes / 60;
+  //   double doubleDistance = locationService.distance1!;
 
-    print(['second', elapsedHours.toDouble().toStringAsFixed(10)]);
-    print(['distance', doubleDistance]);
-    return doubleDistance.toDouble() / elapsedHours.toDouble();
-  }
+  //   print(['second', elapsedHours.toDouble().toStringAsFixed(10)]);
+  //   print(['distance', doubleDistance]);
+  //   return doubleDistance.toDouble() / elapsedHours.toDouble();
+  // }
 
   void setDistance(double distance) {
-    setState(() {
-      this.distance = distance;
-    });
+    this.distance = distance;
+  }
+
+  void getLatLong(String address) async {
+    try {
+      List<Geo.Location> locations = await Geo.locationFromAddress(address);
+      double latitude = locations.first.latitude;
+      double longitude = locations.first.longitude;
+
+      locationService.initEndPoint(latitude, longitude);
+
+      print('Latitude: $latitude, Longitude: $longitude');
+    } catch (e) {
+      print('Error: ${e.toString()}');
+    }
   }
 
   void _setPolyline(List<PointLatLng> points, Color color) {
@@ -85,23 +97,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
     );
   }
 
-  void updateUserMovement(double distance) {
-    setState(() {
-      avgSpeed = calculateSpeed(distance);
-
-      // final speed = calculateSpeed(distance);
-      // if (speed > maxSpeed) {
-      //   maxSpeed = speed;
-      // }
-      // Update your UI based on the speed
-    });
-  }
-
   void reloadDistance() {
-    setState(() {
-      getLatLong(endPoint.text);
-      locationService.endDistance;
-    });
+    getLatLong(endPoint.text);
+    locationService.endDistance;
   }
 
   Future<void> _setPlace(
@@ -127,71 +125,77 @@ class _GoogleMapsState extends State<GoogleMaps> {
   @override
   void initState() {
     super.initState();
-
-    startingPoint.text = 'busay cebu';
+    locationService.endDistance = '0 km';
+    startingPoint.text = 'usjr basak cebu';
     midPoint.text = 'swu cebu';
     endPoint.text = 'usjr main';
 
-    locationService.initLocation();
+    reloadDistance();
+    // locationService.initLocation();
     location = Location();
     enemy = Location();
+    try {
+      if (widget.isUser) {
+        location.onLocationChanged.listen((LocationData currentLocation) {
+          print(
+              'Current location: ${currentLocation.latitude}, ${currentLocation.longitude}');
+          FirebaseFirestore.instance
+              .collection('rides')
+              .where('ridesID', isEqualTo: widget.ride.ridesID)
+              .get()
+              .then((value) {
+            value.docs.forEach(
+              (element) {
+                element.reference.update({
+                  'userLat': currentLocation.latitude,
+                  'userLng': currentLocation.longitude,
+                });
+              },
+            );
+          });
 
-    if (widget.isUser) {
-      location.onLocationChanged.listen((LocationData currentLocation) {
-        print(
-            'Current location: ${currentLocation.latitude}, ${currentLocation.longitude}');
-        FirebaseFirestore.instance
-            .collection('rides')
-            .where('ridesID', isEqualTo: widget.ride.ridesID)
-            .get()
-            .then((value) {
-          value.docs.forEach(
-            (element) {
-              element.reference.update({
-                'userLat': currentLocation.latitude,
-                'userLng': currentLocation.longitude,
-              });
-            },
+          markers.add(
+            Marker(
+              markerId: const MarkerId('currentLocation'),
+              position:
+                  LatLng(currentLocation.latitude!, currentLocation.longitude!),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue),
+            ),
           );
         });
+      } else {
+        location.onLocationChanged.listen((LocationData enemyLocation) {
+          print(
+              'Enemy location: ${enemyLocation.latitude}, ${enemyLocation.longitude}');
+          FirebaseFirestore.instance
+              .collection('rides')
+              .where('ridesID', isEqualTo: widget.ride.ridesID)
+              .get()
+              .then((value) {
+            value.docs.forEach(
+              (element) {
+                element.reference.update({
+                  'enemyLat': enemyLocation.latitude,
+                  'enemyLng': enemyLocation.longitude,
+                });
+              },
+            );
+          });
 
-        markers.add(
-          Marker(
-            markerId: MarkerId('currentLocation'),
-            position:
-                LatLng(currentLocation.latitude!, currentLocation.longitude!),
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          ),
-        );
-      });
-    } else {
-      location.onLocationChanged.listen((LocationData enemyLocation) {
-        print(
-            'Current location: ${enemyLocation.latitude}, ${enemyLocation.longitude}');
-        FirebaseFirestore.instance
-            .collection('rides')
-            .where('ridesID', isEqualTo: widget.ride.ridesID)
-            .get()
-            .then((value) {
-          value.docs.forEach(
-            (element) {
-              element.reference.update({
-                'enemyLat': enemyLocation.latitude,
-                'enemyLng': enemyLocation.longitude,
-              });
-            },
+          markers.add(
+            Marker(
+              markerId: const MarkerId('enemyLocation'),
+              position:
+                  LatLng(enemyLocation.latitude!, enemyLocation.longitude!),
+            ),
           );
         });
-
-        markers.add(
-          Marker(
-            markerId: MarkerId('enemyLocation'),
-            position: LatLng(enemyLocation.latitude!, enemyLocation.longitude!),
-          ),
-        );
-      });
+      }
+    } catch (e) {
+      print(e);
     }
+    print('Caught an exception during initialization: $e');
   }
 
   @override
@@ -205,12 +209,12 @@ class _GoogleMapsState extends State<GoogleMaps> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Maps'),
+        title: const Text('Google Maps'),
         actions: <Widget>[
           Tooltip(
             message: 'Current Location',
             child: IconButton(
-              icon: Icon(Icons.location_on),
+              icon: const Icon(Icons.location_on),
               onPressed: () {
                 // Handle the button press here
               },
@@ -232,11 +236,11 @@ class _GoogleMapsState extends State<GoogleMaps> {
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Something went wrong');
+            return const Text('Something went wrong');
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
+            return const Text("Loading");
           }
 
           return Stack(
@@ -244,22 +248,29 @@ class _GoogleMapsState extends State<GoogleMaps> {
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
               LatLng position = LatLng(
                   data['userLat'] ?? 10.2899758, data['userLng'] ?? 123.861891);
-              Set<Marker> markers = {};
-              markers.add(
-                Marker(
-                  markerId: MarkerId('currentLocation'),
-                  position: position,
-                ),
-              );
               LatLng enemy = LatLng(data['enemyLat'] ?? 10.2899758,
                   data['enemyLng'] ?? 123.861891);
+              Set<Marker> markers = {};
+              if (widget.isUser) {
+                markers.add(
+                  Marker(
+                    markerId: const MarkerId('currentLocation'),
+                    position: position,
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueBlue),
+                  ),
+                );
+              } else {
+                markers.add(
+                  Marker(
+                    markerId: const MarkerId('enemyLocation'),
+                    position: enemy,
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueYellow),
+                  ),
+                );
+              }
 
-              markers.add(
-                Marker(
-                  markerId: MarkerId('enemyLocation'),
-                  position: enemy,
-                ),
-              );
               return Column(
                 children: [
                   Expanded(
@@ -278,11 +289,11 @@ class _GoogleMapsState extends State<GoogleMaps> {
                           polylines: _polylines,
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(5, 350, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(5, 350, 0, 0),
                           child: FloatingActionButton.extended(
                             onPressed: () async {
-                              focusCameraCurrenLocation = false;
-                              setState(() {});
+                              _shouldUpdateCamera = true;
+
                               getLocationUpdates();
                               LocationData currentLocation =
                                   await locationService.getLocation();
@@ -290,8 +301,8 @@ class _GoogleMapsState extends State<GoogleMaps> {
                                   .updateStartLocation(currentLocation);
                               getLocationUpdates();
                             },
-                            label: Text('Current location'),
-                            icon: Icon(Icons.location_history),
+                            label: const Text('Current location'),
+                            icon: const Icon(Icons.location_history),
                             backgroundColor: Colors.white,
                           ),
                         ),
@@ -302,7 +313,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: TextFormField(
                             validator: (value) {
                               if (value!.trim().isEmpty ||
@@ -311,12 +322,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
                               }
                               return null;
                             },
-                            // onSaved: (value) {
-                            //   emailController.text = value!;
-                            // },
-                            // style: GoogleFonts.inter(
-                            //   color: Colors.white,
-                            // ),
                             controller: startingPoint,
                             decoration: InputDecoration(
                               focusedBorder: const OutlineInputBorder(
@@ -347,7 +352,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: TextFormField(
                             validator: (value) {
                               if (value!.trim().isEmpty ||
@@ -386,7 +391,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: TextFormField(
                             validator: (value) {
                               if (value!.trim().isEmpty ||
@@ -426,7 +431,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0x3ffFF0000),
+                            backgroundColor: const Color(0x3ffFF0000),
                             minimumSize: const Size(
                               375,
                               45,
@@ -458,6 +463,12 @@ class _GoogleMapsState extends State<GoogleMaps> {
                               direction['bounds_ne'],
                               direction['bounds_sw'],
                             );
+                            _setPlace(
+                              direction1['start_location']['lat'],
+                              direction1['start_location']['lng'],
+                              direction1['bounds_ne'],
+                              direction1['bounds_sw'],
+                            );
                             _stopwatch.start();
                             isNavigating = true;
                             setDistance(
@@ -466,10 +477,11 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             );
                             _stopwatch.start();
 
-                            Timer.periodic(Duration(seconds: 1), (timer) {
+                            Timer.periodic(const Duration(seconds: 1), (timer) {
                               if (_stopwatch.isRunning) {
                                 timer.cancel();
                               }
+                              reloadDistance();
                             });
                           },
                           child: Text(
@@ -493,9 +505,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     Container(
                       height: 65,
                       width: 500,
-                      margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                      margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                       child: Card(
-                        color: Color(0x3ff181A20),
+                        color: const Color(0x3ff181A20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -504,12 +516,12 @@ class _GoogleMapsState extends State<GoogleMaps> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 80,
                                 ),
                                 Text(
@@ -523,7 +535,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                                         fontSize: 12,
                                       ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 120,
                                 ),
                                 Text(
@@ -541,7 +553,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 60,
                                 ),
                                 Text(
@@ -555,7 +567,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                                         fontSize: 20,
                                       ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 110,
                                 ),
                                 Text(
@@ -579,9 +591,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     Container(
                       height: 65,
                       width: 500,
-                      margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                       child: Card(
-                        color: Color(0x3ff181A20),
+                        color: const Color(0x3ff181A20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -591,13 +603,13 @@ class _GoogleMapsState extends State<GoogleMaps> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                              margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                               child: Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 35,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 110,
                                   ),
                                   Text(
@@ -616,7 +628,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 150,
                                 ),
                                 Text(
@@ -645,28 +657,12 @@ class _GoogleMapsState extends State<GoogleMaps> {
     );
   }
 
-  void getLatLong(String address) async {
-    try {
-      List<Geo.Location> locations = await Geo.locationFromAddress(address);
-      double latitude = locations.first.latitude;
-      double longitude = locations.first.longitude;
-
-      setState(() {
-        locationService.initEndPoint(latitude, longitude);
-      });
-
-      print('Latitude: $latitude, Longitude: $longitude');
-    } catch (e) {
-      print('Error: ${e.toString()}');
-    }
-  }
-
   late bool _shouldUpdateCamera;
 
   Location _locationController = new Location();
   Future<void> getLocationUpdates() async {
     LocationData? _previousLocation;
-    LatLng _finalDestination = LatLng(0, 0);
+    LatLng _finalDestination = const LatLng(0, 0);
     // if (!mounted) {
     //   return;
     // }
@@ -693,7 +689,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         if (_shouldUpdateCamera) {
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 1), () {
             _googleController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
@@ -705,130 +701,131 @@ class _GoogleMapsState extends State<GoogleMaps> {
           });
         }
       }
+
+      if (locationService.endDistance1 == 0.1 && widget.isUser) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Congratulations!'),
+              content: Text('You have won the game11!'),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    final won = await FirebaseFirestore.instance
+                        .collection('rides')
+                        .where('ridesID', isEqualTo: widget.ride.ridesID)
+                        .get();
+                    won.docs.first.reference.update({
+                      'userWinner': true,
+                    }).then((value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => TabsScreen(
+                                email: widget.email,
+                                tabsScreen: 1,
+                                communityTabs: 0))));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else if (widget.isUser == false &&
+          locationService.endDistance1! == 0.1) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Sorry!'),
+              content: Text('You have lose the game11'),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    final won = await FirebaseFirestore.instance
+                        .collection('rides')
+                        .where('ridesID', isEqualTo: widget.ride.ridesID)
+                        .get();
+                    won.docs.first.reference.update({
+                      'enemyWinner': false,
+                    }).then((value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => TabsScreen(
+                                email: widget.email,
+                                tabsScreen: 1,
+                                communityTabs: 0))));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+
+      if (locationService.endDistance1 == 0.1 && widget.isUser == false) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Congratulations!'),
+              content: Text('You have won the game!'),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    final won = await FirebaseFirestore.instance
+                        .collection('rides')
+                        .where('ridesID', isEqualTo: widget.ride.ridesID)
+                        .get();
+                    won.docs.first.reference.update({
+                      'enemyWinner': true,
+                    }).then((value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => TabsScreen(
+                                email: widget.email,
+                                tabsScreen: 1,
+                                communityTabs: 0))));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else if (widget.isUser && locationService.endDistance1 == 0.1) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Sorry!'),
+              content: Text('You lose won the game!'),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    final won = await FirebaseFirestore.instance
+                        .collection('rides')
+                        .where('ridesID', isEqualTo: widget.ride.ridesID)
+                        .get();
+                    won.docs.first.reference.update({
+                      'userWinner': false,
+                    }).then((value) => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => TabsScreen(
+                                email: widget.email,
+                                tabsScreen: 1,
+                                communityTabs: 0))));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     });
-
-    if (locationService.endDistance1 == 0.0 && widget.isUser) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Congratulations!'),
-            content: Text('You have won the game!'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  final won = await FirebaseFirestore.instance
-                      .collection('rides')
-                      .where('ridesID', isEqualTo: widget.ride.ridesID)
-                      .get();
-                  won.docs.first.reference.update({
-                    'userWinner': true,
-                  }).then((value) => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => TabsScreen(
-                              email: widget.email,
-                              tabsScreen: 1,
-                              communityTabs: 0))));
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Congratulations!'),
-            content: Text('You have lose the game'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  final won = await FirebaseFirestore.instance
-                      .collection('rides')
-                      .where('ridesID', isEqualTo: widget.ride.ridesID)
-                      .get();
-                  won.docs.first.reference.update({
-                    'enemyWinner': false,
-                  }).then((value) => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => TabsScreen(
-                              email: widget.email,
-                              tabsScreen: 1,
-                              communityTabs: 0))));
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    if (locationService.endDistance1 == 0.0 && widget.isUser == false) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Congratulations!'),
-            content: Text('You have won the game!'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  final won = await FirebaseFirestore.instance
-                      .collection('rides')
-                      .where('ridesID', isEqualTo: widget.ride.ridesID)
-                      .get();
-                  won.docs.first.reference.update({
-                    'enemyWinner': true,
-                  }).then((value) => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => TabsScreen(
-                              email: widget.email,
-                              tabsScreen: 1,
-                              communityTabs: 0))));
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Congratulations!'),
-            content: Text('You lose won the game!'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  final won = await FirebaseFirestore.instance
-                      .collection('rides')
-                      .where('ridesID', isEqualTo: widget.ride.ridesID)
-                      .get();
-                  won.docs.first.reference.update({
-                    'userWinner': false,
-                  }).then((value) => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => TabsScreen(
-                              email: widget.email,
-                              tabsScreen: 1,
-                              communityTabs: 0))));
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 }
