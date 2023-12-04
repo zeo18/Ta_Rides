@@ -72,7 +72,7 @@ class UserController extends ChangeNotifier {
     notifyListeners();
 
     print('User: ${user.username}');
-    print('Achievement: ${achievement.userName}');
+    print(' newbie: ${achievement.userName}');
     print('Achievement: ${achievement.legendary}');
 
     print('hello3');

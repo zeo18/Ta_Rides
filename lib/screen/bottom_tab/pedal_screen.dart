@@ -627,6 +627,7 @@ class _PedalScreenState extends State<PedalScreen> {
                                           .collection('pedal')
                                           .doc()
                                           .id;
+
                                       final achieve = await FirebaseFirestore
                                           .instance
                                           .collection('achievement')
@@ -634,9 +635,13 @@ class _PedalScreenState extends State<PedalScreen> {
                                               isEqualTo: widget.user.username)
                                           .get();
 
-                                      achieve.docs.first.reference.update({
-                                        'calvesGoBrrr': true,
-                                      });
+                                      if (achieve.docs.isNotEmpty) {
+                                        achieve.docs.first.reference.update({
+                                          'calvesGoBrrr': true,
+                                        });
+                                      } else {
+                                        print('No achievement documents found');
+                                      }
 
                                       final pedalDoc = await FirebaseFirestore
                                           .instance
@@ -646,33 +651,30 @@ class _PedalScreenState extends State<PedalScreen> {
                                           .where('pedalId', isEqualTo: pedalId)
                                           .get();
 
-                                      if (pedalDoc.docs.isEmpty) {
-                                        print('not empty');
-
-                                        print(id);
-                                      }
-
-                                      pedalDoc.docs.first.reference.update({
-                                        'pedalId': id,
-                                        'distance': locationService.distance,
-                                        'avgSpeed': avgSpeed,
-                                        'stopwatch':
-                                            _formatDuration(_stopwatch.elapsed),
-                                        'totalTime': DateTime.now(),
-                                        'totalDistance': distance,
-                                      }).then((value) {
-                                        setState(() {
-                                          locationService.initLocation();
-                                          focusCameraCurrenLocation = true;
-                                          _markers.clear();
-                                          _timer.cancel();
-                                          _stopwatch.stop();
-                                          _stopwatch.reset();
-                                          _polylines.clear();
-                                          pinPoint1stController.clear();
-                                          distance = 0;
-                                          startNavigation = false;
+                                      if (pedalDoc.docs.isNotEmpty) {
+                                        pedalDoc.docs.first.reference.update({
+                                          'pedalId': id,
+                                          'distance': locationService.distance,
+                                          'avgSpeed': avgSpeed,
+                                          'stopwatch': _formatDuration(
+                                              _stopwatch.elapsed),
+                                          'totalTime': DateTime.now(),
+                                          'totalDistance': distance,
                                         });
+                                      } else {
+                                        print('No documents found');
+                                      }
+                                      setState(() {
+                                        locationService.initLocation();
+                                        focusCameraCurrenLocation = true;
+                                        _markers.clear();
+                                        _timer.cancel();
+                                        _stopwatch.stop();
+                                        _stopwatch.reset();
+                                        _polylines.clear();
+                                        pinPoint1stController.clear();
+                                        distance = 0;
+                                        startNavigation = false;
                                         // Navigator.push(
                                         //   context,
                                         //   MaterialPageRoute(
@@ -725,7 +727,7 @@ class _PedalScreenState extends State<PedalScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DefaultTabController(
-                          length: 2,
+                          length: 1,
                           child: Column(
                             children: [
                               TabBar(
@@ -746,9 +748,6 @@ class _PedalScreenState extends State<PedalScreen> {
                                 tabs: const [
                                   Tab(
                                     text: 'Routes',
-                                  ),
-                                  Tab(
-                                    text: "Save Route",
                                   ),
                                 ],
                               ),
@@ -780,7 +779,6 @@ class _PedalScreenState extends State<PedalScreen> {
                                         pedalId: pedalId,
                                         reloadDistance: reloadDistance,
                                       ),
-                                      SavedRoute(),
                                     ],
                                   ),
                                 )

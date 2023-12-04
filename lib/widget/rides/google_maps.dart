@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -98,6 +99,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
   }
 
   void reloadDistance() {
+    locationService.initEndPoint;
     getLatLong(endPoint.text);
     locationService.endDistance;
   }
@@ -126,9 +128,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
   void initState() {
     super.initState();
     locationService.endDistance = '0 km';
-    startingPoint.text = 'usjr basak cebu';
-    midPoint.text = 'swu cebu';
-    endPoint.text = 'usjr main';
+    startingPoint.text = 'mutual homes lapu lapu city';
+    midPoint.text = 'happy homes lapu lapu city';
+    endPoint.text = 'mactan doctors lapu lapu city';
 
     reloadDistance();
     // locationService.initLocation();
@@ -215,8 +217,15 @@ class _GoogleMapsState extends State<GoogleMaps> {
             message: 'Current Location',
             child: IconButton(
               icon: const Icon(Icons.location_on),
-              onPressed: () {
-                // Handle the button press here
+              onPressed: () async {
+                _shouldUpdateCamera = true;
+
+                getLocationUpdates();
+                LocationData currentLocation =
+                    await locationService.getLocation();
+                locationService.updateStartLocation(currentLocation);
+                getLocationUpdates();
+                reloadDistance();
               },
             ),
           ),
@@ -251,25 +260,173 @@ class _GoogleMapsState extends State<GoogleMaps> {
               LatLng enemy = LatLng(data['enemyLat'] ?? 10.2899758,
                   data['enemyLng'] ?? 123.861891);
               Set<Marker> markers = {};
-              if (widget.isUser) {
-                markers.add(
-                  Marker(
-                    markerId: const MarkerId('currentLocation'),
-                    position: position,
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueBlue),
-                  ),
-                );
-              } else {
-                markers.add(
-                  Marker(
-                    markerId: const MarkerId('enemyLocation'),
-                    position: enemy,
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueYellow),
-                  ),
-                );
+              reloadDistance();
+              if (locationService.endDistance1 == 0.1 && widget.isUser) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Congratulations!'),
+                        content: Text('You have won the game11!'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              final won = await FirebaseFirestore.instance
+                                  .collection('rides')
+                                  .where('ridesID',
+                                      isEqualTo: widget.ride.ridesID)
+                                  .get();
+                              won.docs.first.reference.update({
+                                'userWinner': true,
+                                'enemyFinished': true,
+                              }).then((value) {
+                                if (widget.isUser) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => TabsScreen(
+                                              email: widget.email,
+                                              tabsScreen: 1,
+                                              communityTabs: 0)));
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
+              } else if (data['userWinner'] == true && widget.isUser == false) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Sorry!'),
+                        content: Text('You have lose the game11'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              final won = await FirebaseFirestore.instance
+                                  .collection('rides')
+                                  .where('ridesID',
+                                      isEqualTo: widget.ride.ridesID)
+                                  .get();
+                              won.docs.first.reference.update({
+                                'enemyWinner': false,
+                                'enemyFinished': true,
+                              }).then((value) {
+                                if (widget.isUser == false) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => TabsScreen(
+                                              email: widget.email,
+                                              tabsScreen: 1,
+                                              communityTabs: 0)));
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
               }
+
+              if (locationService.endDistance1 == 0.1 &&
+                  widget.isUser == false) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Congratulations!'),
+                        content: Text('You have won the game!'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              final won = await FirebaseFirestore.instance
+                                  .collection('rides')
+                                  .where('ridesID',
+                                      isEqualTo: widget.ride.ridesID)
+                                  .get();
+                              won.docs.first.reference.update({
+                                'enemyWinner': true,
+                                'enemyFinished': true,
+                              }).then((value) => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => TabsScreen(
+                                          email: widget.email,
+                                          tabsScreen: 0,
+                                          communityTabs: 2))));
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
+              } else if (data['enemyWinner'] == true && widget.isUser) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Sorry!'),
+                        content: Text('You lose won the game!'),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              final won = await FirebaseFirestore.instance
+                                  .collection('rides')
+                                  .where('ridesID',
+                                      isEqualTo: widget.ride.ridesID)
+                                  .get();
+                              won.docs.first.reference.update({
+                                'userWinner': false,
+                                'enemyFinished': true,
+                              }).then((value) => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => TabsScreen(
+                                          email: widget.email,
+                                          tabsScreen: 1,
+                                          communityTabs: 0))));
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
+              }
+
+              markers.add(
+                Marker(
+                  markerId: const MarkerId('currentLocation'),
+                  position: position,
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueBlue),
+                ),
+              );
+
+              markers.add(
+                Marker(
+                  markerId: const MarkerId('enemyLocation'),
+                  position: enemy,
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueYellow),
+                ),
+              );
 
               return Column(
                 children: [
@@ -288,28 +445,29 @@ class _GoogleMapsState extends State<GoogleMaps> {
                           markers: markers,
                           polylines: _polylines,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(5, 350, 0, 0),
-                          child: FloatingActionButton.extended(
-                            onPressed: () async {
-                              _shouldUpdateCamera = true;
+                        // Padding(
+                        //   padding: const EdgeInsets.fromLTRB(5, 350, 0, 0),
+                        //   child: FloatingActionButton.extended(
+                        //     onPressed: () async {
+                        //       _shouldUpdateCamera = true;
 
-                              getLocationUpdates();
-                              LocationData currentLocation =
-                                  await locationService.getLocation();
-                              locationService
-                                  .updateStartLocation(currentLocation);
-                              getLocationUpdates();
-                            },
-                            label: const Text('Current location'),
-                            icon: const Icon(Icons.location_history),
-                            backgroundColor: Colors.white,
-                          ),
-                        ),
+                        //       getLocationUpdates();
+                        //       LocationData currentLocation =
+                        //           await locationService.getLocation();
+                        //       locationService
+                        //           .updateStartLocation(currentLocation);
+                        //       getLocationUpdates();
+                        //       reloadDistance();
+                        //     },
+                        //     label: const Text('Current location'),
+                        //     icon: const Icon(Icons.location_history),
+                        //     backgroundColor: Colors.white,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
-                  if (isNavigating == false)
+                  if (isNavigating == false && widget.isUser)
                     Column(
                       children: [
                         Container(
@@ -483,6 +641,14 @@ class _GoogleMapsState extends State<GoogleMaps> {
                               }
                               reloadDistance();
                             });
+                            final won = await FirebaseFirestore.instance
+                                .collection('rides')
+                                .where('ridesID',
+                                    isEqualTo: widget.ride.ridesID)
+                                .get();
+                            won.docs.first.reference.update({
+                              'enemyStart': true,
+                            });
                           },
                           child: Text(
                             'Continue',
@@ -501,153 +667,332 @@ class _GoogleMapsState extends State<GoogleMaps> {
                         ),
                       ],
                     ),
-                  if (isNavigating == true)
-                    Container(
-                      height: 65,
-                      width: 500,
-                      margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                      child: Card(
-                        color: const Color(0x3ff181A20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        elevation: 10,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 80,
-                                ),
-                                Text(
-                                  'TIME',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: const Color(0x3ffE8AA0A),
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 12,
-                                      ),
-                                ),
-                                const SizedBox(
-                                  width: 120,
-                                ),
-                                Text(
-                                  'TOTAL DISTANCE',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: const Color(0x3ffE8AA0A),
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 12,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 60,
-                                ),
-                                Text(
-                                  _formatDuration(_stopwatch.elapsed),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 20,
-                                      ),
-                                ),
-                                const SizedBox(
-                                  width: 110,
-                                ),
-                                Text(
-                                  '${distance.toStringAsFixed(2)} km',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 20,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  if (isNavigating == true)
-                    Container(
-                      height: 65,
-                      width: 500,
-                      margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      child: Card(
-                        color: const Color(0x3ff181A20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        elevation: 10,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                              child: Row(
+                  if (widget.isUser)
+                    Column(
+                      children: [
+                        if (isNavigating == true)
+                          Container(
+                            height: 65,
+                            width: 500,
+                            margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                            child: Card(
+                              color: const Color(0x3ff181A20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              clipBehavior: Clip.hardEdge,
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(
-                                    width: 35,
+                                    height: 5,
                                   ),
-                                  const SizedBox(
-                                    width: 110,
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 80,
+                                      ),
+                                      Text(
+                                        'TIME',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: const Color(0x3ffE8AA0A),
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 12,
+                                            ),
+                                      ),
+                                      const SizedBox(
+                                        width: 120,
+                                      ),
+                                      Text(
+                                        'TOTAL DISTANCE',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: const Color(0x3ffE8AA0A),
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 12,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'DISTANCE',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                          color: const Color(0x3ffE8AA0A),
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 12,
-                                        ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 60,
+                                      ),
+                                      Text(
+                                        _formatDuration(_stopwatch.elapsed),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 20,
+                                            ),
+                                      ),
+                                      const SizedBox(
+                                        width: 110,
+                                      ),
+                                      Text(
+                                        '${distance.toStringAsFixed(2)} km',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 20,
+                                            ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
-                            Row(
+                          ),
+                        if (isNavigating == true)
+                          Container(
+                            height: 65,
+                            width: 500,
+                            margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            child: Card(
+                              color: const Color(0x3ff181A20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              clipBehavior: Clip.hardEdge,
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 35,
+                                        ),
+                                        const SizedBox(
+                                          width: 110,
+                                        ),
+                                        Text(
+                                          'DISTANCE',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: const Color(0x3ffE8AA0A),
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 12,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 150,
+                                      ),
+                                      Text(
+                                        ' ${locationService.endDistance}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 20,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                  else if (widget.isUser == false && data['enemyStart'] == true)
+                    Column(
+                      children: [
+                        Container(
+                          height: 65,
+                          width: 500,
+                          margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                          child: Card(
+                            color: const Color(0x3ff181A20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            elevation: 10,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
-                                  width: 150,
+                                  height: 5,
                                 ),
-                                Text(
-                                  ' ${locationService.endDistance}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 20,
-                                      ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 80,
+                                    ),
+                                    Text(
+                                      'TIME',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: const Color(0x3ffE8AA0A),
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 12,
+                                          ),
+                                    ),
+                                    const SizedBox(
+                                      width: 120,
+                                    ),
+                                    Text(
+                                      'TOTAL DISTANCE',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: const Color(0x3ffE8AA0A),
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 12,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 60,
+                                    ),
+                                    Text(
+                                      _formatDuration(_stopwatch.elapsed),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 20,
+                                          ),
+                                    ),
+                                    const SizedBox(
+                                      width: 110,
+                                    ),
+                                    Text(
+                                      '${distance.toStringAsFixed(2)} km',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 20,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
+                          ),
+                        ),
+                        Container(
+                          height: 65,
+                          width: 500,
+                          margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                          child: Card(
+                            color: const Color(0x3ff181A20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            elevation: 10,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 35,
+                                      ),
+                                      const SizedBox(
+                                        width: 110,
+                                      ),
+                                      Text(
+                                        'DISTANCE',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: const Color(0x3ffE8AA0A),
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 12,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 150,
+                                    ),
+                                    Text(
+                                      ' ${locationService.endDistance}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 20,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else if (widget.isUser == false &&
+                      data['enemyStart'] == false)
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            Text(
+                              'Waiting for the other player set the Route',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                  ),
+                            )
                           ],
                         ),
                       ),
-                    ),
+                    )
                 ],
               );
             }).toList(),
@@ -700,131 +1045,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
             );
           });
         }
-      }
-
-      if (locationService.endDistance1 == 0.1 && widget.isUser) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Congratulations!'),
-              content: Text('You have won the game11!'),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text('OK'),
-                  onPressed: () async {
-                    final won = await FirebaseFirestore.instance
-                        .collection('rides')
-                        .where('ridesID', isEqualTo: widget.ride.ridesID)
-                        .get();
-                    won.docs.first.reference.update({
-                      'userWinner': true,
-                    }).then((value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => TabsScreen(
-                                email: widget.email,
-                                tabsScreen: 1,
-                                communityTabs: 0))));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else if (widget.isUser == false &&
-          locationService.endDistance1! == 0.1) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Sorry!'),
-              content: Text('You have lose the game11'),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text('OK'),
-                  onPressed: () async {
-                    final won = await FirebaseFirestore.instance
-                        .collection('rides')
-                        .where('ridesID', isEqualTo: widget.ride.ridesID)
-                        .get();
-                    won.docs.first.reference.update({
-                      'enemyWinner': false,
-                    }).then((value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => TabsScreen(
-                                email: widget.email,
-                                tabsScreen: 1,
-                                communityTabs: 0))));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-
-      if (locationService.endDistance1 == 0.1 && widget.isUser == false) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Congratulations!'),
-              content: Text('You have won the game!'),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text('OK'),
-                  onPressed: () async {
-                    final won = await FirebaseFirestore.instance
-                        .collection('rides')
-                        .where('ridesID', isEqualTo: widget.ride.ridesID)
-                        .get();
-                    won.docs.first.reference.update({
-                      'enemyWinner': true,
-                    }).then((value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => TabsScreen(
-                                email: widget.email,
-                                tabsScreen: 1,
-                                communityTabs: 0))));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else if (widget.isUser && locationService.endDistance1 == 0.1) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Sorry!'),
-              content: Text('You lose won the game!'),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text('OK'),
-                  onPressed: () async {
-                    final won = await FirebaseFirestore.instance
-                        .collection('rides')
-                        .where('ridesID', isEqualTo: widget.ride.ridesID)
-                        .get();
-                    won.docs.first.reference.update({
-                      'userWinner': false,
-                    }).then((value) => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => TabsScreen(
-                                email: widget.email,
-                                tabsScreen: 1,
-                                communityTabs: 0))));
-                  },
-                ),
-              ],
-            );
-          },
-        );
       }
     });
   }
