@@ -4,6 +4,8 @@ import 'package:ta_rides/models/rides_info.dart';
 
 class RidesController extends ChangeNotifier {
   late List<Rides> rides = <Rides>[];
+  late List<Rides> finishRides = <Rides>[];
+  late List<Rides> userFinishRides = <Rides>[];
   late List<Rides> rider = <Rides>[];
   late List<Rides> allRides = <Rides>[];
   late Rides ride;
@@ -16,6 +18,7 @@ class RidesController extends ChangeNotifier {
     final rulesQuerySnapshot = await FirebaseFirestore.instance
         .collection('rides')
         .where('communityId', isEqualTo: communityId)
+        .where('enemyFinished', isEqualTo: false)
         .get();
 
     if (rulesQuerySnapshot.docs.isEmpty) {
@@ -29,6 +32,58 @@ class RidesController extends ChangeNotifier {
     }).toList();
 
     rides.sort((a, b) => a.timePost.compareTo(b.timePost));
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void getFinishedRides(String communityId) async {
+    isLoading = true;
+    notifyListeners();
+
+    final rulesQuerySnapshot = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('communityId', isEqualTo: communityId)
+        .where('enemyFinished', isEqualTo: true)
+        .get();
+
+    if (rulesQuerySnapshot.docs.isEmpty) {
+      isLoading = false;
+      notifyListeners();
+      throw Exception('No rides found');
+    }
+
+    finishRides = rulesQuerySnapshot.docs.map((snapshot) {
+      return Rides.fromDocument(snapshot);
+    }).toList();
+
+    finishRides.sort((a, b) => b.timePost.compareTo(a.timePost));
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void getUserFinishedRides(String username) async {
+    isLoading = true;
+    notifyListeners();
+
+    final rulesQuerySnapshot = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('userUsername', isEqualTo: username)
+        .where('enemyFinished', isEqualTo: true)
+        .get();
+
+    if (rulesQuerySnapshot.docs.isEmpty) {
+      isLoading = false;
+      notifyListeners();
+      throw Exception('No rides found');
+    }
+
+    userFinishRides = rulesQuerySnapshot.docs.map((snapshot) {
+      return Rides.fromDocument(snapshot);
+    }).toList();
+
+    finishRides.sort((a, b) => b.timePost.compareTo(a.timePost));
 
     isLoading = false;
     notifyListeners();
@@ -62,6 +117,7 @@ class RidesController extends ChangeNotifier {
     final rideQuerySnapshot = await FirebaseFirestore.instance
         .collection('rides')
         .where('userUsername', isEqualTo: username)
+        .where('enemyFinished', isEqualTo: false)
         .where('isEnemy', isEqualTo: true)
         .get();
 
