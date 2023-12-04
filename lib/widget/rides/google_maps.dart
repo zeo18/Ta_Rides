@@ -52,6 +52,8 @@ class _GoogleMapsState extends State<GoogleMaps> {
   int _polygonIdCounter = 1;
   int _polylineIdCounter = 1;
   Set<Polyline> _polylines = Set<Polyline>();
+  bool dialogShown = false;
+  bool gameContinued = false;
 
   // double calculateSpeed(double distance) {
   //   final elapsedMinutes = _stopwatch.elapsedMilliseconds ~/ 60000;
@@ -122,6 +124,73 @@ class _GoogleMapsState extends State<GoogleMaps> {
             southwest: LatLng(boundsSw['lat'], boundsSw['lng']),
             northeast: LatLng(boundsNe['lat'], boundsNe['lng'])),
         25));
+  }
+
+  void winnerUser() async {
+    final won = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('ridesID', isEqualTo: widget.ride.ridesID)
+        .get();
+    won.docs.first.reference.update({
+      'userWinner': true,
+    });
+  }
+
+  void winnerEnemy() async {
+    final won = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('ridesID', isEqualTo: widget.ride.ridesID)
+        .get();
+    won.docs.first.reference.update({
+      'enemyWinner': true,
+    });
+  }
+
+  void continueGame() async {
+    var direction = await LocationService()
+        .getStartToMid(startingPoint.text, midPoint.text);
+    var direction1 =
+        await LocationService().getMidToFinish(midPoint.text, endPoint.text);
+
+    var distanceStarttoEnd = await LocationService()
+        .getStartingToEnd(startingPoint.text, endPoint.text);
+
+    _setPolyline(direction!['polyline_decoded'], Colors.cyan);
+    _setPolyline(direction1!['polyline_decoded'], Colors.deepPurple);
+    getLatLong(endPoint.text);
+
+    _setPlace(
+      direction['start_location']['lat'],
+      direction['start_location']['lng'],
+      direction['bounds_ne'],
+      direction['bounds_sw'],
+    );
+    _setPlace(
+      direction1['start_location']['lat'],
+      direction1['start_location']['lng'],
+      direction1['bounds_ne'],
+      direction1['bounds_sw'],
+    );
+    _stopwatch.start();
+    isNavigating = true;
+    setDistance(
+      double.parse(distanceStarttoEnd!['distance'].split(' ')[0]),
+    );
+    _stopwatch.start();
+
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_stopwatch.isRunning) {
+        timer.cancel();
+      }
+      reloadDistance();
+    });
+    final won = await FirebaseFirestore.instance
+        .collection('rides')
+        .where('ridesID', isEqualTo: widget.ride.ridesID)
+        .get();
+    won.docs.first.reference.update({
+      'enemyStart': true,
+    });
   }
 
   @override
@@ -261,7 +330,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
                   data['enemyLng'] ?? 123.861891);
               Set<Marker> markers = {};
               reloadDistance();
+
               if (locationService.endDistance1 == 0.1 && widget.isUser) {
+                winnerUser();
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   showDialog(
                     context: context,
@@ -299,8 +370,12 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     },
                   );
                 });
-              } else if (data['userWinner'] == true && widget.isUser == false) {
+              }
+              if (data['userWinner'] == true &&
+                  widget.isUser == false &&
+                  !dialogShown) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  dialogShown = true;
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -325,9 +400,10 @@ class _GoogleMapsState extends State<GoogleMaps> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (ctx) => TabsScreen(
-                                              email: widget.email,
-                                              tabsScreen: 1,
-                                              communityTabs: 0)));
+                                                email: widget.email,
+                                                tabsScreen: 0,
+                                                communityTabs: 2,
+                                              )));
                                 }
                               });
                             },
@@ -341,6 +417,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
 
               if (locationService.endDistance1 == 0.1 &&
                   widget.isUser == false) {
+                winnerEnemy();
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   showDialog(
                     context: context,
@@ -374,8 +451,11 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     },
                   );
                 });
-              } else if (data['enemyWinner'] == true && widget.isUser) {
+              } else if (data['enemyWinner'] == true &&
+                  widget.isUser &&
+                  !dialogShown) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  dialogShown = true;
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -408,6 +488,13 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     },
                   );
                 });
+              }
+
+              if (widget.isUser == false &&
+                  data['enemyStart'] == true &&
+                  !gameContinued) {
+                gameContinued = true;
+                continueGame();
               }
 
               markers.add(
@@ -600,55 +687,56 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             ),
                           ),
                           onPressed: () async {
-                            var direction = await LocationService()
-                                .getStartToMid(
-                                    startingPoint.text, midPoint.text);
-                            var direction1 = await LocationService()
-                                .getMidToFinish(midPoint.text, endPoint.text);
+                            // var direction = await LocationService()
+                            //     .getStartToMid(
+                            //         startingPoint.text, midPoint.text);
+                            // var direction1 = await LocationService()
+                            //     .getMidToFinish(midPoint.text, endPoint.text);
 
-                            var distanceStarttoEnd = await LocationService()
-                                .getStartingToEnd(
-                                    startingPoint.text, endPoint.text);
+                            // var distanceStarttoEnd = await LocationService()
+                            //     .getStartingToEnd(
+                            //         startingPoint.text, endPoint.text);
 
-                            _setPolyline(
-                                direction!['polyline_decoded'], Colors.cyan);
-                            _setPolyline(direction1!['polyline_decoded'],
-                                Colors.deepPurple);
-                            getLatLong(endPoint.text);
-                            _setPlace(
-                              direction['start_location']['lat'],
-                              direction['start_location']['lng'],
-                              direction['bounds_ne'],
-                              direction['bounds_sw'],
-                            );
-                            _setPlace(
-                              direction1['start_location']['lat'],
-                              direction1['start_location']['lng'],
-                              direction1['bounds_ne'],
-                              direction1['bounds_sw'],
-                            );
-                            _stopwatch.start();
-                            isNavigating = true;
-                            setDistance(
-                              double.parse(distanceStarttoEnd!['distance']
-                                  .split(' ')[0]),
-                            );
-                            _stopwatch.start();
+                            // _setPolyline(
+                            //     direction!['polyline_decoded'], Colors.cyan);
+                            // _setPolyline(direction1!['polyline_decoded'],
+                            //     Colors.deepPurple);
+                            // getLatLong(endPoint.text);
+                            // _setPlace(
+                            //   direction['start_location']['lat'],
+                            //   direction['start_location']['lng'],
+                            //   direction['bounds_ne'],
+                            //   direction['bounds_sw'],
+                            // );
+                            // _setPlace(
+                            //   direction1['start_location']['lat'],
+                            //   direction1['start_location']['lng'],
+                            //   direction1['bounds_ne'],
+                            //   direction1['bounds_sw'],
+                            // );
+                            // _stopwatch.start();
+                            // isNavigating = true;
+                            // setDistance(
+                            //   double.parse(distanceStarttoEnd!['distance']
+                            //       .split(' ')[0]),
+                            // );
+                            // _stopwatch.start();
 
-                            Timer.periodic(const Duration(seconds: 1), (timer) {
-                              if (_stopwatch.isRunning) {
-                                timer.cancel();
-                              }
-                              reloadDistance();
-                            });
-                            final won = await FirebaseFirestore.instance
-                                .collection('rides')
-                                .where('ridesID',
-                                    isEqualTo: widget.ride.ridesID)
-                                .get();
-                            won.docs.first.reference.update({
-                              'enemyStart': true,
-                            });
+                            // Timer.periodic(const Duration(seconds: 1), (timer) {
+                            //   if (_stopwatch.isRunning) {
+                            //     timer.cancel();
+                            //   }
+                            //   reloadDistance();
+                            // });
+                            // final won = await FirebaseFirestore.instance
+                            //     .collection('rides')
+                            //     .where('ridesID',
+                            //         isEqualTo: widget.ride.ridesID)
+                            //     .get();
+                            // won.docs.first.reference.update({
+                            //   'enemyStart': true,
+                            // });
+                            continueGame();
                           },
                           child: Text(
                             'Continue',
