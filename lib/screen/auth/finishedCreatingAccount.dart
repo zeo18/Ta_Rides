@@ -215,6 +215,15 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
         'challenger': false,
         'calvesGoBrrr': false,
         'roadMaster': false,
+        'flawlessGoal30': false,
+        'consistentGoal30': false,
+        'resilientgoal30': false,
+        'flawlessGoal60': false,
+        'consistentGoal60': false,
+        'resilientgoal60': false,
+        'flawlessGoal90': false,
+        'consistentGoal90': false,
+        'resilientgoal90': false,
       });
 
       await FirebaseFirestore.instance.collection('users').doc(userId).set({
