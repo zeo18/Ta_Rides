@@ -197,9 +197,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
   void initState() {
     super.initState();
     locationService.endDistance = '0 km';
-    startingPoint.text = 'mutual homes lapu lapu city';
-    midPoint.text = 'happy homes lapu lapu city';
-    endPoint.text = 'mactan doctors lapu lapu city';
 
     reloadDistance();
     // locationService.initLocation();
