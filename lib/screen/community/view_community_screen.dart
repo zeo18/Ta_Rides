@@ -413,6 +413,7 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                     );
                   },
                 ),
+              // print('hello');
               //   for (var i = 0; i < communityController.posts.length; i++)
               //     PostCommunityScreen(
               //       community: communityController.posts[i],
