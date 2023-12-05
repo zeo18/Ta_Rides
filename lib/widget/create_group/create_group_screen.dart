@@ -35,7 +35,7 @@ class CreateGroup extends StatefulWidget {
 
 class _CreateGroupState extends State<CreateGroup> {
   final _titleCoummunityController = TextEditingController();
-  int onSelectPrivacy = 0;
+  late int onSelectPrivacy;
 
   late bool selectedPrivacy;
   final _formKey = GlobalKey<FormState>();
@@ -44,7 +44,11 @@ class _CreateGroupState extends State<CreateGroup> {
   void initState() {
     super.initState();
     onSelectPrivacy = widget.onSelectedPrivacy;
-    selectedPrivacy = false;
+    if (onSelectPrivacy == 0) {
+      selectedPrivacy = false;
+    } else {
+      selectedPrivacy = true;
+    }
   }
 
   @override

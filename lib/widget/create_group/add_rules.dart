@@ -145,7 +145,7 @@ class _AddRulesState extends State<AddRules> {
                 ),
               ),
               const SizedBox(
-                height: 550,
+                height: 30,
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
