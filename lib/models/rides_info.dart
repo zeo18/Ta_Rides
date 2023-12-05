@@ -44,6 +44,9 @@ class Rides {
     required this.midLng,
     required this.endLat,
     required this.endLng,
+    required this.startLoc,
+    required this.midLoc,
+    required this.endLoc,
   });
   final String ridesID;
   final String meetUp;
@@ -84,6 +87,10 @@ class Rides {
   final double userLng;
   final double enemyLat;
   final double enemyLng;
+
+  final String startLoc;
+  final String midLoc;
+  final String endLoc;
 
   final double startLat;
   final double startLng;
@@ -134,6 +141,9 @@ class Rides {
       midLng: data['midLng'] as double,
       endLat: data['endLat'] as double,
       endLng: data['endLng'] as double,
+      startLoc: data['startLoc'] as String,
+      midLoc: data['midLoc'] as String,
+      endLoc: data['endLoc'] as String,
     );
   }
 }

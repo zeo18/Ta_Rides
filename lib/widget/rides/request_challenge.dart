@@ -90,6 +90,9 @@ class _RequestChallengeState extends State<RequestChallenge> {
         'midLng': 0.0,
         'endLat': 0.0,
         'endLng': 0.0,
+        'startLoc': '',
+        'midLoc': '',
+        'endLoc': '',
       }).then((value) {
         Navigator.push(
           context,
