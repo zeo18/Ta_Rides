@@ -7,7 +7,8 @@ class Rides {
   Rides({
     required this.ridesID,
     required this.caption,
-    required this.distance,
+    required this.timeMeetUp,
+    required this.meetUp,
     required this.userCommunityId,
     required this.communityId,
     required this.communityImage,
@@ -45,8 +46,10 @@ class Rides {
     required this.endLng,
   });
   final String ridesID;
+  final String meetUp;
+  final String timeMeetUp;
   final String caption;
-  final double distance;
+
   final String userCommunityId;
   final String communityId;
   final String communityImage;
@@ -94,7 +97,8 @@ class Rides {
     return Rides(
       ridesID: data['ridesID'] as String,
       caption: data['caption'] as String,
-      distance: data['distance'] as double,
+      timeMeetUp: data['timeMeetUp'] as String,
+      meetUp: data['meetUp'] as String,
       isUser: data['isUser'] as bool,
       userCommunityId: data['userCommunityId'] as String,
       communityId: data['communityId'] as String,

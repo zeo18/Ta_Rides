@@ -25,6 +25,7 @@ class RequestChallenge extends StatefulWidget {
 class _RequestChallengeState extends State<RequestChallenge> {
   final _captionPostController = TextEditingController();
   final _distancePostController = TextEditingController();
+  final _meetUpTime = TextEditingController();
   UserController userController = UserController();
   CommunityController communityController = CommunityController();
   final _formKey = GlobalKey<FormState>();
@@ -48,11 +49,10 @@ class _RequestChallengeState extends State<RequestChallenge> {
       print(_captionPostController.text);
       DocumentReference docRef =
           FirebaseFirestore.instance.collection('rides').doc();
-      double distance = double.parse(_distancePostController.text);
+
       await FirebaseFirestore.instance.collection('rides').add({
         'ridesID': docRef.id,
         'caption': _captionPostController.text,
-        'distance': distance,
         'userCommunityId': userController.user.communityId,
         'communityId': widget.community.id,
         'communityImage': communityController.community!.coverImage,
@@ -61,6 +61,8 @@ class _RequestChallengeState extends State<RequestChallenge> {
         'userLastname': userController.user.lastName,
         'userImage': userController.user.userImage,
         'userUsername': userController.user.username,
+        'meetUp': _distancePostController.text,
+        'timeMeetUp': _meetUpTime.text,
         'isUser': false,
         'timePost': DateTime.now(),
         'userWinner': false,
@@ -236,6 +238,7 @@ class _RequestChallengeState extends State<RequestChallenge> {
                     Form(
                       key: _formKey,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -284,63 +287,114 @@ class _RequestChallengeState extends State<RequestChallenge> {
                           const SizedBox(
                             height: 20,
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                'INPUT YOUR DISTANCE : ',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15,
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                width: 180,
-                                child: TextFormField(
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  validator: (value) {
-                                    if (value!.trim().isEmpty) {
-                                      return 'Please enter distance';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) {
-                                    _distancePostController.text = value!;
-                                  },
-                                  controller: _distancePostController,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Color.fromARGB(113, 69, 69, 69),
-                                    hintText: "Distance",
-                                    hintStyle: GoogleFonts.inter(
-                                      color: const Color(0x3ff454545),
-                                      fontSize: 15,
-                                    ),
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.white),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color(0x3ff454545)),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                  ),
+                          Text(
+                            'LOCATION MEET UP : ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
                                 ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            width: 500,
+                            child: TextFormField(
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
+                              validator: (value) {
+                                if (value!.trim().isEmpty) {
+                                  return 'Please enter place';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _distancePostController.text = value!;
+                              },
+                              controller: _distancePostController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Color.fromARGB(113, 69, 69, 69),
+                                hintText: "Please enter place",
+                                hintStyle: GoogleFonts.inter(
+                                  color: const Color(0x3ff454545),
+                                  fontSize: 15,
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Colors.white),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                enabledBorder: const OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0x3ff454545)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          Text(
+                            'TIME MEET UP : ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
+                                ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            width: 500,
+                            child: TextFormField(
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              validator: (value) {
+                                if (value!.trim().isEmpty) {
+                                  return 'Please enter time';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _meetUpTime.text = value!;
+                              },
+                              controller: _meetUpTime,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Color.fromARGB(113, 69, 69, 69),
+                                hintText: "Please enter time",
+                                hintStyle: GoogleFonts.inter(
+                                  color: const Color(0x3ff454545),
+                                  fontSize: 15,
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Colors.white),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                enabledBorder: const OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0x3ff454545)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                              ),
+                            ),
                           ),
                         ],
                       ),

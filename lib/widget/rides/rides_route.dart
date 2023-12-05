@@ -98,14 +98,14 @@ class _RidesRouteState extends State<RidesRoute> {
                             fontSize: 15,
                           ),
                     ),
-                    Text(
-                      '${widget.rides.distance} km',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: const Color(0x3ff454545),
-                            fontWeight: FontWeight.w900,
-                            fontSize: 23,
-                          ),
-                    ),
+                    // Text(
+                    //   '${widget.rides.distance} km',
+                    //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    //         color: const Color(0x3ff454545),
+                    //         fontWeight: FontWeight.w900,
+                    //         fontSize: 23,
+                    //       ),
+                    // ),
                   ],
                 ),
                 Column(
@@ -185,54 +185,54 @@ class _RidesRouteState extends State<RidesRoute> {
                 ),
               ),
               onPressed: () async {
-                if (widget.distanceGoal >= widget.rides.distance) {
-                  widget.polylines.clear();
-                  locationServicer.initLocation();
-                  setState(() {});
+                // if (widget.distanceGoal >= widget.rides.distance) {
+                //   widget.polylines.clear();
+                //   locationServicer.initLocation();
+                //   setState(() {});
 
-                  var direction = await LocationService()
-                      .getDirections(widget.pinPoint1st, widget.pinPoint2nd);
+                //   var direction = await LocationService()
+                //       .getDirections(widget.pinPoint1st, widget.pinPoint2nd);
 
-                  var originToUser = await LocationService()
-                      .getDirectionOriginUser(
-                          widget.currentLocation.latitude!,
-                          widget.currentLocation.longitude!,
-                          widget.startLocation.latitude!,
-                          widget.startLocation.longitude!);
+                //   var originToUser = await LocationService()
+                //       .getDirectionOriginUser(
+                //           widget.currentLocation.latitude!,
+                //           widget.currentLocation.longitude!,
+                //           widget.startLocation.latitude!,
+                //           widget.startLocation.longitude!);
 
-                  widget.setPlace(
-                    direction!['start_location']['lat'],
-                    direction['start_location']['lng'],
-                    direction['bounds_ne'],
-                    direction['bounds_sw'],
-                  );
+                //   widget.setPlace(
+                //     direction!['start_location']['lat'],
+                //     direction['start_location']['lng'],
+                //     direction['bounds_ne'],
+                //     direction['bounds_sw'],
+                //   );
 
-                  widget.setPolyline(direction['polyline_decoded']);
-                  widget.distance(
-                    double.parse(direction['distance'].split(' ')[0]),
-                  );
-                  widget.orginToUser(
-                    double.parse(originToUser!['distance'].split(' ')[0]),
-                  );
-                  widget.reloadDistance();
-                  widget.startNavigation();
-                  widget.getLocationUpdate();
-                  widget.stopwatch.start();
+                //   widget.setPolyline(direction['polyline_decoded']);
+                //   widget.distance(
+                //     double.parse(direction['distance'].split(' ')[0]),
+                //   );
+                //   widget.orginToUser(
+                //     double.parse(originToUser!['distance'].split(' ')[0]),
+                //   );
+                //   widget.reloadDistance();
+                //   widget.startNavigation();
+                //   widget.getLocationUpdate();
+                //   widget.stopwatch.start();
 
-                  Timer.periodic(Duration(seconds: 1), (timer) {
-                    if (!widget.stopwatch.isRunning) {
-                      timer.cancel();
-                    }
+                //   Timer.periodic(Duration(seconds: 1), (timer) {
+                //     if (!widget.stopwatch.isRunning) {
+                //       timer.cancel();
+                //     }
 
-                    setState(() {});
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('It should be higher with Todays goal'),
-                    ),
-                  );
-                }
+                //     setState(() {});
+                //   });
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('It should be higher with Todays goal'),
+                //     ),
+                //   );
+                // }
               },
               child: Text(
                 'Continue',
