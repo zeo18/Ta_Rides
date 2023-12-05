@@ -575,7 +575,7 @@ class _PrivateConditionScreenState extends State<PrivateConditionScreen> {
                         selectedChoices.isEmpty ||
                         selectedCheckBox.isEmpty ||
                         writtenUser.text.isEmpty) {
-                      print('incorrect');
+                      print('incorrect111');
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
