@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ta_rides/screen/admin/communities.dart';
 import 'package:ta_rides/screen/admin/events.dart';
+import 'package:ta_rides/screen/admin/report.dart';
 import 'package:ta_rides/screen/admin/tab_bar_admin.dart';
 import 'package:ta_rides/screen/admin/users.dart';
 import 'package:ta_rides/screen/auth/logInPage.dart';
@@ -67,7 +68,12 @@ class _SuperAdminScreenState extends State<SuperAdminScreen> {
               height: 23,
             ),
             onPressed: () {
-              // Add the functionality for the button here
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReportAdmin(),
+                ),
+              );
             },
           ),
           IconButton(

@@ -376,7 +376,39 @@ class _PostCommunityScreenState extends State<PostCommunityScreen> {
                   )
                 else
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      final id = FirebaseFirestore.instance
+                          .collection('report')
+                          .doc()
+                          .id;
+
+                      await FirebaseFirestore.instance
+                          .collection('report')
+                          .add({
+                        'reportId': id,
+                        'postId': widget.post.postId,
+                        'userNameReport': widget.realUser.user.username,
+                        'userfirstnameReport': widget.realUser.user.firstName,
+                        'userlastnameReport': widget.realUser.user.lastName,
+                        'userImageReported': widget.user.userImage,
+                        'userfirstnameReported': widget.user.firstName,
+                        'userlastnameReported': widget.user.lastName,
+                        'userUsernameReported': widget.user.username,
+                        'caption': widget.post.caption,
+                        'time': widget.post.timestamp,
+                        'timeReported': Timestamp.now(),
+                      }).then((value) {
+                        setState(() {
+                          onTapDot = !onTapDot;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Reported'),
+                          ),
+                        );
+                      });
+                    },
                     child: Image.asset(
                       'assets/images/community_images/post_community/reportPost.png',
                     ),

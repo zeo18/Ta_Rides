@@ -36,57 +36,8 @@ class _UsersState extends State<User> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-          child: TextFormField(
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
-            cursorColor: Colors.white,
-            textInputAction: TextInputAction.done,
-            focusNode: _focusNode,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
-              ),
-              labelText: 'Search users',
-              labelStyle: GoogleFonts.inter(
-                color: _focusNode.hasFocus
-                    ? const Color.fromARGB(255, 232, 155, 5)
-                    : const Color.fromARGB(255, 69, 69, 69),
-                fontWeight: FontWeight.w400,
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color.fromARGB(255, 232, 155, 5),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color.fromARGB(255, 69, 69, 69),
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
-              ),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                },
-                icon: Image.asset(
-                  'assets/images/admin_images/search-icon.png',
-                  width: 40,
-                  height: 40,
-                ),
-              ),
-            ),
-          ),
+        const SizedBox(
+          height: 20,
         ),
         Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
