@@ -489,6 +489,187 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          if (day == 30)
+                            Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(60),
+                                  maximumSize: const Size.fromWidth(380),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: goalDay == 30
+                                      ? Colors.red
+                                      : Color(0x3ff797979),
+                                ),
+                                onPressed: () async {
+                                  var checkGoal = 1;
+                                  if (goalDay != 30) {
+                                    print('hellooowre');
+                                    return;
+                                  }
+                                  if (goalDay == 30) {
+                                    FutureBuilder<QuerySnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('goal30')
+                                          .where('userName',
+                                              isEqualTo: widget.user.username)
+                                          .get(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          for (var i = 1;
+                                              i < widget.goal30.goalLenght;
+                                              i++) {
+                                            final achieve = snapshot.data?.docs
+                                                .where((doc) =>
+                                                    doc['day$i'] == true);
+                                            if (achieve!.isNotEmpty) {
+                                              setState(() {
+                                                checkGoal++;
+                                              });
+                                            }
+                                          }
+                                          return Container(); // Return an empty container when no loading is shown
+                                        }
+                                      },
+                                    );
+                                  }
+                                  print(['checkGoal', checkGoal]);
+                                  if (checkGoal == 30) {
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'flawlessGoal30': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Flawless Rider Badge Goal 30.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal <= 30 && checkGoal >= 25) {
+                                    print('gwapo lukeeeeeeeeeee');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'consistentGoal30': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Consistent Rider Badge Goal 30.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal < 25) {
+                                    print('gwapo luke');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'resilientgoal30': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Resilient Rider Badge Goal 30.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  'Challenge Completed!',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -631,6 +812,187 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          if (day == 60)
+                            Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(60),
+                                  maximumSize: const Size.fromWidth(380),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: goalDay == 60
+                                      ? Colors.red
+                                      : Color(0x3ff797979),
+                                ),
+                                onPressed: () async {
+                                  var checkGoal = 1;
+                                  if (goalDay != 60) {
+                                    print('hellooowre');
+                                    return;
+                                  }
+                                  if (goalDay == 60) {
+                                    FutureBuilder<QuerySnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('goal30')
+                                          .where('userName',
+                                              isEqualTo: widget.user.username)
+                                          .get(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          for (var i = 1;
+                                              i < widget.goal30.goalLenght;
+                                              i++) {
+                                            final achieve = snapshot.data?.docs
+                                                .where((doc) =>
+                                                    doc['day$i'] == true);
+                                            if (achieve!.isNotEmpty) {
+                                              setState(() {
+                                                checkGoal++;
+                                              });
+                                            }
+                                          }
+                                          return Container(); // Return an empty container when no loading is shown
+                                        }
+                                      },
+                                    );
+                                  }
+                                  print(['checkGoal', checkGoal]);
+                                  if (checkGoal == 60) {
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'flawlessGoal60': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Flawless Rider Badge Goal 60.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal <= 60 && checkGoal >= 55) {
+                                    print('gwapo lukeeeeeeeeeee');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'consistentGoal60': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Consistent Rider Badge Goal 60.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal < 55) {
+                                    print('gwapo luke');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'resilientgoal60': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Resilient Rider Badge Goal 60.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  'Challenge Completed!',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -773,6 +1135,187 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          if (day == 90)
+                            Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size.fromHeight(60),
+                                  maximumSize: const Size.fromWidth(380),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide.none,
+                                  ),
+                                  backgroundColor: goalDay == 90
+                                      ? Colors.red
+                                      : Color(0x3ff797979),
+                                ),
+                                onPressed: () async {
+                                  var checkGoal = 1;
+                                  if (goalDay != 90) {
+                                    print('hellooowre');
+                                    return;
+                                  }
+                                  if (goalDay == 90) {
+                                    FutureBuilder<QuerySnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('goal30')
+                                          .where('userName',
+                                              isEqualTo: widget.user.username)
+                                          .get(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          for (var i = 1;
+                                              i < widget.goal30.goalLenght;
+                                              i++) {
+                                            final achieve = snapshot.data?.docs
+                                                .where((doc) =>
+                                                    doc['day$i'] == true);
+                                            if (achieve!.isNotEmpty) {
+                                              setState(() {
+                                                checkGoal++;
+                                              });
+                                            }
+                                          }
+                                          return Container(); // Return an empty container when no loading is shown
+                                        }
+                                      },
+                                    );
+                                  }
+                                  print(['checkGoal', checkGoal]);
+                                  if (checkGoal == 90) {
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'flawlessGoal90': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Flawless Rider Badge Goal 90.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal <= 90 && checkGoal >= 85) {
+                                    print('gwapo lukeeeeeeeeeee');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'consistentGoal90': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Consistent Rider Badge Goal 90.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+
+                                  if (checkGoal < 85) {
+                                    print('gwapo luke');
+                                    final achiever = await FirebaseFirestore
+                                        .instance
+                                        .collection('achievement')
+                                        .where('userName',
+                                            isEqualTo: widget.user.username)
+                                        .get();
+
+                                    if (achiever.docs.isNotEmpty) {
+                                      achiever.docs.first.reference.update({
+                                        'resilientgoal90': true,
+                                      }).then((value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Congratulations!'),
+                                              content: const Text(
+                                                  'You received the Resilient Rider Badge Goal 90.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      });
+                                    } else {
+                                      print('No achievement documents found');
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  'Challenge Completed!',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
