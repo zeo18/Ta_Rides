@@ -178,39 +178,45 @@ class _RidesScreenState extends State<RidesScreen> {
                     );
                   },
                 ),
-              TabBar(
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorWeight: 4,
-                indicatorColor: const Color(0x3ffff0000),
-                labelColor: const Color(0x3ffff0000),
-                unselectedLabelColor: Colors.white,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      'Rides',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+              if (isChecked == false)
+                TabBar(
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorWeight: 4,
+                  indicatorColor: const Color(0x3ffff0000),
+                  labelColor: const Color(0x3ffff0000),
+                  unselectedLabelColor: Colors.white,
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        'Rides',
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
                     ),
-                  ),
-                  Tab(
-                    child: Text(
-                      'History Challenge',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Tab(
+                      child: Text(
+                        'History Challenge',
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isChecked == false)
+                  ],
+                ),
+              if (isChecked == false)
+                Expanded(
+                  child: TabBarView(children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
                         AnimatedBuilder(
                             animation: userController,
                             builder: (context, snapshot) {
@@ -223,7 +229,7 @@ class _RidesScreenState extends State<RidesScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(
-                                    height: 50,
+                                    height: 10,
                                   ),
                                   Text(
                                     'Your Team',
@@ -301,9 +307,6 @@ class _RidesScreenState extends State<RidesScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
                                                 ClipOval(
                                                   child: Image.network(
                                                     userController
@@ -372,79 +375,133 @@ class _RidesScreenState extends State<RidesScreen> {
                                 ],
                               );
                             }),
-                      if (isChecked == false)
-                        Expanded(
-                          child: AnimatedBuilder(
-                              animation: ridesController,
-                              builder: (context, snapshot) {
-                                if (ridesController.isLoading) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
+                        if (isChecked == false)
+                          Expanded(
+                            child: AnimatedBuilder(
+                                animation: ridesController,
+                                builder: (context, snapshot) {
+                                  if (ridesController.isLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('CHALLENGER',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                              color: Color(0x3ffE8AA0A),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 25,
-                                            )),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    if (ridesController.rider.isNotEmpty)
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount:
-                                              ridesController.rider.length,
-                                          itemBuilder: (context, index) =>
-                                              UserRideList(
-                                            ride: ridesController.rider[index],
-                                            user: widget.user,
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text('CHALLENGER',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .copyWith(
+                                                    color: Color(0x3ffE8AA0A),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 25,
+                                                  )),
+                                          const SizedBox(
+                                            width: 100,
                                           ),
-                                        ),
-                                      )
-                                    else
-                                      Text(
-                                        'There is no challenge yet.',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Color(0x3ffFF0000),
+                                              minimumSize: const Size(
+                                                80,
+                                                45,
+                                              ),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
                                             ),
+                                            onPressed: () {
+                                              setState(() {
+                                                userController
+                                                    .getUser(widget.email);
+                                                communityController
+                                                    .getCommunityAndUser(
+                                                        widget.email);
+                                                communityController
+                                                    .getAllCommunity();
+                                                searchController =
+                                                    SearchControllers();
+                                                ridesController
+                                                    .getUserChallenge(
+                                                        widget.user.username);
+                                                ridesController
+                                                    .getUserFinishedRides(
+                                                        widget.user.username);
+                                              });
+                                            },
+                                            child: Text(
+                                              'Refresh',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium!
+                                                  .copyWith(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w900,
+                                                    fontSize: 14,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                  ],
-                                );
-                              }),
-                        ),
-                    ],
-                  ),
-                  AnimatedBuilder(
-                      animation: ridesController,
-                      builder: (context, snapshot) {
-                        if (ridesController.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      if (ridesController.rider.isNotEmpty)
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemCount:
+                                                ridesController.rider.length,
+                                            itemBuilder: (context, index) =>
+                                                UserRideList(
+                                              ride:
+                                                  ridesController.rider[index],
+                                              user: widget.user,
+                                            ),
+                                          ),
+                                        )
+                                      else
+                                        Text(
+                                          'There is no challenge yet.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                    ],
+                                  );
+                                }),
+                          ),
+                      ],
+                    ),
+                    AnimatedBuilder(
+                        animation: ridesController,
+                        builder: (context, snapshot) {
+                          if (ridesController.isLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
 
-                        return ListView.builder(
-                          itemCount: ridesController.userFinishRides.length,
-                          itemBuilder: (context, index) => FinishedRides(
-                              rides: ridesController.userFinishRides[index],
-                              email: widget.email),
-                        );
-                      }),
-                ]),
-              )
+                          return ListView.builder(
+                            itemCount: ridesController.userFinishRides.length,
+                            itemBuilder: (context, index) => FinishedRides(
+                                rides: ridesController.userFinishRides[index],
+                                email: widget.email),
+                          );
+                        }),
+                  ]),
+                )
             ],
           ),
         ),
