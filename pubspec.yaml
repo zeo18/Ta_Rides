@@ -160,6 +160,17 @@ flutter:
     - assets/images/pedal/icon1.png
     - assets/images/pedal/icon2.png
     - assets/images/goal30/goal30BG.png
+    - assets/images/goal30/consistent30.png
+    - assets/images/goal30/consistent60.png
+    - assets/images/goal30/consistent90.png
+    - assets/images/goal30/flawless30.png
+    - assets/images/goal30/flawless60.png
+    - assets/images/goal30/flawless90.png
+    - assets/images/goal30/resilient30.png
+    - assets/images/goal30/resilient60.png
+    - assets/images/goal30/resilient90.png
+    
+
     
     
   
