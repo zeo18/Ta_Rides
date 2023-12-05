@@ -433,17 +433,17 @@ class _UserGoogleMapsState extends State<UserGoogleMaps> {
                                         SizedBox(
                                           width: 110,
                                         ),
-                                        Text(
-                                          '${widget.rides.distance} km',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 20,
-                                              ),
-                                        ),
+                                        // Text(
+                                        //   '${widget.rides.distance} km',
+                                        //   style: Theme.of(context)
+                                        //       .textTheme
+                                        //       .bodyLarge!
+                                        //       .copyWith(
+                                        //         color: Colors.white,
+                                        //         fontWeight: FontWeight.w900,
+                                        //         fontSize: 20,
+                                        //       ),
+                                        // ),
                                       ],
                                     ),
                                   ],
@@ -866,56 +866,56 @@ class _UserGoogleMapsState extends State<UserGoogleMaps> {
 
             DateTime currentTime = DateTime.now();
 
-            if (widget.rides.distance == locationService.distance1) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Congratulations!'),
-                    content: Text('You reached your goal today!'),
-                    actions: <Widget>[
-                      ElevatedButton(
-                        child: Text('OK'),
-                        onPressed: () async {
-                          setState(() {});
+            // if (widget.rides.distance == locationService.distance1) {
+            //   showDialog(
+            //     context: context,
+            //     builder: (BuildContext context) {
+            //       return AlertDialog(
+            //         title: Text('Congratulations!'),
+            //         content: Text('You reached your goal today!'),
+            //         actions: <Widget>[
+            //           ElevatedButton(
+            //             child: Text('OK'),
+            //             onPressed: () async {
+            //               setState(() {});
 
-                          // for (var i = 0; i < goal30.length; i++) {
-                          // if (widget.goalDay == i) {
-                          //   // if(widget.goalDay == i{
-                          //   //   return;
-                          //   // })
-                          //   setState(() {
-                          //     yourGoal = 0;
-                          //   });
+            //               // for (var i = 0; i < goal30.length; i++) {
+            //               // if (widget.goalDay == i) {
+            //               //   // if(widget.goalDay == i{
+            //               //   //   return;
+            //               //   // })
+            //               //   setState(() {
+            //               //     yourGoal = 0;
+            //               //   });
 
-                          //   final goalDone = await FirebaseFirestore.instance
-                          //       .collection('goal30')
-                          //       .where('day$i', isEqualTo: false)
-                          //       .get();
+            //               //   final goalDone = await FirebaseFirestore.instance
+            //               //       .collection('goal30')
+            //               //       .where('day$i', isEqualTo: false)
+            //               //       .get();
 
-                          //   goalDone.docs.first.reference.update({
-                          //     'day$i': true,
-                          //   }).then((value) {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => TabsScreen(
-                          //           email: widget.user.email,
-                          //           tabsScreen: 3,
-                          //           communityTabs: 0,
-                          //         ),
-                          //       ),
-                          //     );
-                          //   });
-                          // }
-                          // }
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
+            //               //   goalDone.docs.first.reference.update({
+            //               //     'day$i': true,
+            //               //   }).then((value) {
+            //               //     Navigator.push(
+            //               //       context,
+            //               //       MaterialPageRoute(
+            //               //         builder: (context) => TabsScreen(
+            //               //           email: widget.user.email,
+            //               //           tabsScreen: 3,
+            //               //           communityTabs: 0,
+            //               //         ),
+            //               //       ),
+            //               //     );
+            //               //   });
+            //               // }
+            //               // }
+            //             },
+            //           ),
+            //         ],
+            //       );
+            //     },
+            //   );
+            // }
             _previousLocation = currentLocation;
             _previousTime = currentTime;
           });

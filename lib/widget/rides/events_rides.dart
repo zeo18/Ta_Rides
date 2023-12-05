@@ -20,7 +20,7 @@ class EventRides extends StatelessWidget {
       children: [
         // if (rides.enemyFinished == false)
         Container(
-          height: 260,
+          height: 300,
           width: 500,
           margin: const EdgeInsets.all(10),
           child: InkWell(
@@ -148,6 +148,34 @@ class EventRides extends StatelessWidget {
                                     ),
                               ),
                               const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'WHERE: ${rides.meetUp}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Color(0x3ff989898),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14,
+                                    ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'WHEN: ${rides.timeMeetUp}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                      color: Color(0x3ff989898),
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14,
+                                    ),
+                              ),
+                              const SizedBox(
                                 height: 5,
                               ),
                               Text(
@@ -177,7 +205,7 @@ class EventRides extends StatelessWidget {
                         BorderRadius.circular(15), // Adjust the value as needed
                     child: Image.network(
                       rides.communityImage,
-                      height: 150,
+                      height: 220,
                       width: 80,
                       fit: BoxFit.cover,
                     ),

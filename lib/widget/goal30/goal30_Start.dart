@@ -299,6 +299,7 @@ class _Goal30StartState extends State<Goal30Start> {
       return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
     }
 
+    print(["goal Day plss", widget.goalDay]);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -1040,13 +1041,10 @@ class _Goal30StartState extends State<Goal30Start> {
                       ElevatedButton(
                         child: Text('OK'),
                         onPressed: () async {
-                          setState(() {});
+                          print('goalDay: ${widget.goalDay}');
 
                           for (var i = 0; i < goal30.length; i++) {
                             if (widget.goalDay == i) {
-                              // if(widget.goalDay == i{
-                              //   return;
-                              // })
                               setState(() {
                                 yourGoal = 0;
                               });
@@ -1165,146 +1163,3 @@ class _Goal30StartState extends State<Goal30Start> {
     _setMarker(LatLng(lat, lng));
   }
 }
-
-
-// Padding(
-//                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-//                   child: Row(
-//                     children: [
-//                       IconButton(
-//                         onPressed: selectBack2,
-//                         icon: Icon(Icons.arrow_back),
-//                       ),
-//                       IconButton(
-//                           onPressed: () async {
-//                             var direction = await LocationService()
-//                                 .getDirections(pinPoint1stController.text,
-//                                     pinPoint2ndController.text);
-
-//                             _setPlace(
-//                               direction!['start_location']['lat'],
-//                               direction['start_location']['lng'],
-//                               direction['bounds_ne'],
-//                               direction['bounds_sw'],
-//                             );
-
-//                             _setPolyline(direction['polyline_decoded']);
-//                           },
-//                           icon: Icon(Icons.arrow_circle_up_sharp)),
-//                       Text(
-//                         '2nd Pin point',
-//                         style:
-//                             Theme.of(context).textTheme.bodyLarge!.copyWith(
-//                                   color: const Color(0x3ff454545),
-//                                   fontWeight: FontWeight.bold,
-//                                   fontSize: 13,
-//                                 ),
-//                       ),
-//                       SizedBox(
-//                         width: 180,
-//                       ),
-//                       // Container(
-//                       //   height: 30,
-//                       //   width: 80,
-//                       //   decoration: BoxDecoration(
-//                       //     color: const Color(0x3ffff0000),
-//                       //     borderRadius: BorderRadius.circular(50),
-//                       //   ),
-//                       //   child: TextButton(
-//                       //     onPressed: () {},
-//                       //     child: Text(
-//                       //       'Done',
-//                       //       style:
-//                       //           Theme.of(context).textTheme.bodyLarge!.copyWith(
-//                       //                 color: Colors.white,
-//                       //                 fontWeight: FontWeight.bold,
-//                       //                 fontSize: 13,
-//                       //               ),
-//                       //     ),
-//                       //   ),
-//                       // )
-//                     ],
-//                   ),
-//                 ),
-//                 Padding(
-//                   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-//                   child: Container(
-//                     margin: EdgeInsets.all(10),
-//                     child: Card(
-//                       color: Color.fromARGB(255, 255, 255, 255),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(20),
-//                       ),
-//                       clipBehavior: Clip.hardEdge,
-//                       elevation: 10,
-//                       child: InkWell(
-//                         onTap: () {},
-//                         child: Container(
-//                           margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-//                           child: TextFormField(
-//                             style: Theme.of(context)
-//                                 .textTheme
-//                                 .bodyMedium!
-//                                 .copyWith(
-//                                   color: Colors.black,
-//                                   fontWeight: FontWeight.bold,
-//                                 ),
-//                             // onChanged: (value) {
-//                             //   _setMarker(LatLng(
-//                             //     double.parse(pinPoint2ndController.text),
-//                             //     double.parse(pinPoint1stController.text),
-//                             //   ));
-//                             // },
-//                             cursorColor: Colors.white,
-//                             controller: pinPoint2ndController,
-//                             textInputAction: TextInputAction.done,
-//                             decoration: InputDecoration(
-//                               label: Text(
-//                                 'Input your 2nd Pin point...',
-//                                 style: GoogleFonts.inter(
-//                                   color: const Color(0x3ff454545),
-//                                   fontSize: 12,
-//                                 ),
-//                               ),
-//                               suffix: IconButton(
-//                                 onPressed: () async {
-//                                   var place = await LocationService()
-//                                       .getPlace(pinPoint2ndController.text);
-//                                   _goToPlace(place);
-//                                   print(place);
-//                                 },
-//                                 // () async {
-//                                 //   var place = await LocationService()
-//                                 //       .getPlace(pinPoint2ndController.text);
-//                                 //   _goToPlace(place);
-//                                 // },
-//                                 icon: Icon(Icons.search),
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-
-
-
-
-  // void onLocationChanged(LocationData currentLocation) {
-  //   setState(() {
-  //     if (previousLocation != null) {
-  //       distance += calculateDistance(previousLocation!, currentLocation);
-  //       if (mounted) {
-  //         totalDistance += distance;
-  //       }
-  //       avgSpeed = distance / DateTime.now().difference(startTime).inHours;
-  //       // elevationGain +=
-  //       //     calculateElevationGain(previousLocation!, currentLocation);
-  //       maxSpeed =
-  //           max(maxSpeed, calculateSpeed(previousLocation!, currentLocation));
-  //     }
-
-  //     previousLocation = currentLocation;
-  //   });
-  // }

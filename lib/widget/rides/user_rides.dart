@@ -115,14 +115,14 @@ class _UserRidesState extends State<UserRides> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(
-                  'DISTANCE: ${widget.rides.distance} km',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                ),
+                // Text(
+                //   'DISTANCE: ${widget.rides.distance} km',
+                //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                //         color: Colors.white,
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 25,
+                //       ),
+                // ),
                 const SizedBox(
                   height: 50,
                 ),
