@@ -146,46 +146,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
     });
   }
 
-  void enemyGame() async {
-    var direction = await LocationService()
-        .getStartToMid(widget.ride.startLoc, widget.ride.midLoc);
-    var direction1 = await LocationService()
-        .getMidToFinish(widget.ride.midLoc, widget.ride.endLoc);
-
-    var distanceStarttoEnd = await LocationService()
-        .getStartingToEnd(widget.ride.startLoc, widget.ride.endLoc);
-
-    _setPolyline(direction!['polyline_decoded'], Colors.cyan);
-    _setPolyline(direction1!['polyline_decoded'], Colors.deepPurple);
-    getLatLong(widget.ride.endLoc);
-
-    _setPlace(
-      direction['start_location']['lat'],
-      direction['start_location']['lng'],
-      direction['bounds_ne'],
-      direction['bounds_sw'],
-    );
-    _setPlace(
-      direction1['start_location']['lat'],
-      direction1['start_location']['lng'],
-      direction1['bounds_ne'],
-      direction1['bounds_sw'],
-    );
-    _stopwatch.start();
-    isNavigating = true;
-    setDistance(
-      double.parse(distanceStarttoEnd!['distance'].split(' ')[0]),
-    );
-    _stopwatch.start();
-
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_stopwatch.isRunning) {
-        timer.cancel();
-      }
-      reloadDistance();
-    });
-  }
-
   void continueGame() async {
     var direction = await LocationService()
         .getStartToMid(startingPoint.text, midPoint.text);
@@ -195,18 +155,21 @@ class _GoogleMapsState extends State<GoogleMaps> {
     var distanceStarttoEnd = await LocationService()
         .getStartingToEnd(startingPoint.text, endPoint.text);
 
-    _setPolyline(direction!['polyline_decoded'], Colors.cyan);
-    _setPolyline(direction1!['polyline_decoded'], Colors.deepPurple);
+    setState(() {
+      _setPolyline(direction!['polyline_decoded'], Colors.cyan);
+      _setPolyline(direction1!['polyline_decoded'], Colors.deepPurple);
+    });
+
     getLatLong(endPoint.text);
 
     _setPlace(
-      direction['start_location']['lat'],
+      direction!['start_location']['lat'],
       direction['start_location']['lng'],
       direction['bounds_ne'],
       direction['bounds_sw'],
     );
     _setPlace(
-      direction1['start_location']['lat'],
+      direction1!['start_location']['lat'],
       direction1['start_location']['lng'],
       direction1['bounds_ne'],
       direction1['bounds_sw'],
@@ -240,6 +203,10 @@ class _GoogleMapsState extends State<GoogleMaps> {
   void initState() {
     super.initState();
     locationService.endDistance = '0 km';
+
+    startingPoint.text = widget.ride.startLoc;
+    midPoint.text = widget.ride.midLoc;
+    endPoint.text = widget.ride.endLoc;
 
     reloadDistance();
     // locationService.initLocation();
@@ -379,7 +346,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text('Congratulations!'),
-                        content: Text('You have won the game11!'),
+                        content: Text('You have won the game!'),
                         actions: <Widget>[
                           ElevatedButton(
                             child: Text('OK'),
@@ -421,7 +388,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text('Sorry!'),
-                        content: Text('You have lose the game11'),
+                        content: Text('You have lost the game'),
                         actions: <Widget>[
                           ElevatedButton(
                             child: Text('OK'),
@@ -501,7 +468,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text('Sorry!'),
-                        content: Text('You lose won the game!'),
+                        content: Text('You have lost the game!'),
                         actions: <Widget>[
                           ElevatedButton(
                             child: Text('OK'),
@@ -529,12 +496,54 @@ class _GoogleMapsState extends State<GoogleMaps> {
                   );
                 });
               }
+              Future<void> fetchAndSetPolyline() async {
+                var direction = await LocationService()
+                    .getStartToMid(data['startLoc'], data['midLoc']);
+                var direction1 = await LocationService()
+                    .getMidToFinish(data['midLoc'], data['endLoc']);
+                var distanceStarttoEnd = await LocationService()
+                    .getStartingToEnd(data['startLoc'], data['endLoc']);
+
+                _setPolyline(direction!['polyline_decoded'], Colors.cyan);
+                _setPolyline(
+                    direction1!['polyline_decoded'], Colors.deepPurple);
+
+                getLatLong(data['endLoc']);
+
+                _setPlace(
+                  direction['start_location']['lat'],
+                  direction['start_location']['lng'],
+                  direction['bounds_ne'],
+                  direction['bounds_sw'],
+                );
+                _setPlace(
+                  direction1['start_location']['lat'],
+                  direction1['start_location']['lng'],
+                  direction1['bounds_ne'],
+                  direction1['bounds_sw'],
+                );
+
+                _stopwatch.start();
+                isNavigating = true;
+                setDistance(
+                  double.parse(distanceStarttoEnd!['distance'].split(' ')[0]),
+                );
+                _stopwatch.start();
+
+                Timer.periodic(const Duration(seconds: 1), (timer) {
+                  if (_stopwatch.isRunning) {
+                    timer.cancel();
+                  }
+                  reloadDistance();
+                });
+              }
 
               if (widget.isUser == false &&
                   data['enemyStart'] == true &&
                   !gameContinued) {
                 gameContinued = true;
-                enemyGame();
+                print(["hello", widget.ride.startLoc]);
+                fetchAndSetPolyline();
               }
 
               markers.add(
@@ -775,6 +784,14 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             //     .get();
                             // won.docs.first.reference.update({
                             //   'enemyStart': true,
+                            //   'startLoc': startingPoint.text,
+                            //   'midLoc': midPoint.text,
+                            //   'endLoc': endPoint.text,
+                            // });
+                            // setState(() {
+                            //   startingPoint.text = widget.ride.startLoc;
+                            //   midPoint.text = widget.ride.midLoc;
+                            //   endPoint.text = widget.ride.endLoc;
                             // });
                             continueGame();
                           },
