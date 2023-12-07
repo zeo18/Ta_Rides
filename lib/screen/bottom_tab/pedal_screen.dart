@@ -949,10 +949,12 @@ class _PedalScreenState extends State<PedalScreen> {
   late bool _shouldUpdateCamera;
   DateTime? _previousTime;
   double _threshold = 0.1;
+  bool chek = false;
 
   Future<void> getLocationUpdates() async {
     LocationData? _previousLocation;
     LatLng _finalDestination = LatLng(0, 0);
+
     // if (!mounted) {
     //   return;
     // }
@@ -1021,7 +1023,13 @@ class _PedalScreenState extends State<PedalScreen> {
             //   _totalSpeed += speed;
             // }
 
-            if (distance == locationService.distance1 && distance > 0.0) {
+            if (distance == locationService.distance1 &&
+                distance > 0.0 &&
+                !chek) {
+              setState(() {
+                chek = true;
+              });
+
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -1033,19 +1041,9 @@ class _PedalScreenState extends State<PedalScreen> {
                         child: Text('OK'),
                         onPressed: () {
                           setState(() {
-                            distance = 10000.0;
+                            distance = distance;
                           });
-
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TabsScreen(
-                                email: widget.user.email,
-                                tabsScreen: 2,
-                                communityTabs: 0,
-                              ),
-                            ),
-                          );
+                          Navigator.pop(context);
                         },
                       ),
                     ],

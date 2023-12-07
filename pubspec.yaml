@@ -56,6 +56,8 @@ dependencies:
   intl: ^0.18.0
   scrollable_positioned_list: ^0.2.0-nullsafety.0
   contained_tab_bar_view_with_custom_page_navigator: ^0.1.3
+  flutter_image_compress: ^1.1.0
+  dio: ^4.0.0
   
   
 

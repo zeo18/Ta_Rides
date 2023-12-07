@@ -7,6 +7,7 @@ import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/pedal_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/profile_dart.dart';
+import 'package:ta_rides/screen/bottom_tab/real_pedal_screen.dart';
 import 'package:ta_rides/screen/bottom_tab/rides_screen.dart';
 import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
 import 'package:ta_rides/widget/all_controller/rides_controller.dart';
@@ -150,12 +151,10 @@ class _TabsScreenState extends State<TabsScreen> {
                     child: CircularProgressIndicator(),
                   );
                 }
-                final pedalId =
-                    FirebaseFirestore.instance.collection('pedal').doc().id;
-                return PedalScreen(
-                  locationData: _locationData!,
+
+                return RealPedalScreen(
                   user: userController.user,
-                  pedalId: pedalId,
+                  locationData: _locationData!,
                 );
               })
           : const Center(
