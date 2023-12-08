@@ -11,6 +11,7 @@ import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
 import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 import 'package:ta_rides/widget/goal30/goal30_Start.dart';
+import 'package:ta_rides/widget/goal30/goal30_googlemap.dart';
 
 class Goal30TrackGoal extends StatefulWidget {
   const Goal30TrackGoal({
@@ -1350,7 +1351,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => _locationData != null
-                                    ? Goal30Start(
+                                    ? Goal30GoogleMap(
                                         locationData: _locationData!,
                                         user: widget.user,
                                         goalDay: goalDay,
@@ -1402,7 +1403,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => _locationData != null
-                                    ? Goal30Start(
+                                    ? Goal30GoogleMap(
                                         locationData: _locationData!,
                                         user: widget.user,
                                         goalDay: goalDay,
@@ -1454,7 +1455,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => _locationData != null
-                                    ? Goal30Start(
+                                    ? Goal30GoogleMap(
                                         locationData: _locationData!,
                                         user: widget.user,
                                         goalDay: goalDay,

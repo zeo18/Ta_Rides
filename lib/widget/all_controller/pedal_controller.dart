@@ -44,6 +44,8 @@ class PedalController extends ChangeNotifier {
       return Pedal.fromDocument(snapshot);
     }).toList();
 
+    print(["si martin ni?", pedal[0].username]);
+
     isLoading = false;
     notifyListeners();
   }

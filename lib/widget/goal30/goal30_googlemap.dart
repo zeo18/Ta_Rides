@@ -13,26 +13,34 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:ta_rides/data/goal30_data.dart';
 import 'package:ta_rides/models/directions_model.dart';
+import 'package:ta_rides/models/goal30_info.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'package:ta_rides/models/real_location.dart';
 import 'package:ta_rides/models/user_info.dart';
 
-class RealPedalScreen extends StatefulWidget {
-  const RealPedalScreen({
+class Goal30GoogleMap extends StatefulWidget {
+  const Goal30GoogleMap({
     super.key,
     this.locationData,
     required this.user,
+    required this.goalDay,
+    required this.goal30,
+    required this.day,
   });
 
   final LocationData? locationData;
   final Users user;
+  final int goalDay;
+  final Goal30 goal30;
+  final int day;
 
   @override
-  State<RealPedalScreen> createState() => _RealPedalScreenState();
+  State<Goal30GoogleMap> createState() => _RealPedalScreenState();
 }
 
-class _RealPedalScreenState extends State<RealPedalScreen> {
+class _RealPedalScreenState extends State<Goal30GoogleMap> {
   final ScreenshotController screenshotController = ScreenshotController();
   DirectionsRespository directionsRespository = DirectionsRespository();
   TextEditingController searchLocationController = TextEditingController();
@@ -54,6 +62,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
   bool isStart = false;
   Marker? _destination;
   DateTime? startTime;
+  double yourGoal = 0.0;
 
   @override
   void initState() {
@@ -143,39 +152,40 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                 onPressed: () async {
                   final Uint8List? screenshot =
                       await _googlemapController!.takeSnapshot();
-                  if (screenshot != null) {
-                    final directory = await getApplicationDocumentsDirectory();
-                    final imagePath = '${directory.path}/screenshot.png';
-                    final imageFile = File(imagePath);
-                    await imageFile.writeAsBytes(screenshot);
+                  // if (screenshot != null) {
+                  //   final directory = await getApplicationDocumentsDirectory();
+                  //   final imagePath = '${directory.path}/screenshot.png';
+                  //   final imageFile = File(imagePath);
+                  //   await imageFile.writeAsBytes(screenshot);
 
-                    final FirebaseFirestore _firestore =
-                        FirebaseFirestore.instance;
-                    final String id = _firestore.collection('pedal').doc().id;
+                  //   final FirebaseFirestore _firestore =
+                  //       FirebaseFirestore.instance;
+                  //   final String id = _firestore.collection('pedal').doc().id;
 
-                    final storageRef = FirebaseStorage.instance
-                        .ref()
-                        .child('pedal_image')
-                        .child('$id.jpg');
-                    await storageRef.putFile(imageFile);
+                  //   final storageRef = FirebaseStorage.instance
+                  //       .ref()
+                  //       .child('goal30_image')
+                  //       .child('$id.jpg');
+                  //   await storageRef.putFile(imageFile);
 
-                    final imageUrl = await storageRef.getDownloadURL();
+                  //   final imageUrl = await storageRef.getDownloadURL();
 
-                    await FirebaseFirestore.instance.collection('pedal').add({
-                      'pedalId': id,
-                      'username': widget.user.username,
-                      'startTime': startTime,
-                      'endTime': DateTime.now(),
-                      'timer':
-                          _duration.toString().split('.').first.padLeft(8, "0"),
-                      'totalDistance': _info!.totalDistance,
-                      'avgSpeed': avgSpeed,
-                      'travelDistance': directionsRespository.distance,
-                      'location': imageUrl,
-                    }).then(
-                      (value) => Navigator.of(context).pop(),
-                    );
-                  }
+                  //   await FirebaseFirestore.instance.collection('pedal').add({
+                  //     'pedalId': id,
+                  //     'username': widget.user.username,
+                  //     'startTime': startTime,
+                  //     'endTime': DateTime.now(),
+                  //     'timer':
+                  //         _duration.toString().split('.').first.padLeft(8, "0"),
+                  //     'totalDistance': _info!.totalDistance,
+                  //     'avgSpeed': avgSpeed,
+                  //     'travelDistance': directionsRespository.distance,
+                  //     'location': imageUrl,
+                  //   }).then(
+                  //     (value) =>
+                  //   );
+                  // }
+                  Navigator.of(context).pop();
 
                   setState(() {
                     isStart = false;
@@ -267,6 +277,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
         ),
       );
     }
+
     if (directionsRespository.distance1 != null) {
       final elapsedSeconds = _duration.inSeconds / 2000;
       final elapsedMinutes = _duration.inMinutes / 60;
@@ -278,6 +289,28 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
       setState(() {
         avgSpeed = doubleDistance.toDouble() / elapsedSeconds.toDouble();
       });
+    }
+
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal30.length) {
+        if (widget.day == goal30[i].day) {
+          yourGoal = goal30[i].kmGoal;
+        }
+      }
+    }
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal60.length) {
+        if (widget.day == goal60[i].day) {
+          yourGoal = goal60[i].kmGoal;
+        }
+      }
+    }
+    for (var i = 0; i < widget.goal30.goalLenght; i++) {
+      if (widget.goal30.goalLenght == goal90.length) {
+        if (widget.day == goal90[i].day) {
+          yourGoal = goal90[i].kmGoal;
+        }
+      }
     }
 
     return FutureBuilder(
@@ -303,7 +336,6 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                automaticallyImplyLeading: false,
                 backgroundColor: Color(0x3fff0C0D11),
                 actions: [
                   Container(
@@ -455,12 +487,12 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(
-                                      height: 5,
+                                      height: 15,
                                     ),
                                     Row(
                                       children: [
                                         const SizedBox(
-                                          width: 50,
+                                          width: 10,
                                         ),
                                         Text(
                                           'TOTAL DISTANCE',
@@ -469,7 +501,20 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                                               .titleLarge!
                                               .copyWith(
                                                 color: Colors.white,
-                                                fontSize: 15,
+                                                fontSize: 10,
+                                              ),
+                                        ),
+                                        const SizedBox(
+                                          width: 40,
+                                        ),
+                                        Text(
+                                          'KM GOAL',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontSize: 10,
                                               ),
                                         ),
                                       ],
@@ -477,8 +522,8 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                                   ],
                                 ),
                                 Positioned(
-                                  bottom: 0,
-                                  left: 70,
+                                  bottom: 20,
+                                  left: 25,
                                   child: Text(
                                     '${_info!.totalDistance}',
                                     style: Theme.of(context)
@@ -486,7 +531,22 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                                         .titleLarge!
                                         .copyWith(
                                           color: Colors.white,
-                                          fontSize: 40,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 20,
+                                  left: 130,
+                                  child: Text(
+                                    '$yourGoal km',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                          color: Colors.white,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),

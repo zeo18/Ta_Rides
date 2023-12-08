@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:ta_rides/models/pedal_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
+import 'package:ta_rides/widget/profile_Tabs/history_location.dart';
 
 class ProgressTabs extends StatelessWidget {
   const ProgressTabs({
@@ -20,185 +21,217 @@ class ProgressTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(15),
-      child: Card(
-        color: const Color(0xff282828),
-        margin: const EdgeInsets.symmetric(horizontal: 0.1, vertical: 3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        clipBehavior: Clip.hardEdge,
-        elevation: 10,
-        child: Container(
-          margin: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                DateFormat('MMM d, yyyy').format(pedal.totalTime.toDate()),
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            child: Card(
+              color: const Color(0xff282828),
+              margin: const EdgeInsets.symmetric(horizontal: 0.1, vertical: 3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                margin: const EdgeInsets.all(10),
-                child: Row(
+              clipBehavior: Clip.hardEdge,
+              elevation: 10,
+              child: Container(
+                margin: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'TIME',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        Text(
-                          pedal.stopwatch,
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => HistoryLocation(
+                              pedal: pedal,
+                            ),
                           ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image(
+                          image: NetworkImage(pedal.location),
+                          width: 150,
+                          fit: BoxFit.cover,
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 50,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'START TIME',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(pedal.time.toDate()),
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 40,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'END TIME',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a')
-                              .format(pedal.totalTime.toDate()),
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(15, 5, 15, 0),
-                child: Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          'TOTAL DISTANCE',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        Text(
-                          pedal.totalDistance.toStringAsFixed(2),
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 32,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'AVG SPEED',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                        ),
-                        Text(
-                          pedal.avgSpeed.toStringAsFixed(2),
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 52,
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'DISTANCE',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                        ),
-                        Text(
-                          pedal.distance,
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 30,
+            right: 72,
+            child: Text(
+              'DATE: ${DateFormat('dd/MM/yyyy').format(pedal.startTime.toDate())}',
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+            ),
+          ),
+          Positioned(
+            top: 135,
+            right: 24,
+            child: Row(
+              children: [
+                Text(
+                  'START TIME',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+                const SizedBox(
+                  width: 50,
+                ),
+                Text(
+                  'END TIME',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 155,
+            right: 10,
+            child: Row(
+              children: [
+                Text(
+                  DateFormat('hh:mm:ss a').format(pedal.startTime.toDate()),
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  DateFormat('hh:mm:ss a').format(pedal.endTime.toDate()),
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 60,
+            right: 8,
+            child: Row(
+              children: [
+                Text(
+                  'TOTAL DISTANCE',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'TRAVEL DISTANCE',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 80,
+            right: 24,
+            child: Row(
+              children: [
+                Text(
+                  pedal.totalDistance,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                ),
+                const SizedBox(
+                  width: 40,
+                ),
+                Text(
+                  pedal.travelDistance,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 210,
+            right: 35,
+            child: Row(
+              children: [
+                Text(
+                  'AVERAGE SPEED',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+                const SizedBox(
+                  width: 40,
+                ),
+                Text(
+                  'TIMER',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 230,
+            right: 20,
+            child: Row(
+              children: [
+                Text(
+                  '${pedal.avgSpeed.toStringAsFixed(1)} km',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                ),
+                const SizedBox(
+                  width: 25,
+                ),
+                Text(
+                  pedal.timer,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

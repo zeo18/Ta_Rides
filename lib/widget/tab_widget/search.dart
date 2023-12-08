@@ -33,7 +33,6 @@ class _SearchTabsState extends State<SearchTabs> {
     userController.getUser(widget.email);
     communityController.getCommunityAndUser(widget.email);
     communityController.getAllCommunity();
-
     searchController = SearchControllers();
     super.initState();
   }
