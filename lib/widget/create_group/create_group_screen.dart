@@ -179,6 +179,7 @@ class _CreateGroupState extends State<CreateGroup> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0x3ff0C0D11),
       appBar: AppBar(
+        actions: [],
         backgroundColor: const Color(0x3ff0C0D11),
       ),
       body: Container(

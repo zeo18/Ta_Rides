@@ -4,34 +4,37 @@ class Pedal {
   Pedal({
     required this.pedalId,
     required this.username,
-    required this.time,
-    required this.stopwatch,
+    required this.endTime,
     required this.totalDistance,
     required this.avgSpeed,
-    required this.distance,
-    required this.totalTime,
+    required this.travelDistance,
+    required this.startTime,
+    required this.location,
+    required this.timer,
   });
 
   final String pedalId;
   final String username;
-  final Timestamp totalTime;
-  final Timestamp time;
-  final String stopwatch;
-  final double totalDistance;
+  final Timestamp endTime;
+  final Timestamp startTime;
+  final String location;
+  final String timer;
+  final String totalDistance;
   final double avgSpeed;
-  final String distance;
+  final String travelDistance;
 
   factory Pedal.fromDocument(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data() as Map<String, dynamic>;
     return Pedal(
       pedalId: data['pedalId'] as String,
       username: data['username'] as String,
-      totalTime: data['totalTime'] as Timestamp,
-      time: data['time'] as Timestamp,
-      stopwatch: data['stopwatch'] as String,
-      totalDistance: data['totalDistance'] as double,
+      startTime: data['startTime'] as Timestamp,
+      endTime: data['endTime'] as Timestamp,
+      location: data['location'] as String,
+      timer: data['timer'] as String,
+      totalDistance: data['totalDistance'] as String,
       avgSpeed: data['avgSpeed'] as double,
-      distance: data['distance'] as String,
+      travelDistance: data['travelDistance'] as String,
     );
   }
 }

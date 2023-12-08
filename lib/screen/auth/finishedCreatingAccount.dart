@@ -52,28 +52,6 @@ class _FinishedCreatingAccountState extends State<FinishedCreatingAccount> {
   // int userID = UserInformation[UserInformation.length - 1].id + 1;
 
   void addUser() {
-    // widget.addUser(
-    //   Users(
-    //     id: userID,
-    //     userImage: '',
-    //     username: widget.usernameValue,
-    //     password: widget.passwordValue,
-    //     firstName: widget.firstNameValue,
-    //     lastName: widget.lastNameValue,
-    //     email: widget.emailValue,
-    //     birthdate: widget.selectedDateValue,
-    //     gender: widget.genderValue,
-    //     location: widget.countryValue,
-    //     phoneNumber: widget.phoneNumberValue,
-    //     followers: 0,
-    //     following: 0,
-    //     isCommunity: false,
-    //     communityId: 0,
-    //     isAchievement: false,
-    //     chooseUserImage: widget.selectUserImageValue,
-    //   ),
-    // );
-
     Navigator.push(
       context,
       MaterialPageRoute(
