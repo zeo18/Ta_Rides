@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
@@ -48,6 +50,8 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
   Duration _duration = Duration();
   Timer? _timer;
   double avgSpeed = 0.0;
+  StreamController<LatLng> _originStreamController = StreamController<LatLng>();
+  StreamSubscription? _originSubscription;
 
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
@@ -114,6 +118,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
   }
 
   void finish() async {
+    _originSubscription?.pause();
     _googlemapController!.animateCamera(_info != null
         ? CameraUpdate.newLatLngBounds(_info!.bounds, 100.0)
         : CameraUpdate.newCameraPosition(
@@ -135,6 +140,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
               TextButton(
                 child: Text('No'),
                 onPressed: () {
+                  _originSubscription?.resume();
                   Navigator.of(context).pop();
                 },
               ),
@@ -215,6 +221,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
             icon: icon,
           );
         });
+        _originStreamController.add(_origin!.position);
       },
     );
     _info = null;
@@ -236,7 +243,10 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
   @override
   void dispose() {
     _locationSubscription?.cancel();
+
     _googlemapController!.dispose();
+    _originSubscription?.cancel();
+    _originStreamController.close();
     _timer?.cancel();
 
     super.dispose();
@@ -249,6 +259,21 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
     await controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 15.5),
     ));
+  }
+
+  void focusLocation(LatLng newPosition) async {
+    final bearing = await FlutterCompass.events!.first;
+
+    _googlemapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: newPosition,
+          zoom: 17.4746,
+          tilt: 50,
+          bearing: bearing.heading!,
+        ),
+      ),
+    );
   }
 
   @override
@@ -531,12 +556,54 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                       Positioned(
                         bottom: 175,
                         left: 10.0,
-                        child: Container(
-                          width: 140,
-                          height: 45,
-                          decoration: const BoxDecoration(
-                            color: Color(0x3FFF0C0D11),
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: InkWell(
+                          onTap: () {
+                            if (_originSubscription == null) {
+                              _originSubscription = _originStreamController
+                                  .stream
+                                  .listen((newPosition) {
+                                focusLocation(newPosition);
+                              });
+                            } else if (_originSubscription!.isPaused) {
+                              _originSubscription!.resume();
+                            } else {
+                              _originSubscription!.pause();
+                            }
+                          },
+                          child: Container(
+                            width: 140,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: _originSubscription != null &&
+                                      !_originSubscription!.isPaused
+                                  ? Color.fromARGB(103, 12, 13, 17)
+                                  : Color(0x3FFF0C0D11),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'FOCUS YOUR ',
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    'LOCATION',
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),

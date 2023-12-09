@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
@@ -56,6 +58,8 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
   Duration _duration = Duration();
   Timer? _timer;
   double avgSpeed = 0.0;
+  StreamController<LatLng> _originStreamController = StreamController<LatLng>();
+  StreamSubscription? _originSubscription;
 
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
@@ -123,6 +127,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
   }
 
   void finish() async {
+    _originSubscription?.pause();
     _googlemapController!.animateCamera(_info != null
         ? CameraUpdate.newLatLngBounds(_info!.bounds, 100.0)
         : CameraUpdate.newCameraPosition(
@@ -144,6 +149,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
               TextButton(
                 child: Text('No'),
                 onPressed: () {
+                  _originSubscription?.resume();
                   Navigator.of(context).pop();
                 },
               ),
@@ -152,40 +158,39 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                 onPressed: () async {
                   final Uint8List? screenshot =
                       await _googlemapController!.takeSnapshot();
-                  // if (screenshot != null) {
-                  //   final directory = await getApplicationDocumentsDirectory();
-                  //   final imagePath = '${directory.path}/screenshot.png';
-                  //   final imageFile = File(imagePath);
-                  //   await imageFile.writeAsBytes(screenshot);
+                  if (screenshot != null) {
+                    final directory = await getApplicationDocumentsDirectory();
+                    final imagePath = '${directory.path}/screenshot.png';
+                    final imageFile = File(imagePath);
+                    await imageFile.writeAsBytes(screenshot);
 
-                  //   final FirebaseFirestore _firestore =
-                  //       FirebaseFirestore.instance;
-                  //   final String id = _firestore.collection('pedal').doc().id;
+                    final FirebaseFirestore _firestore =
+                        FirebaseFirestore.instance;
+                    final String id = _firestore.collection('pedal').doc().id;
 
-                  //   final storageRef = FirebaseStorage.instance
-                  //       .ref()
-                  //       .child('goal30_image')
-                  //       .child('$id.jpg');
-                  //   await storageRef.putFile(imageFile);
+                    final storageRef = FirebaseStorage.instance
+                        .ref()
+                        .child('pedal_image')
+                        .child('$id.jpg');
+                    await storageRef.putFile(imageFile);
 
-                  //   final imageUrl = await storageRef.getDownloadURL();
+                    final imageUrl = await storageRef.getDownloadURL();
 
-                  //   await FirebaseFirestore.instance.collection('pedal').add({
-                  //     'pedalId': id,
-                  //     'username': widget.user.username,
-                  //     'startTime': startTime,
-                  //     'endTime': DateTime.now(),
-                  //     'timer':
-                  //         _duration.toString().split('.').first.padLeft(8, "0"),
-                  //     'totalDistance': _info!.totalDistance,
-                  //     'avgSpeed': avgSpeed,
-                  //     'travelDistance': directionsRespository.distance,
-                  //     'location': imageUrl,
-                  //   }).then(
-                  //     (value) =>
-                  //   );
-                  // }
-                  Navigator.of(context).pop();
+                    await FirebaseFirestore.instance.collection('pedal').add({
+                      'pedalId': id,
+                      'username': widget.user.username,
+                      'startTime': startTime,
+                      'endTime': DateTime.now(),
+                      'timer':
+                          _duration.toString().split('.').first.padLeft(8, "0"),
+                      'totalDistance': _info!.totalDistance,
+                      'avgSpeed': avgSpeed,
+                      'travelDistance': directionsRespository.distance,
+                      'location': imageUrl,
+                    }).then(
+                      (value) => Navigator.of(context).pop(),
+                    );
+                  }
 
                   setState(() {
                     isStart = false;
@@ -225,6 +230,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
             icon: icon,
           );
         });
+        _originStreamController.add(_origin!.position);
       },
     );
     _info = null;
@@ -246,7 +252,10 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
   @override
   void dispose() {
     _locationSubscription?.cancel();
+
     _googlemapController!.dispose();
+    _originSubscription?.cancel();
+    _originStreamController.close();
     _timer?.cancel();
 
     super.dispose();
@@ -259,6 +268,47 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
     await controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 15.5),
     ));
+  }
+
+  void focusLocation(LatLng newPosition) async {
+    final bearing = await FlutterCompass.events!.first;
+
+    _googlemapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: newPosition,
+          zoom: 17.4746,
+          tilt: 50,
+          bearing: bearing.heading!,
+        ),
+      ),
+    );
+  }
+
+  void getGoalKm() {
+    setState(() {
+      for (var i = 0; i < widget.goal30.goalLenght; i++) {
+        if (widget.goal30.goalLenght == goal30.length) {
+          if (widget.day == goal30[i].day) {
+            yourGoal = goal30[i].kmGoal;
+          }
+        }
+      }
+      for (var i = 0; i < widget.goal30.goalLenght; i++) {
+        if (widget.goal30.goalLenght == goal60.length) {
+          if (widget.day == goal60[i].day) {
+            yourGoal = goal60[i].kmGoal;
+          }
+        }
+      }
+      for (var i = 0; i < widget.goal30.goalLenght; i++) {
+        if (widget.goal30.goalLenght == goal90.length) {
+          if (widget.day == goal90[i].day) {
+            yourGoal = goal90[i].kmGoal;
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -277,7 +327,6 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
         ),
       );
     }
-
     if (directionsRespository.distance1 != null) {
       final elapsedSeconds = _duration.inSeconds / 2000;
       final elapsedMinutes = _duration.inMinutes / 60;
@@ -291,28 +340,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
       });
     }
 
-    for (var i = 0; i < widget.goal30.goalLenght; i++) {
-      if (widget.goal30.goalLenght == goal30.length) {
-        if (widget.day == goal30[i].day) {
-          yourGoal = goal30[i].kmGoal;
-        }
-      }
-    }
-    for (var i = 0; i < widget.goal30.goalLenght; i++) {
-      if (widget.goal30.goalLenght == goal60.length) {
-        if (widget.day == goal60[i].day) {
-          yourGoal = goal60[i].kmGoal;
-        }
-      }
-    }
-    for (var i = 0; i < widget.goal30.goalLenght; i++) {
-      if (widget.goal30.goalLenght == goal90.length) {
-        if (widget.day == goal90[i].day) {
-          yourGoal = goal90[i].kmGoal;
-        }
-      }
-    }
-
+    getGoalKm();
     return FutureBuilder(
       future: _setMarkerFuture,
       builder: (context, snapshot) {
@@ -330,12 +358,13 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
               backgroundColor: Color(0x3fff0C0D11),
               appBar: AppBar(
                 title: Text(
-                  'Pedal',
+                  'Goal ${widget.goal30.goalLenght}',
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
+                automaticallyImplyLeading: false,
                 backgroundColor: Color(0x3fff0C0D11),
                 actions: [
                   Container(
@@ -591,12 +620,54 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                       Positioned(
                         bottom: 175,
                         left: 10.0,
-                        child: Container(
-                          width: 140,
-                          height: 45,
-                          decoration: const BoxDecoration(
-                            color: Color(0x3FFF0C0D11),
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: InkWell(
+                          onTap: () {
+                            if (_originSubscription == null) {
+                              _originSubscription = _originStreamController
+                                  .stream
+                                  .listen((newPosition) {
+                                focusLocation(newPosition);
+                              });
+                            } else if (_originSubscription!.isPaused) {
+                              _originSubscription!.resume();
+                            } else {
+                              _originSubscription!.pause();
+                            }
+                          },
+                          child: Container(
+                            width: 140,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: _originSubscription != null &&
+                                      !_originSubscription!.isPaused
+                                  ? Color.fromARGB(103, 12, 13, 17)
+                                  : Color(0x3FFF0C0D11),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'FOCUS YOUR ',
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    'LOCATION',
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -815,3 +886,141 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+  // final LocationData? locationData;
+  // final Users user;
+  // final int goalDay;
+  // final Goal30 goal30;
+  // final int day;
+
+
+
+        // if (_info != null)
+        //             if (isStart == false)
+        //               Positioned(
+        //                 bottom: 5.0,
+        //                 left: 5.0,
+        //                 child: Container(
+        //                   height: 100,
+        //                   width: 350,
+        //                   decoration: BoxDecoration(
+        //                     color: Color(0x3FFF0C0D11),
+        //                     borderRadius: BorderRadius.circular(15.0),
+        //                   ),
+        //                   child: Container(
+        //                     margin: const EdgeInsets.all(10),
+        //                     child: Stack(
+        //                       children: [
+        //                         Column(
+        //                           crossAxisAlignment: CrossAxisAlignment.start,
+        //                           children: [
+        //                             const SizedBox(
+        //                               height: 15,
+        //                             ),
+        //                             Row(
+        //                               children: [
+        //                                 const SizedBox(
+        //                                   width: 10,
+        //                                 ),
+        //                                 Text(
+        //                                   'TOTAL DISTANCE',
+        //                                   style: Theme.of(context)
+        //                                       .textTheme
+        //                                       .titleLarge!
+        //                                       .copyWith(
+        //                                         color: Colors.white,
+        //                                         fontSize: 10,
+        //                                       ),
+        //                                 ),
+        //                                 const SizedBox(
+        //                                   width: 40,
+        //                                 ),
+        //                                 Text(
+        //                                   'KM GOAL',
+        //                                   style: Theme.of(context)
+        //                                       .textTheme
+        //                                       .titleLarge!
+        //                                       .copyWith(
+        //                                         color: Colors.white,
+        //                                         fontSize: 10,
+        //                                       ),
+        //                                 ),
+        //                               ],
+        //                             ),
+        //                           ],
+        //                         ),
+        //                         Positioned(
+        //                           bottom: 20,
+        //                           left: 25,
+        //                           child: Text(
+        //                             '${_info!.totalDistance}',
+        //                             style: Theme.of(context)
+        //                                 .textTheme
+        //                                 .titleLarge!
+        //                                 .copyWith(
+        //                                   color: Colors.white,
+        //                                   fontSize: 20,
+        //                                   fontWeight: FontWeight.bold,
+        //                                 ),
+        //                           ),
+        //                         ),
+        //                         Positioned(
+        //                           bottom: 20,
+        //                           left: 130,
+        //                           child: Text(
+        //                             '$yourGoal km',
+        //                             style: Theme.of(context)
+        //                                 .textTheme
+        //                                 .titleLarge!
+        //                                 .copyWith(
+        //                                   color: Colors.white,
+        //                                   fontSize: 20,
+        //                                   fontWeight: FontWeight.bold,
+        //                                 ),
+        //                           ),
+        //                         ),
+        //                         Positioned(
+        //                           right: 0,
+        //                           child: ElevatedButton(
+        //                             style: ElevatedButton.styleFrom(
+        //                               backgroundColor: Color(0x3ffFF0000),
+        //                               minimumSize: const Size(
+        //                                 105,
+        //                                 82,
+        //                               ),
+        //                               elevation: 0,
+        //                               shape: RoundedRectangleBorder(
+        //                                 borderRadius: BorderRadius.circular(20),
+        //                               ),
+        //                             ),
+        //                             onPressed: () {
+        //                               setState(() {
+        //                                 isStart = true;
+        //                               });
+        //                               start();
+        //                             },
+        //                             child: Text(
+        //                               'START',
+        //                               style: GoogleFonts.inter(
+        //                                 color: Colors.white,
+        //                                 fontWeight: FontWeight.bold,
+        //                                 fontSize: 20,
+        //                               ),
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
