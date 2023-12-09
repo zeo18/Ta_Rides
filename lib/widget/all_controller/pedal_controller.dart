@@ -44,9 +44,13 @@ class PedalController extends ChangeNotifier {
       return Pedal.fromDocument(snapshot);
     }).toList();
 
+    pedal.sort((a, b) => b.endTime.compareTo(a.endTime));
+
     print(["si martin ni?", pedal[0].username]);
 
     isLoading = false;
     notifyListeners();
+
+    //  allFinishRides.sort((a, b) => b.timePost.compareTo(a.timePost));
   }
 }

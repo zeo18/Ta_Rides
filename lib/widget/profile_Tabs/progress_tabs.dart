@@ -6,6 +6,7 @@ import 'package:ta_rides/models/pedal_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/profile_Tabs/history_location.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProgressTabs extends StatelessWidget {
   const ProgressTabs({
@@ -50,13 +51,15 @@ class ProgressTabs extends StatelessWidget {
                         );
                       },
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image(
-                          image: NetworkImage(pedal.location),
-                          width: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+    borderRadius: BorderRadius.circular(15),
+    child: CachedNetworkImage(
+      imageUrl: pedal.location,
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+      width: 150,
+      fit: BoxFit.cover,
+    ),
+  ),
                     ),
                   ],
                 ),
