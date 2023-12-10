@@ -146,4 +146,179 @@ class CommunityController extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
   }
+  // try {
+  //   final communityQuerySnapshot = await FirebaseFirestore.instance
+  //       .collection('community')
+  //       .doc(user.communityId)
+  //       .get();
+
+  //   if (!communityQuerySnapshot.exists) {
+  //     throw Exception('Community not found');
+  //   }
+
+  //   community = Community.fromDocument(communityQuerySnapshot);
+  // } catch (e) {
+  //   isLoading = false;
+  //   notifyListeners();
+  //   throw Exception(e);
+  // }
+
+// get all community
+
+  // final communitiesQuerySnapshot =
+  //     await FirebaseFirestore.instance.collection('community').get();
+
+  // if (communitiesQuerySnapshot.docs.isEmpty) {
+  //   isLoading = false;
+  //   notifyListeners();
+  //   throw Exception('No communities found');
+  // }
+
+  // communities = communitiesQuerySnapshot.docs.map((documentSnapshot) {
+  //   return Community.fromDocument(documentSnapshot);
+  // }).toList();
+
+  // isLoading = false;
+  // notifyListeners();
+  // print(["communities lenght", communities.length]);
+  // for (var i = 0; i < communities.length; i++) {
+  //   print(["communities", communities[i].id]);
+  // }
+  // Future<List<Post>> getAllPost() async {
+
+  //   return posts;
+  // }
+// Future<List<Community>> getAllCommunity() async {
+
+//   return communities;
+// }
 }
+    // }
+
+
+
+        // for (int i = 2; i < posts.length; i++) {
+    // print('naka sud bas users?');
+    // final usersQuerySnapshot = await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .where('username',
+    //         whereIn: posts.map((posts) => posts.usersName).toList())
+    //     .get();
+
+    // for (int i = 0; i < posts.length; i++) {
+    //   // if (posts[i].usersName == users[i].username) {
+    //   //   print(["post name", posts[i].usersName]);
+    //   //   print(["users name", users[i].username]);
+    //   // }
+    //   print('naka sud bas users?');
+    // }
+
+    // print(["post name", post.usersName]);
+
+
+
+
+
+
+
+
+
+
+
+ // final List<Users> users =
+    //     userQuerySnapshot.docs.map((userDocumentSnapshot) {
+    //   return Users.fromDocument(userDocumentSnapshot);
+    // }).toList();
+
+    // final Users currentUser = users.firstWhere(
+    //   (user) => user.id == 'currentUserId',
+    // );
+
+    // if (currentUser == null) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('User not found');
+    // }
+
+    // if (currentUser.communityId == community.id) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('User is not a member of this community');
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //  final postsQuerySnapshot = await FirebaseFirestore.instance
+    //     .collection('post')
+    //     .where('communityId', isEqualTo: community.id)
+    //     .orderBy('timestamp', descending: true)
+    //     .get();
+
+    // if (postsQuerySnapshot.docs.isEmpty) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('No posts found');
+    // }
+
+    // posts = postsQuerySnapshot.docs.map((postDocumentSnapshot) {
+    //   return Post.fromDocument(postDocumentSnapshot);
+    // }).toList();
+    // isLoading = false;
+    // notifyListeners();
+
+    // final usersQuerySnapshot = await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .where('username',
+    //         whereIn: posts.map((post) => post.usersName).toList())
+    //     .get();
+
+    // if (usersQuerySnapshot.docs.isEmpty) {
+    //   isLoading = false;
+    //   notifyListeners();
+    //   throw Exception('No users1 found');
+    // }
+
+    // final users = usersQuerySnapshot.docs.map((usersDocumentSnapshot) {
+    //   return Users.fromDocument(usersDocumentSnapshot);
+    // }).toList();
+
+    // isLoading = true;
+    // notifyListeners();
+    // for (final post in posts) {
+    //   print(["post", post.usersName]);
+    // }
+
+    // for (final post in posts) {
+    //   for (final user in users) {
+    //     if (post.usersName == user.username) {
+    //       userPost.add(user);
+    //       notifyListeners();
+    //       print('Match found!');
+    //     }
+    //   }
+    // }
+
+    // print(["posts lenght", posts.length]);
+    // print(["userPost lenght", userPost.length]);
+    // print(["users lenght", users.length]);
+
+    // // for (int i = 0; i < users.length; i++) {
+    // //   print(["user name", users[i].username]);
+    // // }
+
+    // for (int i = 0; i < posts.length; i++) {
+    //   print(["post name", posts[i].usersName]);
+    // }
+    // for (int i = 0; i < userPost.length; i++) {
+    //   print(["userPost name", userPost[i].username]);
+    // }

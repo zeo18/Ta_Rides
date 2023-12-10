@@ -12,6 +12,8 @@ class Community {
     required this.description,
     required this.members,
     required this.id,
+    required this.owner,
+    required this.isOwner,
   });
   final String id; //
   final String coverImage; //
@@ -19,6 +21,8 @@ class Community {
   final String title; //
   final String description; //
   final List<String> members; //
+  final String owner;
+  final bool isOwner;
 
   factory Community.fromDocument(
       DocumentSnapshot<Map<String, dynamic>> document) {
@@ -34,6 +38,8 @@ class Community {
       title: data['title'] as String,
       description: data['description'] as String,
       members: members,
+      isOwner: data['isOwner'] as bool,
+      owner: data['owner'] as String,
     );
   }
 }

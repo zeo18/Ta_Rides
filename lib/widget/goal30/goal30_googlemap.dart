@@ -21,6 +21,7 @@ import 'package:ta_rides/models/goal30_info.dart';
 import 'package:ta_rides/models/location_info.dart';
 import 'package:ta_rides/models/real_location.dart';
 import 'package:ta_rides/models/user_info.dart';
+import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
 
 class Goal30GoogleMap extends StatefulWidget {
   const Goal30GoogleMap({
@@ -158,6 +159,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                 onPressed: () async {
                   final Uint8List? screenshot =
                       await _googlemapController!.takeSnapshot();
+
                   if (screenshot != null) {
                     final directory = await getApplicationDocumentsDirectory();
                     final imagePath = '${directory.path}/screenshot.png';
@@ -166,21 +168,26 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
 
                     final FirebaseFirestore _firestore =
                         FirebaseFirestore.instance;
-                    final String id = _firestore.collection('pedal').doc().id;
+                    final String id = _firestore.collection('goal30').doc().id;
 
                     final storageRef = FirebaseStorage.instance
                         .ref()
-                        .child('pedal_image')
+                        .child('goal30_image')
                         .child('$id.jpg');
                     await storageRef.putFile(imageFile);
 
                     final imageUrl = await storageRef.getDownloadURL();
 
-                    await FirebaseFirestore.instance.collection('pedal').add({
-                      'pedalId': id,
+                    await FirebaseFirestore.instance
+                        .collection('goal30History')
+                        .add({
+                      'goalHistoryId': id,
+                      'day': widget.day,
                       'username': widget.user.username,
+                      'bmi': 'you havent set your bmi yet',
                       'startTime': startTime,
                       'endTime': DateTime.now(),
+                      'lenght': widget.goal30.goalLenght,
                       'timer':
                           _duration.toString().split('.').first.padLeft(8, "0"),
                       'totalDistance': _info!.totalDistance,
@@ -311,6 +318,26 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
     });
   }
 
+  void achievedGoal(BuildContext context) async {
+    if (yourGoal == directionsRespository.distance1) {
+      final goalDone = await FirebaseFirestore.instance
+          .collection('goal30')
+          .where('day${widget.day}', isEqualTo: false)
+          .get();
+
+      if (goalDone.docs.isNotEmpty) {
+        goalDone.docs.first.reference.update({
+          'day${widget.day}': true,
+        }).then((value) {
+          final snackBar = SnackBar(
+            content: Text('You achieved your goal today!'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Set<Polyline> allPolylines = Set<Polyline>.of(polylines.values);
@@ -341,16 +368,18 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
     }
 
     getGoalKm();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      achievedGoal(context);
+    });
+
     return FutureBuilder(
       future: _setMarkerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child:
-                  CircularProgressIndicator()); // Show loading indicator while waiting for setMarker to complete
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text(
-              'Error: ${snapshot.error}'); // Show error message if setMarker completed with an error
+          return Text('Error: ${snapshot.error}');
         } else {
           return Screenshot(
             controller: screenshotController,
@@ -365,6 +394,23 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                       ),
                 ),
                 automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) => TabsScreen(
+                            email: widget.user.email,
+                            tabsScreen: 3,
+                            communityTabs: 0),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                ),
                 backgroundColor: Color(0x3fff0C0D11),
                 actions: [
                   Container(
@@ -376,7 +422,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                     ),
                   ),
                   TextButton(
-                    onLongPress: () {
+                    onPressed: () {
                       _googlemapController!.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
@@ -387,7 +433,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                         ),
                       );
                     },
-                    onPressed: () {
+                    onLongPress: () {
                       _googlemapController!.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
@@ -411,7 +457,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                   Icon(Icons.place, color: Colors.red),
                   if (_destination != null)
                     TextButton(
-                      onLongPress: () {
+                      onPressed: () {
                         _googlemapController!.animateCamera(
                           CameraUpdate.newCameraPosition(
                             CameraPosition(
@@ -422,7 +468,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                           ),
                         );
                       },
-                      onPressed: () {
+                      onLongPress: () {
                         _googlemapController!.animateCamera(
                           CameraUpdate.newCameraPosition(
                             CameraPosition(
@@ -463,7 +509,7 @@ class _RealPedalScreenState extends State<Goal30GoogleMap> {
                       target: LatLng(
                           widget.locationData!.latitude ?? 10.2899758,
                           widget.locationData!.longitude ?? 123.861891),
-                      zoom: 14.4746,
+                      zoom: 10.4746,
                     ),
                     onMapCreated: (GoogleMapController controller) {
                       _googlemapController = controller;

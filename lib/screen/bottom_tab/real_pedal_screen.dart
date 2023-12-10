@@ -340,7 +340,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                     ),
                   ),
                   TextButton(
-                    onLongPress: () {
+                    onPressed: () {
                       _googlemapController!.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
@@ -351,7 +351,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                         ),
                       );
                     },
-                    onPressed: () {
+                    onLongPress: () {
                       _googlemapController!.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
@@ -375,7 +375,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                   Icon(Icons.place, color: Colors.red),
                   if (_destination != null)
                     TextButton(
-                      onLongPress: () {
+                      onPressed: () {
                         _googlemapController!.animateCamera(
                           CameraUpdate.newCameraPosition(
                             CameraPosition(
@@ -386,7 +386,7 @@ class _RealPedalScreenState extends State<RealPedalScreen> {
                           ),
                         );
                       },
-                      onPressed: () {
+                      onLongPress: () {
                         _googlemapController!.animateCamera(
                           CameraUpdate.newCameraPosition(
                             CameraPosition(

@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
 import 'package:location/location.dart' as loc;
 import 'package:ta_rides/models/user_info.dart';
+import 'package:http/http.dart' as http;
 import 'package:ta_rides/widget/rides/google_maps.dart';
+import 'package:ta_rides/widget/rides/realGooglemap.dart';
+import 'package:ta_rides/widget/rides/realRides_googlemap.dart';
 import 'package:ta_rides/widget/rides/user_googlemaps.dart';
 
 class UserRides extends StatefulWidget {
@@ -61,6 +66,7 @@ class _UserRidesState extends State<UserRides> {
 
     double? latitude = _locationData?.latitude;
     double? longitude = _locationData?.longitude;
+
     FirebaseFirestore.instance
         .collection('rides')
         .where('ridesID', isEqualTo: widget.rides.ridesID)
@@ -77,6 +83,23 @@ class _UserRidesState extends State<UserRides> {
         );
       },
     );
+  }
+
+  Future<Uint8List> _loadImage(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final Uint8List originalBytes = response.bodyBytes;
+      final List<int> resizedBytes =
+          await FlutterImageCompress.compressWithList(
+        originalBytes,
+        minHeight: 100,
+        minWidth: 100,
+        quality: 100,
+      );
+      return Uint8List.fromList(resizedBytes);
+    } else {
+      throw Exception('Failed to load image');
+    }
   }
 
   @override
@@ -346,16 +369,23 @@ class _UserRidesState extends State<UserRides> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    final Uint8List originIcon =
+                        await _loadImage(widget.rides.userImage);
+                    final Uint8List enemyIcon =
+                        await _loadImage(widget.rides.enemyImage);
+
                     _locationData != null
                         ? Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => GoogleMaps(
+                              builder: (context) => RealGoogleMap(
                                 locationData: _locationData,
                                 ride: widget.rides,
                                 isUser: true,
                                 email: widget.user.email,
+                                originIcon: originIcon,
+                                enemyIcon: enemyIcon,
                               ),
                             ),
                           )
