@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ta_rides/models/community_info.dart';
 import 'package:ta_rides/models/user_info.dart';
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
+import 'package:ta_rides/screen/community/view_member_request.dart';
 import 'package:ta_rides/widget/all_controller/community_controller.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/tab_widget/events.dart';

@@ -179,7 +179,6 @@ class _CreateGroupState extends State<CreateGroup> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0x3ff0C0D11),
       appBar: AppBar(
-        actions: [],
         backgroundColor: const Color(0x3ff0C0D11),
       ),
       body: Container(
@@ -285,353 +284,353 @@ class _CreateGroupState extends State<CreateGroup> {
                   ),
                 ),
               if (onSelectPrivacy == 1)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      'Questions',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 25,
-                          ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'As soon as a potential member applies to join your group, ask them up to three questions. The responses will only be visible to administrators and moderators.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Color(0x3ff797979),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    if (choicePrivates.isNotEmpty)
-                      Column(
-                        children: [
-                          Text(
-                            'Multiplie Choice',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                    if (choicePrivates.isNotEmpty)
-                      for (var private in choicePrivates)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              private.choiceQuestion,
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            for (var choice in private.choices)
-                              Text(
-                                '• $choice',
-                                style: GoogleFonts.inter(
-                                    fontSize: 13,
-                                    color: const Color(0x3ff797979)),
-                              ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              private.choicesAnswer.isEmpty
-                                  ? 'Correct Answer: Not Answer'
-                                  : 'Correct Answer: ${private.choicesAnswer}',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: const Color(0x3ff797979),
-                              ),
-                            ),
-                          ],
-                        ),
-                    if (cheboxesPrivates.isNotEmpty &&
-                        choicePrivates.isNotEmpty)
-                      const Divider(
-                        color: Color(0x3ff797979),
-                        thickness: 1.0,
-                        indent: 0,
-                        endIndent: 0,
-                      ),
-                    if (choicePrivates.isNotEmpty &&
-                        cheboxesPrivates.isNotEmpty)
-                      Column(
-                        children: [
-                          Text(
-                            'Check Boxes',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                    if (cheboxesPrivates.isNotEmpty)
-                      for (var private in cheboxesPrivates)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              private.cheboxesQuestion,
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            for (var cheboxes in private.cheboxes)
-                              Text(
-                                '•  $cheboxes',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: const Color(0x3ff797979),
-                                ),
-                              ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              private.cheboxesAnswer.isEmpty
-                                  ? 'Correct Answer: Not Answer'
-                                  : 'Correct Answer: ${private.cheboxesAnswer}',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: const Color(0x3ff797979),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        ),
-                    if (cheboxesPrivates.isNotEmpty &&
-                        choicePrivates.isNotEmpty &&
-                        writtenPrivates.isNotEmpty)
-                      const Divider(
-                        color: Color(0x3ff797979),
-                        thickness: 1.0,
-                        indent: 0,
-                        endIndent: 0,
-                      ),
-                    if (writtenPrivates.isNotEmpty)
-                      Column(
-                        children: [
-                          Text(
-                            'Written Answer',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                    if (writtenPrivates.isNotEmpty)
-                      for (var private in writtenPrivates)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              private.writtenQuestion,
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'answer: ${private.writtenAnswer}',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: const Color(0x3ff797979),
-                              ),
-                            ),
-                          ],
-                        ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0x3ffFF0000),
-                          minimumSize: const Size(
-                            375,
-                            45,
-                          ),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: onAddQuestion,
-                        // onAddQuestion,
-                        child: Text(
-                          'Add Questions',
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 14,
-                                  ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      'Questions Rules',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 25,
-                          ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Make group guidelines and request acceptance from prospective members.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Color(0x3ff797979),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    if (rulesPrivates.isNotEmpty)
-                      Column(
-                        children: [
-                          Text(
-                            'Rules',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
-                    if (rulesPrivates.isNotEmpty)
-                      for (var privates in rulesPrivates)
-                        Column(
-                          children: [
-                            Text(
-                              privates.writeRules,
-                              style: GoogleFonts.inter(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              privates.detailsRules,
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: const Color(0x3ff797979),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0x3ffFF0000),
-                          minimumSize: const Size(
-                            375,
-                            45,
-                          ),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: onAddRules,
-                        //onAddRules,
-                        child: Text(
-                          'Create Rules',
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 14,
-                                  ),
-                        ),
-                      ),
-                    ),
-                  ],
+                const SizedBox(
+                  height: 15,
                 ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     const SizedBox(
+                //       height: 15,
+                //     ),
+                //     Text(
+                //       'Questions',
+                //       style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                //             color: Colors.white,
+                //             fontWeight: FontWeight.w900,
+                //             fontSize: 25,
+                //           ),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Text(
+                //       'As soon as a potential member applies to join your group, ask them up to three questions. The responses will only be visible to administrators and moderators.',
+                //       style: GoogleFonts.inter(
+                //         fontSize: 15,
+                //         color: Color(0x3ff797979),
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     if (choicePrivates.isNotEmpty)
+                //       Column(
+                //         children: [
+                //           Text(
+                //             'Multiplie Choice',
+                //             style: Theme.of(context)
+                //                 .textTheme
+                //                 .titleMedium!
+                //                 .copyWith(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.bold,
+                //                   fontSize: 18,
+                //                 ),
+                //           ),
+                //           const SizedBox(
+                //             height: 5,
+                //           ),
+                //         ],
+                //       ),
+                //     if (choicePrivates.isNotEmpty)
+                //       for (var private in choicePrivates)
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Text(
+                //               private.choiceQuestion,
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 15,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //             for (var choice in private.choices)
+                //               Text(
+                //                 '• $choice',
+                //                 style: GoogleFonts.inter(
+                //                     fontSize: 13,
+                //                     color: const Color(0x3ff797979)),
+                //               ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //             Text(
+                //               private.choicesAnswer.isEmpty
+                //                   ? 'Correct Answer: Not Answer'
+                //                   : 'Correct Answer: ${private.choicesAnswer}',
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 13,
+                //                 color: const Color(0x3ff797979),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //     if (cheboxesPrivates.isNotEmpty &&
+                //         choicePrivates.isNotEmpty)
+                //       const Divider(
+                //         color: Color(0x3ff797979),
+                //         thickness: 1.0,
+                //         indent: 0,
+                //         endIndent: 0,
+                //       ),
+                //     if (choicePrivates.isNotEmpty &&
+                //         cheboxesPrivates.isNotEmpty)
+                //       Column(
+                //         children: [
+                //           Text(
+                //             'Check Boxes',
+                //             style: Theme.of(context)
+                //                 .textTheme
+                //                 .titleMedium!
+                //                 .copyWith(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.bold,
+                //                   fontSize: 18,
+                //                 ),
+                //           ),
+                //           const SizedBox(
+                //             height: 5,
+                //           ),
+                //         ],
+                //       ),
+                //     if (cheboxesPrivates.isNotEmpty)
+                //       for (var private in cheboxesPrivates)
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Text(
+                //               private.cheboxesQuestion,
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 15,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //             for (var cheboxes in private.cheboxes)
+                //               Text(
+                //                 '•  $cheboxes',
+                //                 style: GoogleFonts.inter(
+                //                   fontSize: 13,
+                //                   color: const Color(0x3ff797979),
+                //                 ),
+                //               ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //             Text(
+                //               private.cheboxesAnswer.isEmpty
+                //                   ? 'Correct Answer: Not Answer'
+                //                   : 'Correct Answer: ${private.cheboxesAnswer}',
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 13,
+                //                 color: const Color(0x3ff797979),
+                //               ),
+                //             ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //           ],
+                //         ),
+                //     if (cheboxesPrivates.isNotEmpty &&
+                //         choicePrivates.isNotEmpty &&
+                //         writtenPrivates.isNotEmpty)
+                //       const Divider(
+                //         color: Color(0x3ff797979),
+                //         thickness: 1.0,
+                //         indent: 0,
+                //         endIndent: 0,
+                //       ),
+                //     if (writtenPrivates.isNotEmpty)
+                //       Column(
+                //         children: [
+                //           Text(
+                //             'Written Answer',
+                //             style: Theme.of(context)
+                //                 .textTheme
+                //                 .titleMedium!
+                //                 .copyWith(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.bold,
+                //                   fontSize: 18,
+                //                 ),
+                //           ),
+                //           const SizedBox(
+                //             height: 5,
+                //           ),
+                //         ],
+                //       ),
+                //     if (writtenPrivates.isNotEmpty)
+                //       for (var private in writtenPrivates)
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Text(
+                //               private.writtenQuestion,
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 15,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //             const SizedBox(
+                //               height: 5,
+                //             ),
+                //             Text(
+                //               'answer: ${private.writtenAnswer}',
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 13,
+                //                 color: const Color(0x3ff797979),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //     const SizedBox(
+                //       height: 15,
+                //     ),
+                //     Center(
+                //       child: ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //           backgroundColor: Color(0x3ffFF0000),
+                //           minimumSize: const Size(
+                //             375,
+                //             45,
+                //           ),
+                //           elevation: 0,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(8),
+                //           ),
+                //         ),
+                //         onPressed: onAddQuestion,
+                //         // onAddQuestion,
+                //         child: Text(
+                //           'Add Questions',
+                //           style:
+                //               Theme.of(context).textTheme.titleMedium!.copyWith(
+                //                     color: Colors.white,
+                //                     fontWeight: FontWeight.w900,
+                //                     fontSize: 14,
+                //                   ),
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       height: 15,
+                //     ),
+                //     Text(
+                //       'Questions Rules',
+                //       style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                //             color: Colors.white,
+                //             fontWeight: FontWeight.w900,
+                //             fontSize: 25,
+                //           ),
+                //     ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Text(
+                //       'Make group guidelines and request acceptance from prospective members.',
+                //       style: GoogleFonts.inter(
+                //         fontSize: 15,
+                //         color: Color(0x3ff797979),
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       height: 15,
+                //     ),
+                //     if (rulesPrivates.isNotEmpty)
+                //       Column(
+                //         children: [
+                //           Text(
+                //             'Rules',
+                //             style: Theme.of(context)
+                //                 .textTheme
+                //                 .titleMedium!
+                //                 .copyWith(
+                //                   color: Colors.white,
+                //                   fontWeight: FontWeight.bold,
+                //                   fontSize: 18,
+                //                 ),
+                //           ),
+                //           const SizedBox(
+                //             height: 5,
+                //           ),
+                //         ],
+                //       ),
+                //     if (rulesPrivates.isNotEmpty)
+                //       for (var privates in rulesPrivates)
+                //         Column(
+                //           children: [
+                //             Text(
+                //               privates.writeRules,
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 15,
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.w600,
+                //               ),
+                //             ),
+                //             const SizedBox(height: 1),
+                //             Text(
+                //               privates.detailsRules,
+                //               style: GoogleFonts.inter(
+                //                 fontSize: 13,
+                //                 color: const Color(0x3ff797979),
+                //               ),
+                //             ),
+                //             const SizedBox(
+                //               height: 10,
+                //             ),
+                //           ],
+                //         ),
+                //     const SizedBox(
+                //       height: 10,
+                //     ),
+                //     Center(
+                //       child: ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //           backgroundColor: Color(0x3ffFF0000),
+                //           minimumSize: const Size(
+                //             375,
+                //             45,
+                //           ),
+                //           elevation: 0,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(8),
+                //           ),
+                //         ),
+                //         onPressed: onAddRules,
+                //         //onAddRules,
+                //         child: Text(
+                //           'Create Rules',
+                //           style:
+                //               Theme.of(context).textTheme.titleMedium!.copyWith(
+                //                     color: Colors.white,
+                //                     fontWeight: FontWeight.w900,
+                //                     fontSize: 14,
+                //                   ),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
               if (onSelectPrivacy == 0)
+             
                 const SizedBox(
-                  height: 330,
-                )
-              else
-                const SizedBox(
-                  height: 40,
+                  height: 15,
                 ),
               Center(
                 child: Column(
                   children: [
-                    Image.asset('assets/images/community_images/first.png'),
+                   
                     const SizedBox(
-                      height: 10,
+                      height: 50,
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

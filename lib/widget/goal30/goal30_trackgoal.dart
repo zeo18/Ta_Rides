@@ -12,6 +12,7 @@ import 'package:ta_rides/widget/all_controller/goal30_controller.dart';
 import 'package:ta_rides/widget/goal30/goal30_BMI_screen.dart';
 import 'package:ta_rides/widget/goal30/goal30_Start.dart';
 import 'package:ta_rides/widget/goal30/goal30_googlemap.dart';
+import 'package:ta_rides/widget/goal30/goal_history.dart';
 
 class Goal30TrackGoal extends StatefulWidget {
   const Goal30TrackGoal({
@@ -37,6 +38,7 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
   ScrollController scrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
   final keys = List<GlobalKey>.generate(90, (index) => GlobalKey());
+
   int goalDay = 1;
 
   int dateDay = DateTime.now().day;
@@ -216,6 +218,8 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
     for (var i = 0; i < goalsssDone.length; i++) {
       print(['goalsssDone', goalsssDone[i]]);
     }
+
+    print(['Day', day]);
 
     Widget buildCard(BMI item, int dateDay, GlobalKey key) => ClipRRect(
           key: key,
@@ -489,9 +493,6 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
                           ),
                           if (day == 30)
                             Center(
@@ -813,9 +814,6 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
                           if (day == 60)
                             Center(
                               child: ElevatedButton(
@@ -1136,9 +1134,6 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
                           if (day == 90)
                             Center(
                               child: ElevatedButton(
@@ -1320,6 +1315,12 @@ class _Goal30TrackGoalState extends State<Goal30TrackGoal> {
                         ],
                       ),
                     ),
+              if (goal30Controller.goal30.goalLenght == goal30.length)
+                Goal30History(
+                  user: widget.user,
+                  day: day,
+                  goal30: widget.goal30,
+                ),
               const SizedBox(
                 height: 10,
               ),

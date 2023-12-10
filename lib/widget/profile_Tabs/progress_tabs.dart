@@ -51,15 +51,17 @@ class ProgressTabs extends StatelessWidget {
                         );
                       },
                       child: ClipRRect(
-    borderRadius: BorderRadius.circular(15),
-    child: CachedNetworkImage(
-      imageUrl: pedal.location,
-      placeholder: (context, url) => CircularProgressIndicator(),
-      errorWidget: (context, url, error) => Icon(Icons.error),
-      width: 150,
-      fit: BoxFit.cover,
-    ),
-  ),
+                        borderRadius: BorderRadius.circular(15),
+                        child: CachedNetworkImage(
+                          imageUrl: pedal.location,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          width: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ],
                 ),

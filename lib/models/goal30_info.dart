@@ -303,6 +303,55 @@ class Goal30 {
   }
 }
 
+class goal30History {
+  goal30History({
+    required this.goalHistoryId,
+    required this.day,
+    required this.bmi,
+    required this.username,
+    required this.lenght,
+    required this.endTime,
+    required this.startTime,
+    required this.location,
+    required this.timer,
+    required this.totalDistance,
+    required this.avgSpeed,
+    required this.travelDistance,
+  });
+  final String goalHistoryId;
+  final int day;
+  final int lenght;
+  final String bmi;
+  final String username;
+  final Timestamp endTime;
+  final Timestamp startTime;
+  final String location;
+  final String timer;
+  final String totalDistance;
+  final double avgSpeed;
+  final String travelDistance;
+
+  factory goal30History.fromDocument(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data() as Map<String, dynamic>;
+
+    return goal30History(
+      goalHistoryId: data['goalHistoryId'] as String,
+      day: data['day'] as int,
+      username: data['username'] as String,
+      lenght: data['lenght'] as int,
+      bmi: data['bmi'] as String,
+      startTime: data['startTime'] as Timestamp,
+      endTime: data['endTime'] as Timestamp,
+      location: data['location'] as String,
+      timer: data['timer'] as String,
+      totalDistance: data['totalDistance'] as String,
+      avgSpeed: data['avgSpeed'] as double,
+      travelDistance: data['travelDistance'] as String,
+    );
+  }
+}
+
 class BMI {
   final int day;
   final String yourCategory;

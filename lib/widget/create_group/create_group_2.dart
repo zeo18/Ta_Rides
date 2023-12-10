@@ -100,6 +100,8 @@ class _CreateGroup2State extends State<CreateGroup2> {
         'members': [widget.user.user.username],
         'coverImage': coverImageUrl,
         'id': widget.idCommunity,
+        'owner': widget.user.user.username,
+        'isOwner': widget.isPrivate,
       });
 
       await FirebaseFirestore.instance

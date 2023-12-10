@@ -1,18 +1,18 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ta_rides/data/community_data.dart';
+
 import 'package:ta_rides/models/community_info.dart';
-import 'package:ta_rides/models/user_info.dart';
+
 import 'package:ta_rides/screen/bottom_tab/tabs_screen.dart';
-import 'package:ta_rides/widget/all_controller/community_controller.dart';
+import 'package:ta_rides/screen/community/view_member_request.dart';
+
 import 'package:ta_rides/widget/all_controller/post_controller.dart';
+import 'package:ta_rides/widget/all_controller/request_controller.dart';
 import 'package:ta_rides/widget/all_controller/user_controller.dart';
 import 'package:ta_rides/widget/post_community/add_post.dart';
 import 'package:ta_rides/widget/post_community/post_comunnity.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ForYouTabs extends StatefulWidget {
   const ForYouTabs({
@@ -44,6 +44,7 @@ class _ForYouTabsState extends State<ForYouTabs> {
   UserController userController = UserController();
   // CommunityController communityController = CommunityController();
   PostController postController = PostController();
+  RequestController requestController = RequestController();
   bool leaveGroup = false;
 
   // CommunityController communityController = CommunityController();
@@ -57,6 +58,7 @@ class _ForYouTabsState extends State<ForYouTabs> {
     // communityController.getCommunityAndUser(widget.email);
     postController.setEmail(widget.email);
     postController.getPost(widget.community!.id);
+    requestController.getRequest(widget.community!.id);
     super.initState();
   }
 
@@ -218,6 +220,55 @@ class _ForYouTabsState extends State<ForYouTabs> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
+                              Text(
+                                'hello',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              AnimatedBuilder(
+                                animation: requestController,
+                                builder: (context, snapshot) {
+                                  if (requestController.isLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+
+                                  return IconButton(
+                                    onPressed: () {
+                                      for (var i = 0;
+                                          i < requestController.request.length;
+                                          i++) {
+                                        print('heyyyyyy');
+                                        print(
+                                            'Checking username: ${requestController.request[i].userName}');
+                                        print(requestController
+                                            .request[i].userName);
+                                        print(userController.user.username);
+                                        if (widget.community!.owner ==
+                                            userController.user.username) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  ViewMemberRequest(
+                                                request: requestController
+                                                    .request[i],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      print('No matching username found');
+                                    },
+                                    icon: const Icon(
+                                      Icons.person_add,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                  );
+                                },
+                              ),
+                              // if community is private or host ka sa community show this
                             ],
                           ),
                         ),

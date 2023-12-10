@@ -22,6 +22,10 @@ class DirectionsRespository {
   StreamSubscription<LocationData>? locationSubscription;
   String? distance;
   double? distance1;
+  String? secondDistance;
+  double? secondDistance1;
+  String? endDistance;
+  double? endDistance1;
 
   void initStartLocation() async {
     startLocation = await location.getLocation();
@@ -42,6 +46,48 @@ class DirectionsRespository {
       distance = result?['distance'];
 
       print('Distance from starting location: $distance');
+    });
+  }
+
+  void initSecondPoint(double endPointLat, double endPointLng) async {
+    locationSubscription =
+        location.onLocationChanged.listen((LocationData currentLocation) async {
+      Map<String, dynamic>? result = await getEndPointDistance(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+        endPointLat,
+        endPointLng,
+      );
+      if (result?['distance'] != null && result!['distance'] is String) {
+        String distanceString = result['distance'].replaceAll('km', '');
+        print('Parsing: $distanceString');
+        secondDistance1 = double.tryParse(distanceString) ?? 0.0;
+      }
+
+      secondDistance = result?['distance'];
+
+      print('Distance from endpoint: $endDistance');
+    });
+  }
+
+  void initEndPoint(double endPointLat, double endPointLng) async {
+    locationSubscription =
+        location.onLocationChanged.listen((LocationData currentLocation) async {
+      Map<String, dynamic>? result = await getEndPointDistance(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+        endPointLat,
+        endPointLng,
+      );
+      if (result?['distance'] != null && result!['distance'] is String) {
+        String distanceString = result['distance'].replaceAll('km', '');
+        print('Parsing: $distanceString');
+        endDistance1 = double.tryParse(distanceString) ?? 0.0;
+      }
+
+      endDistance = result?['distance'];
+
+      print('Distance from endpoint: $endDistance');
     });
   }
 
@@ -107,6 +153,36 @@ class DirectionsRespository {
 
     final String url =
         'https://maps.googleapis.com/maps/api/directions/json?origin=$currentLoc&destination=$startLoc&mode=walking&alternatives=true&key=$key';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    print(json['routes']);
+    print(response.statusCode);
+
+    if (json['routes'].isEmpty) {
+      throw Exception('No routes found for the given origin and destination');
+    }
+    String distance = json['routes'][0]['legs'][0]['distance']['text'];
+
+    print('Extracted distance: $distance');
+    Map<String, dynamic> results = {
+      'distance': distance,
+    };
+
+    return results;
+  }
+
+  Future<Map<String, dynamic>?> getEndPointDistance(
+    double latCurrentLocation,
+    double lngCurrentLocation,
+    double latEndPoint,
+    double lngEndPoint,
+  ) async {
+    String endLoc = '${latEndPoint},${lngEndPoint}';
+    String currentLoc = '${latCurrentLocation},${lngCurrentLocation}';
+    print('Current location: $currentLoc');
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$currentLoc&destination=$endLoc&mode=walking&alternatives=true&key=$key';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     print(json['routes']);

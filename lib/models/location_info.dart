@@ -346,8 +346,12 @@ class LocationService {
     return results;
   }
 
-  Future<Map<String, dynamic>?> getEndToStartDistance(double latCurrentLocation,
-      double lngCurrentLocation, double latEndPoint, double lngEndPoint) async {
+  Future<Map<String, dynamic>?> getEndToStartDistance(
+    double latCurrentLocation,
+    double lngCurrentLocation,
+    double latEndPoint,
+    double lngEndPoint,
+  ) async {
     Location location = new Location();
 
     bool _serviceEnabled;

@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:ta_rides/models/rides_info.dart';
 import 'package:ta_rides/widget/all_controller/rides_controller.dart';
 import 'package:location/location.dart' as loc;
 import 'package:ta_rides/widget/rides/google_maps.dart';
+import 'package:ta_rides/widget/rides/realGooglemap.dart';
+import 'package:http/http.dart' as http;
 
 class JoinedEvent extends StatefulWidget {
   const JoinedEvent({
@@ -78,6 +82,23 @@ class _JoinedEventState extends State<JoinedEvent> {
         );
       },
     );
+  }
+
+  Future<Uint8List> _loadImage(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final Uint8List originalBytes = response.bodyBytes;
+      final List<int> resizedBytes =
+          await FlutterImageCompress.compressWithList(
+        originalBytes,
+        minHeight: 100,
+        minWidth: 100,
+        quality: 100,
+      );
+      return Uint8List.fromList(resizedBytes);
+    } else {
+      throw Exception('Failed to load image');
+    }
   }
 
   @override
@@ -406,15 +427,22 @@ class _JoinedEventState extends State<JoinedEvent> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          final Uint8List originIcon =
+                              await _loadImage(widget.rides.userImage);
+                          final Uint8List enemyIcon =
+                              await _loadImage(widget.rides.enemyImage);
+
                           _locationData != null
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => GoogleMaps(
+                                    builder: (context) => RealGoogleMap(
                                       locationData: _locationData,
                                       ride: widget.rides,
                                       isUser: false,
+                                      enemyIcon: enemyIcon,
+                                      originIcon: originIcon,
                                       email: widget.email,
                                     ),
                                   ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ta_rides/data/community_data.dart';
@@ -248,16 +249,52 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                               ),
                             );
                           }
-
                           if (widget.community.private) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (ctx) => PrivateConditionScreen(
-                                  community: widget.community,
-                                  email: widget.email,
-                                  private: privateCommunityController,
-                                ),
+                            // ignore: use_build_context_synchronously
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text('Request Sent'),
+                                content: Text(
+                                    'You have requested to join the community.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Yes'),
+                                    onPressed: () {
+                                      FirebaseFirestore.instance
+                                          .collection('request')
+                                          .add({
+                                        'communityId': widget.community.id,
+                                        'userName':
+                                            userController.user.username,
+                                        'userImage':
+                                            userController.user.userImage,
+                                        'firstName':
+                                            userController.user.firstName,
+                                        'lastName':
+                                            userController.user.lastName,
+                                        'requestId': '2312131',
+                                      }).then(
+                                        (value) => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => TabsScreen(
+                                              communityTabs: 1,
+                                              tabsScreen: 0,
+                                              email: widget.email,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('No'),
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop();
+                                    },
+                                  ),
+                                ],
                               ),
                             );
                           }
@@ -309,79 +346,80 @@ class _ViewCommunityScreenState extends State<ViewCommunityScreen> {
                 ),
               ),
               if (widget.community.private)
-                Container(
-                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rules',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      AnimatedBuilder(
-                          animation: privateCommunityController,
-                          builder: (context, snapshot) {
-                            if (privateCommunityController.isLoading) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return Column(
-                              children: [
-                                for (var i = 0;
-                                    i <
-                                        privateCommunityController
-                                            .private.length;
-                                    i++)
-                                  if (privateCommunityController
-                                      .private[i].writeRules.isNotEmpty)
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          privateCommunityController
-                                              .private[i].writeRules,
-                                          style: GoogleFonts.inter(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          privateCommunityController
-                                              .private[i].detailsRules,
-                                          style: GoogleFonts.inter(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                              ],
-                            );
-                          }),
-                    ],
-                  ),
-                ),
 
-              if (widget.community.private == false)
-                Text(
-                  'Group Post',
-                  style: GoogleFonts.inter(
-                    fontSize: 19,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                // Container(
+                //   margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         'Rules',
+                //         style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                //               color: Colors.white,
+                //               fontWeight: FontWeight.bold,
+                //             ),
+                //       ),
+                //       AnimatedBuilder(
+                //           animation: privateCommunityController,
+                //           builder: (context, snapshot) {
+                //             if (privateCommunityController.isLoading) {
+                //               return const Center(
+                //                 child: CircularProgressIndicator(),
+                //               );
+                //             }
+                //             return Column(
+                //               children: [
+                //                 for (var i = 0;
+                //                     i <
+                //                         privateCommunityController
+                //                             .private.length;
+                //                     i++)
+                //                   if (privateCommunityController
+                //                       .private[i].writeRules.isNotEmpty)
+                //                     Column(
+                //                       crossAxisAlignment:
+                //                           CrossAxisAlignment.start,
+                //                       children: [
+                //                         const SizedBox(
+                //                           height: 10,
+                //                         ),
+                //                         Text(
+                //                           privateCommunityController
+                //                               .private[i].writeRules,
+                //                           style: GoogleFonts.inter(
+                //                               fontSize: 20,
+                //                               color: Colors.white,
+                //                               fontWeight: FontWeight.bold),
+                //                         ),
+                //                         const SizedBox(
+                //                           height: 10,
+                //                         ),
+                //                         Text(
+                //                           privateCommunityController
+                //                               .private[i].detailsRules,
+                //                           style: GoogleFonts.inter(
+                //                             fontSize: 16,
+                //                             color: Colors.white,
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     ),
+                //               ],
+                //             );
+                //           }),
+                //     ],
+                //   ),
+                // ),
+
+                if (widget.community.private == false)
+                  Text(
+                    'Group Post',
+                    style: GoogleFonts.inter(
+                      fontSize: 19,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
 
               if (widget.community.private == false)
                 AnimatedBuilder(
