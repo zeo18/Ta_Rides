@@ -26,6 +26,8 @@ The Rides feature provides users with the opportunity to engage in friendly comp
 
 <h2>Sceenshot</h2>
 
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/a99e90fb-7055-4cb3-9459-0f96c7cb75b2"  width="100" >
+
 
 
 
