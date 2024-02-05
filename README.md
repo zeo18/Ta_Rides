@@ -9,6 +9,14 @@ A community- based mobile application that allows bikers to interact with one an
 A new Flutter project.
 Core Features: 
 
+<ul>
+  <li>Pedal</li>
+  <li>Community</li>
+  <li>Goal 30 60 90</li>
+  <li>Rides</li>
+  <li>Profile</li>
+</ul>
+
 Measure your Performance 
 TaRIDES syncs with the phone and keeps track of any performance metric you can think of.
 
