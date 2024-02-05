@@ -11,10 +11,10 @@ Core Features:
 
 <ul>
   <li ><h3>Pedal</h3></li>
-  <li>Community</li>
-  <li>Goal 30 60 90 </li>
-  <li>Rides</li>
-  <li>Profile</li>
+  <li><h3>Community</h3></li>
+  <li><h3>Rides</h3></li>
+  <li><h3>Goal30</h3></li>
+  <li><h3>Profile</h3></li>
 </ul>
 
 Measure your Performance 
