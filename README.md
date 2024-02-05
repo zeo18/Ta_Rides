@@ -1,4 +1,4 @@
-<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/a590d521-8ed8-4e6b-83a3-940511c6cd25"  width="500" >
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/a590d521-8ed8-4e6b-83a3-940511c6cd25"  width="200" >
 
 <h1>TaRides</h1>
 
