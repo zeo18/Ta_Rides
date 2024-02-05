@@ -12,7 +12,7 @@ Core Features:
 <ul type="A" style="font-weight: bold;">
   <li>Pedal</li>
   <li>Community</li>
-  <li>Goal 30 60 90</li>
+  <li>Goal 30 60 90 </li>
   <li>Rides</li>
   <li>Profile</li>
 </ul>
