@@ -2,20 +2,19 @@
 A community- based mobile application that allows bikers to interact with one another and complete challenges. This allows users to engage in friendly challenges with fellow cyclists. The app integrates social connectivity, enabling cyclists to share their experiences, tips, and accomplishments within the community. Emphasizing the benefits of exercise, TaRides aligns with the broader goal of enhancing physical well-being while creating a supportive environment for cyclists to thrive. 
 
 ## Features
+<h2>Core Features: </h2>
 
-
-
-
-A new Flutter project.
-Core Features: 
 
 <ul>
   <li ><h3>Pedal</h3></li>
+	<p></p>
   <li><h3>Community</h3></li>
   <li><h3>Rides</h3></li>
   <li><h3>Goal30</h3></li>
   <li><h3>Profile</h3></li>
 </ul>
+
+
 
 Measure your Performance 
 TaRIDES syncs with the phone and keeps track of any performance metric you can think of.
