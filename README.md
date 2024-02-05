@@ -1,5 +1,5 @@
 # ta_rides
-<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/20a5ebf3-bc92-43bd-8b55-09fc498bb8e8" width="50" height="50" />
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/20a5ebf3-bc92-43bd-8b55-09fc498bb8e8" width="400"  />
 A new Flutter project.
 
 
