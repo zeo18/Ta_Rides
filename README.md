@@ -31,6 +31,12 @@ The Rides feature provides users with the opportunity to engage in friendly comp
 <img src="https://github.com/zeo18/Ta_Rides/assets/90707486/ba58aefe-8506-4ce0-a011-895eb1af6502"  height="300" >
 <img src="https://github.com/zeo18/Ta_Rides/assets/90707486/9f682eb5-166f-47ff-92af-53fe897c0896"  height="300" >
 
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/d80b3791-5c42-4d93-a1e8-23dc07784141"  height="300" >
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/1992303f-8a16-4f20-a614-8c3e4211b5aa"  height="300" >
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/5feda428-d452-4e6f-9cfe-ca3546abd20b"  height="300" >
+
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/b29c409a-5b17-4d90-a296-467fbdf89ccc"  height="300" >
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/6eb90452-767a-446d-9174-c62b51d97a50"  height="300" >
 
 
 
