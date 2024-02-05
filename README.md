@@ -9,59 +9,18 @@ A community- based mobile application that allows bikers to interact with one an
 	<p>
 Pedal is specifically designed for individual cyclists who prefer a solo biking experience, allowing users to personally choose their starting point when planning a route. The app seamlessly integrates user preferences by requesting input for the endpoint, thereby facilitating the generation of a customized route based on the user's specified locations.</p>
   <li><h3>Community</h3></li>
+	<p>
+The concept of a community within the platform enables users to actively engage in social interactions by either forming their own groups or participating in existing ones. This feature empowers users to create connections and foster a sense of camaraderie with fellow users.</p>
   <li><h3>Rides</h3></li>
+	<p>
+The Rides feature provides users with the opportunity to engage in friendly competition against one another. This unique aspect is limited to one-on-one challenges, where users can create or join lobbies to participate in the challenges.</p>
   <li><h3>Goal30</h3></li>
+	<p> Goal 30 60 90, users have the flexibility to choose a fitness challenge lasting for 30, 60, or 90 days. This feature empowers individuals to personalize their fitness journey by selecting the duration that aligns best with their preferences and goals.</p>
   <li><h3>Profile</h3></li>
+	<p>profile section, users can effortlessly explore and manage a wealth of information. This includes not only their personal details but also provides a comprehensive overview of their past rides and the history of their bikes, creating a rich and detailed account of their cycling journey.</p>
 </ul>
 
 
 
-Measure your Performance 
-TaRIDES syncs with the phone and keeps track of any performance metric you can think of.
-
-
-Create / Join Community Groups
-TaRIDES users can create / join their preferred group
-
-
-Compete with other community groups
-Once communities are created, the leaders of the respected community may compete head to head with their members.
-
-
-Individual Ranking
-When one of the users wins the activity, they are being ranked
-
-
-Use Reward Points for Successful Activity
-Every activity of the group inside the community can earn points depending on their ranking
-
-
-Invite Members of the Community
-Members may invite users to increase the popularity of their community. 
-
-
-Route Setting 
-Users are able to specify where they want the planned challenge to take place.
-
-Goal 30 60 90 Challenge
-Daily Activity feature
-The app sets its daily activity for the user to use.
-
-Biking lose weight
-It will give you 30 days to drop some pounds. It will provide you with a daily action to do today to lose weight until you reach the 30-day goal.
-
-
-
-User can make own template of activities
-User’s makes the template and share to other user’s
-Edit the template to its own preference
-				
-				
-
-
-
-
-Tracker feature
-Helps in tracing your path during your participation in the activity that you are joining.
 
 
