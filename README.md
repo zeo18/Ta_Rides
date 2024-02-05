@@ -9,7 +9,7 @@ A community- based mobile application that allows bikers to interact with one an
 A new Flutter project.
 Core Features: 
 
-<ul>
+<ul style="font-weight: bold>
   <li>Pedal</li>
   <li>Community</li>
   <li>Goal 30 60 90</li>
