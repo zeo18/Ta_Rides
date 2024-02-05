@@ -1,4 +1,4 @@
-<img src="[img_girl.jpg](https://github.com/zeo18/Ta_Rides/assets/90707486/a590d521-8ed8-4e6b-83a3-940511c6cd25)"  width="500" >
+<img src="https://github.com/zeo18/Ta_Rides/assets/90707486/a590d521-8ed8-4e6b-83a3-940511c6cd25"  width="500" >
 # TaRides
 A community- based mobile application that allows bikers to interact with one another and complete challenges. This allows users to engage in friendly challenges with fellow cyclists. The app integrates social connectivity, enabling cyclists to share their experiences, tips, and accomplishments within the community. Emphasizing the benefits of exercise, TaRides aligns with the broader goal of enhancing physical well-being while creating a supportive environment for cyclists to thrive. 
 
