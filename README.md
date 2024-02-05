@@ -10,7 +10,7 @@ A new Flutter project.
 Core Features: 
 
 <ul type="A" style="font-weight: bold;">
-  <li>Pedal</li>
+  <li style="font-weight: bold;">Pedal</li>
   <li>Community</li>
   <li>Goal 30 60 90 </li>
   <li>Rides</li>
